@@ -1,15 +1,14 @@
 import { Injectable } from "@angular/core";
+import { environment } from "../environments/environment";
 
 @Injectable({
   providedIn: "root",
 })
 export class BaseUrlService {
   // Base URL trỏ tới nhóm endpoint auth
-  private authBaseUrl: string = "/auth"; // Dev (Sử dụng proxy)
+  private authBaseUrl: string = environment.production && environment.apiUrl ? `${environment.apiUrl}/auth` : "/auth"; 
   // Base URL trỏ tới API chính
-  private apiBaseUrl: string = ""; // Dev (Sử dụng proxy)
-  // Có thể bật production bằng hàm setAuthBaseUrl
-  // Ví dụ: "https://dacsii-backend.onrender.com/auth"
+  private apiBaseUrl: string = environment.production && environment.apiUrl ? environment.apiUrl : "";
 
   getAuthBaseUrl(): string {
     return this.authBaseUrl;

@@ -33,6 +33,7 @@
     "@angular/platform-server": "20.3.13",
     "@angular/router": "20.3.13",
     "@angular/ssr": "20.3.13",
+    "@vercel/analytics": "^2.0.1",
     "@zxing/library": "^0.21.3",
     "@zxing/ngx-scanner": "^20.0.0",
     "express": "^5.1.0",

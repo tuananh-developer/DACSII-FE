@@ -25,12 +25,11 @@ export class AuthInterceptor implements HttpInterceptor {
   private baseUrl = inject(BaseUrlService);
 
   private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
+  private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(
+    null,
+  );
 
-  intercept(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Add access token to request if available
     const accessToken = this.getAccessToken();
     if (accessToken && !request.headers.has('Authorization')) {
@@ -51,15 +50,15 @@ export class AuthInterceptor implements HttpInterceptor {
         }
 
         return throwError(() => error);
-      })
+      }),
     );
   }
 
   private addTokenToRequest(request: HttpRequest<any>, token: string): HttpRequest<any> {
     return request.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`
-      }
+        Authorization: `Bearer ${token}`,
+      },
     });
   }
 
@@ -73,10 +72,12 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   private isAuthRequest(url: string): boolean {
-    return url.includes('/auth/refresh') || 
-           url.includes('/auth/login') || 
-           url.includes('/auth/register') ||
-           url.includes('/auth/logout');
+    return (
+      url.includes('/auth/refresh') ||
+      url.includes('/auth/login') ||
+      url.includes('/auth/register') ||
+      url.includes('/auth/logout')
+    );
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -88,7 +89,7 @@ export class AuthInterceptor implements HttpInterceptor {
         switchMap((newToken: string) => {
           this.isRefreshing = false;
           this.refreshTokenSubject.next(newToken);
-          
+
           // Retry the original request with new token
           return next.handle(this.addTokenToRequest(request, newToken));
         }),
@@ -96,23 +97,23 @@ export class AuthInterceptor implements HttpInterceptor {
           this.isRefreshing = false;
           this.handleLogout();
           return throwError(() => refreshError);
-        })
+        }),
       );
     } else {
       // Wait for the refresh to complete and then retry
       return this.refreshTokenSubject.pipe(
-        filter(token => token !== null),
+        filter((token) => token !== null),
         take(1),
         switchMap((token) => {
           return next.handle(this.addTokenToRequest(request, token!));
-        })
+        }),
       );
     }
   }
 
   private async refreshToken(): Promise<string> {
     const url = `${this.baseUrl.getAuthBaseUrl()}/refresh`;
-    
+
     try {
       const result = await fetch(url, {
         method: 'POST',
@@ -128,11 +129,13 @@ export class AuthInterceptor implements HttpInterceptor {
       }
 
       const data = await result.json();
-      
+
       if (data?.accessToken) {
         try {
           localStorage.setItem('accessToken', data.accessToken);
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
         console.log('[AuthInterceptor] Token refreshed successfully');
         return data.accessToken;
       }
@@ -146,17 +149,19 @@ export class AuthInterceptor implements HttpInterceptor {
 
   private handleLogout(): void {
     console.log('[AuthInterceptor] 401 Unauthorized - refresh failed, logging out');
-    
+
     // Clear auth state
     this.authState.setUser(null);
-    
+
     // Clear tokens from localStorage
     try {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('authUser');
-    } catch { /* ignore */ }
-    
+    } catch {
+      /* ignore */
+    }
+
     // Store the attempted URL for redirecting after login
     const currentUrl = this.router.url;
     if (!currentUrl.includes('/login') && !currentUrl.includes('/register')) {
