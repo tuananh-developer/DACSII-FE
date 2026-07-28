@@ -1,0 +1,40 @@
+<div class="min-h-screen bg-canvas font-sans pb-24">
+  <!-- Header Nav -->
+  <header class="h-20 flex items-center justify-between px-6 md:px-12 xl:px-24 border-b border-hairline bg-canvas sticky top-0 z-50">
+    <a routerLink="/" class="text-primary font-bold text-2xl flex items-center gap-2 hover:opacity-80 transition-opacity">
+      <svg viewBox="0 0 32 32" class="h-8 w-8 fill-current"><path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.172-.179h-.011l-.176.185c-2.044 2.1-4.267 3.42-6.414 3.615l-.28.019-.267.006C5.377 31 2.5 28.584 2.5 24.522l.005-.469c.026-.928.23-1.768.83-3.244l.216-.524c.966-2.298 5.083-10.87 7.11-14.886l.528-1.038C12.53 2.016 13.982 1 16 1z"></path></svg>
+      NexusSport
+    </a>
+    
+    <div class="flex items-center gap-4 relative">
+      <app-notification-dropdown></app-notification-dropdown>
+      
+      <button class="flex items-center gap-2 border border-hairline rounded-full py-2 px-3 hover:shadow-float transition-all bg-canvas">
+        <svg viewBox="0 0 32 32" class="w-4 h-4 stroke-ink stroke-2 fill-none"><path d="M10 4h12v4H10zM4 10h24v18H4z"></path></svg>
+        <div class="w-7 h-7 bg-ink text-canvas rounded-full flex items-center justify-center text-xs font-bold">A</div>
+      </button>
+    </div>
+  </header>
+
+  <div class="px-6 md:px-12 xl:px-24 max-w-6xl mx-auto pt-10">
+    <div class="flex flex-col md:flex-row gap-10">
+      
+      <!-- Sidebar Nav -->
+      <nav class="w-full md:w-64 shrink-0 flex flex-row md:flex-col overflow-x-auto border-b md:border-b-0 border-hairline pb-4 md:pb-0 hide-scrollbar">
+        <a *ngFor="let item of navItems" 
+           [routerLink]="item.path" 
+           routerLinkActive="font-bold text-ink bg-surface-soft border-l-4 border-primary" 
+           [routerLinkActiveOptions]="{exact: false}"
+           class="whitespace-nowrap md:whitespace-normal px-4 py-3 text-[16px] text-muted hover:bg-surface-soft hover:text-ink transition-colors rounded-r-lg border-l-4 border-transparent mr-2 md:mr-0">
+          {{ item.label }}
+        </a>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="flex-1">
+        <router-outlet></router-outlet>
+      </main>
+
+    </div>
+  </div>
+</div>

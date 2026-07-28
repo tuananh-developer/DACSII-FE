@@ -1,0 +1,194 @@
+<div *ngIf="isLoading()" class="min-h-screen flex items-center justify-center bg-canvas">
+  <div class="w-10 h-10 border-4 border-hairline border-t-primary rounded-full animate-spin"></div>
+</div>
+
+<div *ngIf="!isLoading() && field()" class="min-h-screen bg-canvas font-sans pb-24">
+  
+  <!-- Header Nav -->
+  <header class="h-20 flex items-center justify-between px-6 md:px-12 xl:px-24 border-b border-hairline bg-canvas sticky top-0 z-50">
+    <a routerLink="/" class="text-primary font-bold text-2xl flex items-center gap-2 hover:opacity-80 transition-opacity">
+      <svg viewBox="0 0 32 32" class="h-8 w-8 fill-current"><path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.172-.179h-.011l-.176.185c-2.044 2.1-4.267 3.42-6.414 3.615l-.28.019-.267.006C5.377 31 2.5 28.584 2.5 24.522l.005-.469c.026-.928.23-1.768.83-3.244l.216-.524c.966-2.298 5.083-10.87 7.11-14.886l.528-1.038C12.53 2.016 13.982 1 16 1z"></path></svg>
+      NexusSport
+    </a>
+  </header>
+
+  <!-- Title & Action Bar -->
+  <div class="px-6 md:px-12 xl:px-24 pt-8 pb-6 max-w-7xl mx-auto">
+    <h1 class="text-[26px] md:text-[32px] font-semibold text-ink leading-tight mb-2">{{ field()!.name }}</h1>
+    
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm font-medium text-ink">
+      <div class="flex items-center gap-2">
+        <span class="flex items-center gap-1">
+          <svg viewBox="0 0 32 32" class="w-3.5 h-3.5 fill-current"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
+          {{ field()!.rating }}
+        </span>
+        <span class="text-muted">·</span>
+        <span class="underline cursor-pointer hover:text-muted transition-colors">{{ field()!.reviewsCount }} đánh giá</span>
+        <span class="text-muted">·</span>
+        <span class="underline cursor-pointer hover:text-muted transition-colors">{{ field()!.address }}</span>
+      </div>
+      
+      <div class="flex items-center gap-4">
+        <button class="flex items-center gap-2 hover:bg-surface-soft px-3 py-2 rounded-lg transition-colors">
+          <svg viewBox="0 0 32 32" class="w-4 h-4 fill-none stroke-current stroke-2"><path d="M27 18v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-9M16 3v23M6 13l9.3-9.3a1 1 0 0 1 1.4 0L26 13"></path></svg>
+          Chia sẻ
+        </button>
+        <button class="flex items-center gap-2 hover:bg-surface-soft px-3 py-2 rounded-lg transition-colors">
+          <svg viewBox="0 0 32 32" class="w-4 h-4 fill-none stroke-current stroke-2"><path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-6.94c-2.87 0-5.45 1.5-6.75 4.14-1.3-2.64-3.88-4.14-6.75-4.14A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path></svg>
+          Lưu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Gallery Grid (Airbnb Style) -->
+  <div class="px-6 md:px-12 xl:px-24 max-w-7xl mx-auto mb-10">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative">
+      <div class="md:col-span-2 h-full cursor-pointer hover:opacity-90 transition-opacity bg-surface-strong">
+        <img [src]="field()!.imageUrl" class="w-full h-full object-cover">
+      </div>
+      <div class="hidden md:flex flex-col gap-2 h-full">
+        <img src="https://images.unsplash.com/photo-1518605368461-1ee06b2b4bc6?q=80&w=600&auto=format&fit=crop" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer">
+        <img src="https://images.unsplash.com/photo-1529900965600-70f90e542af1?q=80&w=600&auto=format&fit=crop" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer">
+      </div>
+      <div class="hidden md:flex flex-col gap-2 h-full">
+        <img src="https://images.unsplash.com/photo-1574629810360-7efbbad11303?q=80&w=600&auto=format&fit=crop" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer">
+        <img src="https://images.unsplash.com/photo-1589487391730-58f20eb2c308?q=80&w=600&auto=format&fit=crop" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer">
+      </div>
+      
+      <button class="absolute bottom-4 right-4 bg-canvas text-ink border border-ink text-sm font-semibold px-4 py-1.5 rounded-lg shadow-sm hover:bg-surface-soft transition-colors flex items-center gap-2">
+        <svg viewBox="0 0 32 32" class="w-4 h-4 fill-current"><circle cx="7" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><circle cx="25" cy="16" r="2"/><circle cx="7" cy="7" r="2"/><circle cx="16" cy="7" r="2"/><circle cx="25" cy="7" r="2"/><circle cx="7" cy="25" r="2"/><circle cx="16" cy="25" r="2"/><circle cx="25" cy="25" r="2"/></svg>
+        Hiển thị tất cả ảnh
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Layout: Main Info (Left) + Booking Sticky Card (Right) -->
+  <div class="px-6 md:px-12 xl:px-24 max-w-7xl mx-auto flex flex-col md:flex-row gap-12 lg:gap-24">
+    
+    <!-- Left Column (Field Info) -->
+    <div class="flex-1">
+      <div class="pb-8 border-b border-hairline">
+        <h2 class="text-[22px] font-semibold text-ink mb-1">Sân do NexusSport quản lý</h2>
+        <p class="text-[16px] text-muted">Bao gồm 3 sân 5, 2 sân 7 và 1 sân 11</p>
+      </div>
+
+      <div class="py-8 border-b border-hairline">
+        <div class="flex gap-4 mb-6">
+          <svg viewBox="0 0 32 32" class="w-6 h-6 fill-none stroke-current stroke-2 shrink-0"><path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-6.94c-2.87 0-5.45 1.5-6.75 4.14-1.3-2.64-3.88-4.14-6.75-4.14A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path><circle cx="16" cy="11" r="3"></circle></svg>
+          <div>
+            <h3 class="font-semibold text-ink text-[16px]">Vị trí đắc địa</h3>
+            <p class="text-muted text-[14px] mt-1 text-muted-soft">Nằm ngay trung tâm, có bãi đỗ xe máy và ô tô rộng rãi.</p>
+          </div>
+        </div>
+        <div class="flex gap-4 mb-6">
+          <svg viewBox="0 0 32 32" class="w-6 h-6 fill-none stroke-current stroke-2 shrink-0"><path d="M25 4v24M7 4v24M2 16h28"></path></svg>
+          <div>
+            <h3 class="font-semibold text-ink text-[16px]">Cỏ nhân tạo đạt chuẩn FIFA</h3>
+            <p class="text-muted text-[14px] mt-1 text-muted-soft">Mặt sân được bảo trì hàng tuần, đảm bảo độ bám và êm ái.</p>
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <svg viewBox="0 0 32 32" class="w-6 h-6 fill-none stroke-current stroke-2 shrink-0"><path d="M26 13a4 4 0 1 0-8 0v13h8V13zM14 13a4 4 0 1 0-8 0v13h8V13z"></path></svg>
+          <div>
+            <h3 class="font-semibold text-ink text-[16px]">Trọng tài & Nước uống miễn phí</h3>
+            <p class="text-muted text-[14px] mt-1 text-muted-soft">Hỗ trợ trọng tài cho các trận đấu và miễn phí 2 bình nước mỗi sân.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="py-8 border-b border-hairline">
+        <h2 class="text-[22px] font-semibold text-ink mb-4">Mô tả sân</h2>
+        <p class="text-[16px] text-ink leading-relaxed font-light">
+          {{ field()!.description || 'Sân bóng chất lượng cao với hệ thống đèn chiếu sáng tiêu chuẩn. Phù hợp cho các giải đấu phong trào và giao hữu cuối tuần. Có khu vực căng tin giải khát và phòng thay đồ sạch sẽ.' }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Column (Sticky Booking Card) -->
+    <div class="w-full md:w-[320px] lg:w-[380px] shrink-0">
+      <div class="sticky top-28 bg-canvas border border-hairline shadow-float rounded-2xl p-6">
+        
+        <div class="flex justify-between items-baseline mb-6">
+          <div class="text-[22px] font-semibold text-ink" *ngIf="selectedSlotIds().length === 0">
+            ₫{{ field()!.price | number:'1.0-0' }} <span class="text-[16px] font-normal text-muted">/ giờ</span>
+          </div>
+          <div class="text-[22px] font-semibold text-ink" *ngIf="selectedSlotIds().length > 0">
+            ₫{{ totalBookingPrice | number:'1.0-0' }} <span class="text-[16px] font-normal text-muted">tổng</span>
+          </div>
+          <div class="text-sm font-medium flex items-center gap-1">
+            <svg viewBox="0 0 32 32" class="w-3 h-3 fill-current"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
+            {{ field()!.rating }} <span class="text-muted underline cursor-pointer">{{ field()!.reviewsCount }} đánh giá</span>
+          </div>
+        </div>
+
+        <div class="border border-muted-soft rounded-lg overflow-hidden mb-6">
+          <!-- Date Picker Box -->
+          <div class="flex border-b border-muted-soft">
+            <div class="flex-1 p-3 cursor-pointer hover:bg-surface-soft transition-colors relative" (click)="showDatePicker.set(!showDatePicker())">
+              <div class="text-[10px] font-bold uppercase text-ink">Ngày đá</div>
+              <div class="text-[14px] text-muted-soft">{{ selectedDate() | date:'dd/MM/yyyy' }}</div>
+              <!-- Native Date Input hidden over the box -->
+              <input type="date" [ngModel]="selectedDate()" (change)="onDateChange($event)" 
+                     class="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                     [min]="(today | date:'yyyy-MM-dd')" />
+            </div>
+          </div>
+          
+          <!-- Slots Box -->
+          <div class="p-3 bg-canvas">
+            <div class="text-[10px] font-bold uppercase text-ink mb-2">Giờ đá</div>
+            
+            <div *ngIf="isLoadingSlots()" class="flex justify-center py-4">
+              <div class="w-6 h-6 border-2 border-hairline border-t-primary rounded-full animate-spin"></div>
+            </div>
+            
+            <div *ngIf="!isLoadingSlots() && timeSlots().length === 0" class="text-[14px] text-muted text-center py-2">
+              Không có suất trống trong ngày này
+            </div>
+            
+            <div *ngIf="!isLoadingSlots() && timeSlots().length > 0" class="grid grid-cols-2 gap-2 max-h-[240px] overflow-y-auto">
+              <div *ngFor="let slot of timeSlots()" 
+                   (click)="toggleSlot(slot.id, slot.isAvailable)"
+                   class="px-2 py-2 rounded-lg text-center border text-[13px] font-medium transition-all"
+                   [ngClass]="{
+                     'border-ink bg-ink text-canvas': selectedSlotIds().includes(slot.id),
+                     'border-hairline bg-canvas text-ink hover:border-ink cursor-pointer': !selectedSlotIds().includes(slot.id) && slot.isAvailable,
+                     'border-hairline bg-surface-soft text-muted-soft opacity-50 cursor-not-allowed': !slot.isAvailable
+                   }">
+                {{ slot.startTime }} - {{ slot.endTime }}
+                <div class="text-[11px] font-normal" [ngClass]="selectedSlotIds().includes(slot.id) ? 'text-canvas' : 'text-muted'">
+                  {{ slot.price | number:'1.0-0' }}đ
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button 
+          (click)="goToCheckout()"
+          [disabled]="selectedSlotIds().length === 0"
+          class="w-full font-bold text-[16px] py-3.5 rounded-lg transition-all"
+          [ngClass]="selectedSlotIds().length > 0 ? 'bg-primary hover:bg-primary-active text-canvas active:scale-[0.98]' : 'bg-primary-disabled text-on-primary cursor-not-allowed'">
+          {{ selectedSlotIds().length > 0 ? 'Tiếp tục đặt sân' : 'Chọn giờ đá' }}
+        </button>
+
+        <p class="text-center text-[14px] text-muted mt-4">Bạn vẫn chưa bị trừ tiền</p>
+        
+        <!-- Breakdown (Airbnb style) -->
+        <div *ngIf="selectedSlotIds().length > 0" class="mt-4 pt-4 border-t border-hairline">
+          <div class="flex justify-between text-[16px] text-ink mb-2">
+            <span class="underline">₫{{ field()!.price | number:'1.0-0' }} x {{ selectedSlotIds().length }} giờ</span>
+            <span>₫{{ totalBookingPrice | number:'1.0-0' }}</span>
+          </div>
+          <div class="flex justify-between text-[16px] font-semibold text-ink pt-4 border-t border-hairline mt-4">
+            <span>Tổng cộng</span>
+            <span>₫{{ totalBookingPrice | number:'1.0-0' }}</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

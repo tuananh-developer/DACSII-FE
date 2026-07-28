@@ -1,0 +1,45 @@
+<div *ngIf="profile()" class="max-w-2xl">
+  <h1 class="text-[32px] font-semibold text-ink mb-8">Hồ sơ cá nhân</h1>
+
+  <div class="flex items-center gap-6 mb-10 pb-8 border-b border-hairline">
+    <div class="relative">
+      <img [src]="profile()!.avatarUrl" class="w-24 h-24 rounded-full object-cover shadow-sm">
+      <button class="absolute bottom-0 right-0 bg-surface-strong border border-hairline rounded-full w-8 h-8 flex items-center justify-center hover:bg-hairline transition-colors">
+        <svg viewBox="0 0 32 32" class="w-4 h-4 fill-ink"><path d="M25.7 8.3a3.8 3.8 0 0 0-5.4 0L7 21.6V27h5.4l13.3-13.3a3.8 3.8 0 0 0 0-5.4zM11.6 25H9v-2.6l10.5-10.5 2.6 2.6L11.6 25z"></path></svg>
+      </button>
+    </div>
+    <div>
+      <h2 class="text-[22px] font-semibold text-ink">{{ profile()!.name }}</h2>
+      <p class="text-[14px] text-muted">Thành viên từ {{ profile()!.joinedDate | date:'yyyy' }}</p>
+    </div>
+  </div>
+
+  <div class="space-y-6">
+    <div>
+      <label class="block text-[14px] font-bold text-ink uppercase mb-2">Tên hiển thị</label>
+      <input type="text" [(ngModel)]="name" class="w-full bg-canvas border border-border-strong rounded-md p-4 text-[16px] text-ink focus:outline-none focus:border-ink transition-colors">
+    </div>
+    
+    <div>
+      <label class="block text-[14px] font-bold text-ink uppercase mb-2">Số điện thoại</label>
+      <input type="text" [(ngModel)]="phone" class="w-full bg-canvas border border-border-strong rounded-md p-4 text-[16px] text-ink focus:outline-none focus:border-ink transition-colors">
+    </div>
+
+    <div>
+      <label class="block text-[14px] font-bold text-ink uppercase mb-2">Địa chỉ email</label>
+      <input type="email" [(ngModel)]="email" class="w-full bg-surface-soft border border-hairline rounded-md p-4 text-[16px] text-muted cursor-not-allowed" disabled>
+      <p class="text-[12px] text-muted mt-2">Email không thể thay đổi sau khi đăng ký.</p>
+    </div>
+
+    <div class="pt-6">
+      <button (click)="save()" [disabled]="isSaving()" class="bg-ink hover:bg-black text-canvas font-bold text-[16px] py-4 px-8 rounded-lg transition-transform active:scale-[0.98] flex items-center justify-center gap-2">
+        <svg *ngIf="isSaving()" class="w-5 h-5 animate-spin text-canvas" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        Lưu thay đổi
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!profile()" class="flex justify-center py-20">
+  <div class="w-8 h-8 border-4 border-hairline border-t-primary rounded-full animate-spin"></div>
+</div>

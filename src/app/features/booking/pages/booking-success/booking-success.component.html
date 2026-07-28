@@ -1,0 +1,25 @@
+<div class="min-h-screen bg-canvas font-sans flex flex-col items-center justify-center p-6">
+  
+  <div class="max-w-md w-full bg-canvas border border-hairline shadow-float rounded-2xl p-8 text-center">
+    
+    <div class="w-20 h-20 bg-surface-soft rounded-full flex items-center justify-center mx-auto mb-6">
+      <svg viewBox="0 0 32 32" class="w-10 h-10 fill-primary"><path d="M12.7 26a1 1 0 0 1-.7-.3l-8-8a1 1 0 0 1 1.4-1.4l7.3 7.3L26.6 6.3a1 1 0 0 1 1.4 1.4l-14.6 18a1 1 0 0 1-.7.3z"></path></svg>
+    </div>
+
+    <h1 class="text-[26px] font-semibold text-ink mb-2">Thanh toán thành công!</h1>
+    <p class="text-[16px] text-muted mb-8">
+      Đơn đặt sân của bạn đã được xác nhận. Mã đặt sân: <span class="font-semibold text-ink">{{ bookingId() || 'N/A' }}</span>
+    </p>
+
+    <div class="flex flex-col gap-4">
+      <button routerLink="/profile/bookings" class="w-full bg-primary hover:bg-primary-active text-canvas font-bold text-[16px] py-3.5 rounded-lg transition-transform active:scale-[0.98]">
+        Xem chi tiết đặt sân
+      </button>
+      <button routerLink="/" class="w-full bg-canvas text-ink border border-ink font-semibold text-[16px] py-3.5 rounded-lg hover:bg-surface-soft transition-colors">
+        Về trang chủ
+      </button>
+    </div>
+
+  </div>
+
+</div>
