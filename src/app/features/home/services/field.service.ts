@@ -69,4 +69,16 @@ export class FieldService {
   getFieldDetails(id: string): Observable<Field> {
     return this.api.get(`/fields/${id}`);
   }
+
+  getLocations(): Observable<any[]> {
+    return this.api.get('/locations');
+  }
+
+  getBranches(): Observable<any[]> {
+    return this.api.get('/branches');
+  }
+
+  getFieldTypes(): Observable<any[]> {
+    return this.api.get('/field-types');
+  }
 }

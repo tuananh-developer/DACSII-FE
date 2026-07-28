@@ -16,12 +16,34 @@ export class HomeComponent implements OnInit {
   searchQuery = signal('');
   searchLocation = signal('');
   searchType = signal('');
-  searchDate = signal('');
+  searchBranch = signal('');
+  searchDate = signal(new Date().toISOString().split('T')[0]);
+
+  // Options
+  locations = signal<any[]>([]);
+  branches = signal<any[]>([]);
+  fieldTypes = signal<any[]>([]);
 
   constructor(public fieldService: FieldService) {}
 
   ngOnInit() {
     this.fieldService.getFields().subscribe();
+    this.loadFilterOptions();
+  }
+
+  loadFilterOptions() {
+    this.fieldService.getLocations().subscribe({
+      next: (data) => this.locations.set(data),
+      error: () => this.locations.set([{ id: 'hcm', name: 'TP.HCM' }, { id: 'hn', name: 'Hà Nội' }]) // fallback mock if api fails
+    });
+    this.fieldService.getBranches().subscribe({
+      next: (data) => this.branches.set(data),
+      error: () => this.branches.set([{ id: 'b1', name: 'Chi nhánh Tân Bình' }, { id: 'b2', name: 'Chi nhánh Quận 10' }])
+    });
+    this.fieldService.getFieldTypes().subscribe({
+      next: (data) => this.fieldTypes.set(data),
+      error: () => this.fieldTypes.set([{ id: '5', name: 'Sân 5 người' }, { id: '7', name: 'Sân 7 người' }])
+    });
   }
 
   toggleSave(field: Field, event: Event) {
@@ -34,6 +56,7 @@ export class HomeComponent implements OnInit {
     this.fieldService.getFields({
       q: this.searchQuery(),
       location: this.searchLocation(),
+      branch: this.searchBranch(),
       type: this.searchType(),
       date: this.searchDate()
     }).subscribe();
