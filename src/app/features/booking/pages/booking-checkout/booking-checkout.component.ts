@@ -20,7 +20,7 @@ export class BookingCheckoutComponent implements OnInit {
   note = signal<string>('');
 
   constructor(
-    private router: Router,
+    public router: Router,
     private bookingService: BookingService
   ) {}
 
