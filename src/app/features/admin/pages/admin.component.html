@@ -1,0 +1,118 @@
+<div class="min-h-screen bg-strike-canvas text-strike-ink font-sans tracking-tight flex">
+
+  <!-- Sidebar (Dashboard Navigation) -->
+  <aside class="w-64 bg-white border-r border-strike-hairline hidden md:flex flex-col">
+    <div class="h-16 flex items-center px-6 font-bold text-lg text-strike-primary tracking-tighter">
+      NexusSport Admin
+    </div>
+    
+    <nav class="flex-1 px-4 py-6 space-y-2">
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium bg-strike-canvas text-strike-primary rounded-md">
+        Tổng quan
+      </a>
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-strike-ink-mute hover:bg-strike-canvas hover:text-strike-ink rounded-md transition-colors">
+        Quản lý Sân
+      </a>
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-strike-ink-mute hover:bg-strike-canvas hover:text-strike-ink rounded-md transition-colors">
+        Lịch đặt (Bookings)
+      </a>
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-strike-ink-mute hover:bg-strike-canvas hover:text-strike-ink rounded-md transition-colors">
+        Tài chính
+      </a>
+      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-strike-ink-mute hover:bg-strike-canvas hover:text-strike-ink rounded-md transition-colors">
+        Khách hàng
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col">
+    <!-- Topbar -->
+    <header class="h-16 bg-white border-b border-strike-hairline flex items-center justify-between px-8">
+      <h1 class="text-xl font-medium tracking-tight">Hôm nay</h1>
+      <div class="flex items-center gap-4">
+        <button class="bg-strike-primary hover:bg-strike-primary-press text-white px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm">
+          Tạo đặt sân
+        </button>
+      </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="p-8 max-w-6xl mx-auto w-full">
+      
+      <!-- Metrics Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        
+        <!-- Metric Card (Strike Style) -->
+        <div class="bg-white p-6 rounded-lg border border-strike-hairline shadow-sm">
+          <h3 class="text-sm font-medium text-strike-ink-mute mb-2">Doanh thu hôm nay</h3>
+          <div class="text-3xl font-light tracking-tight tabular-nums flex items-baseline gap-2">
+            ₫{{ revenue | number:'1.0-0' }}
+            <span class="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+12.5%</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg border border-strike-hairline shadow-sm">
+          <h3 class="text-sm font-medium text-strike-ink-mute mb-2">Lượt đặt sân</h3>
+          <div class="text-3xl font-light tracking-tight tabular-nums flex items-baseline gap-2">
+            {{ bookings }}
+            <span class="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+4</span>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg border border-strike-hairline shadow-sm">
+          <h3 class="text-sm font-medium text-strike-ink-mute mb-2">Đang thi đấu</h3>
+          <div class="text-3xl font-light tracking-tight tabular-nums flex items-baseline gap-2">
+            8 <span class="text-base text-strike-ink-mute font-normal">/ 12 sân</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table Section (Strike Style) -->
+      <div class="bg-white rounded-lg border border-strike-hairline shadow-sm overflow-hidden">
+        <div class="px-6 py-4 border-b border-strike-hairline bg-white flex justify-between items-center">
+          <h2 class="text-lg font-medium">Giao dịch gần đây</h2>
+          <button class="text-sm font-medium text-strike-primary hover:text-strike-primary-press">Xem tất cả</button>
+        </div>
+        
+        <table class="w-full text-left text-sm">
+          <thead class="bg-strike-canvas text-strike-ink-mute border-b border-strike-hairline">
+            <tr>
+              <th class="px-6 py-3 font-medium">Khách hàng</th>
+              <th class="px-6 py-3 font-medium">Sân</th>
+              <th class="px-6 py-3 font-medium">Thời gian</th>
+              <th class="px-6 py-3 font-medium text-right">Số tiền</th>
+              <th class="px-6 py-3 font-medium text-right">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-strike-hairline text-strike-ink">
+            <tr class="hover:bg-strike-canvas transition-colors">
+              <td class="px-6 py-4 font-medium">Nguyễn Văn A</td>
+              <td class="px-6 py-4 text-strike-ink-mute">Sân số 1 (5 người)</td>
+              <td class="px-6 py-4 text-strike-ink-mute tabular-nums">18:00 - 19:30</td>
+              <td class="px-6 py-4 text-right tabular-nums font-medium">₫350,000</td>
+              <td class="px-6 py-4 text-right">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">
+                  Thành công
+                </span>
+              </td>
+            </tr>
+            <tr class="hover:bg-strike-canvas transition-colors">
+              <td class="px-6 py-4 font-medium">Trần Văn B</td>
+              <td class="px-6 py-4 text-strike-ink-mute">Sân số 3 (7 người)</td>
+              <td class="px-6 py-4 text-strike-ink-mute tabular-nums">19:30 - 21:00</td>
+              <td class="px-6 py-4 text-right tabular-nums font-medium">₫500,000</td>
+              <td class="px-6 py-4 text-right">
+                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700">
+                  Chờ thanh toán
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+
+</div>
