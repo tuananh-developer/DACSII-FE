@@ -5,6 +5,9 @@ export interface UserProfile {
   phone: string;
   avatarUrl: string;
   joinedDate: string;
+  dateOfBirth?: string;
+  gender?: 'male' | 'female' | 'other';
+  bio?: string;
 }
 
 export interface BookingHistoryItem {
