@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,7 @@ import { AuthService } from '../services/auth.service';
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.component.html'
 })
-export class LoginComponent {
+export class LoginComponent implements OnDestroy {
   // Steps: 1 = Enter Email/Password, 2 = Verify OTP
   step = signal<1 | 2>(1);
   
@@ -21,7 +22,33 @@ export class LoginComponent {
   isLoading = signal(false);
   errorMessage = signal('');
 
-  constructor(private authService: AuthService, private router: Router) {}
+  private messageListener: any;
+
+  constructor(private authService: AuthService, private router: Router) {
+    this.messageListener = this.handleMessage.bind(this);
+    window.addEventListener('message', this.messageListener);
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('message', this.messageListener);
+  }
+
+  loginWithGoogle() {
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const url = `${environment.apiUrl}/auth/google`;
+    
+    window.open(url, 'Google Login', `width=${width},height=${height},left=${left},top=${top}`);
+  }
+
+  handleMessage(event: MessageEvent) {
+    if (event.data && event.data.accessToken && event.data.user) {
+      this.authService.setAuthData(event.data.accessToken, event.data.user);
+      this.router.navigate(['/']);
+    }
+  }
 
   onInitiateLogin() {
     if (!this.email() || !this.password()) {

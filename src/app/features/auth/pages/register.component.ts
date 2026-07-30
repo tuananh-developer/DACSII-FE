@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +11,7 @@ import { AuthService } from '../services/auth.service';
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './register.component.html'
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnDestroy {
   step = signal<1 | 2>(1);
   
   // Form fields
@@ -25,7 +26,33 @@ export class RegisterComponent {
   isLoading = signal(false);
   errorMessage = signal('');
 
-  constructor(private authService: AuthService, private router: Router) {}
+  private messageListener: any;
+
+  constructor(private authService: AuthService, private router: Router) {
+    this.messageListener = this.handleMessage.bind(this);
+    window.addEventListener('message', this.messageListener);
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('message', this.messageListener);
+  }
+
+  loginWithGoogle() {
+    const width = 500;
+    const height = 600;
+    const left = window.screenX + (window.outerWidth - width) / 2;
+    const top = window.screenY + (window.outerHeight - height) / 2;
+    const url = `${environment.apiUrl}/auth/google`;
+    
+    window.open(url, 'Google Login', `width=${width},height=${height},left=${left},top=${top}`);
+  }
+
+  handleMessage(event: MessageEvent) {
+    if (event.data && event.data.accessToken && event.data.user) {
+      this.authService.setAuthData(event.data.accessToken, event.data.user);
+      this.router.navigate(['/']);
+    }
+  }
 
   onInitiateRegister() {
     if (!this.email() || !this.password() || !this.full_name() || !this.phone_number()) {

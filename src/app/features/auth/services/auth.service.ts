@@ -24,13 +24,17 @@ export class AuthService {
     return this.api.post('/auth/login/initiate', { email, password });
   }
 
+  setAuthData(accessToken: string, user: User) {
+    localStorage.setItem('access_token', accessToken);
+    this.currentUser.set(user);
+  }
+
   // 2. Complete Login with OTP
   loginComplete(email: string, verificationCode: string): Observable<any> {
     return this.api.post('/auth/login/complete', { email, verificationCode }).pipe(
       tap((res: any) => {
         if (res.accessToken) {
-          localStorage.setItem('access_token', res.accessToken);
-          this.currentUser.set(res.user);
+          this.setAuthData(res.accessToken, res.user);
         }
       })
     );
