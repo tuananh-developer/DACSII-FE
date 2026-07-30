@@ -51,7 +51,7 @@ export class NotificationService {
   }
 
   private loadInitialNotifications() {
-    this.http.get<AppNotification[]>(`${environment.apiUrl}/notifications`).subscribe({
+    this.http.get<AppNotification[]>(`${environment.apiUrl}/notification`).subscribe({
       next: (notifications) => {
         this.notificationsSubject.next(notifications);
         this.updateUnreadCount();
@@ -61,7 +61,7 @@ export class NotificationService {
   }
 
   markAsRead(id: string) {
-    this.http.patch(`${environment.apiUrl}/notifications/${id}/read`, {}).subscribe({
+    this.http.patch(`${environment.apiUrl}/notification/${id}/read`, {}).subscribe({
       next: () => {
         const updated = this.notificationsSubject.value.map(n => 
           n.id === id ? { ...n, isRead: true } : n
@@ -73,7 +73,7 @@ export class NotificationService {
   }
 
   markAllAsRead() {
-    this.http.patch(`${environment.apiUrl}/notifications/read-all`, {}).subscribe({
+    this.http.patch(`${environment.apiUrl}/notification/read-all`, {}).subscribe({
       next: () => {
         const updated = this.notificationsSubject.value.map(n => ({ ...n, isRead: true }));
         this.notificationsSubject.next(updated);

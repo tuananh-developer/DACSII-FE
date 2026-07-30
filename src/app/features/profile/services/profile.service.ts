@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment';
   providedIn: 'root'
 })
 export class ProfileService {
-  private apiUrl = `${environment.apiUrl}/profile`;
+  private apiUrl = `${environment.apiUrl}/users/me`;
 
   constructor(private http: HttpClient) {}
 
@@ -17,15 +17,15 @@ export class ProfileService {
   }
 
   updateProfile(data: Partial<UserProfile>): Observable<UserProfile> {
-    return this.http.put<UserProfile>(this.apiUrl, data);
+    return this.http.put<UserProfile>(`${this.apiUrl}/profile`, data);
   }
 
   getBookings(): Observable<BookingHistoryItem[]> {
-    return this.http.get<BookingHistoryItem[]>(`${this.apiUrl}/bookings`);
+    return this.http.get<BookingHistoryItem[]>(`${environment.apiUrl}/bookings/me`);
   }
 
   getWishlist(): Observable<WishlistItem[]> {
-    return this.http.get<WishlistItem[]>(`${this.apiUrl}/wishlist`);
+    return this.http.get<WishlistItem[]>(`${environment.apiUrl}/users/me/wishlist`);
   }
 
   submitReview(review: ReviewRequest): Observable<boolean> {
