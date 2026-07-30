@@ -16,7 +16,7 @@
           <img *ngIf="authService.currentUser()?.avatarUrl; else noAvatar" [src]="authService.currentUser()?.avatarUrl" class="w-8 h-8 rounded-full object-cover ml-1 md:ml-2">
           <ng-template #noAvatar>
             <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-canvas font-bold text-[14px] ml-1 md:ml-2">
-              {{ (authService.currentUser()?.firstName?.[0] || authService.currentUser()?.full_name?.[0] || authService.currentUser()?.email?.[0] || 'U') | uppercase }}
+              {{ (authService.currentUser()?.firstName?.[0] || $any(authService.currentUser())?.full_name?.[0] || authService.currentUser()?.email?.[0] || 'U') | uppercase }}
             </div>
           </ng-template>
         </div>
@@ -24,7 +24,7 @@
         <!-- Dropdown Menu -->
         <div class="absolute right-0 top-[110%] w-56 bg-canvas rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-hairline py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top-right">
           <div class="px-4 py-3 border-b border-hairline mb-2">
-            <p class="text-[14px] font-bold text-ink truncate">Xin chào, {{ authService.currentUser()?.firstName || authService.currentUser()?.full_name || authService.currentUser()?.email?.split('@')[0] }}</p>
+            <p class="text-[14px] font-bold text-ink truncate">Xin chào, {{ authService.currentUser()?.firstName || $any(authService.currentUser())?.full_name || authService.currentUser()?.email?.split('@')?.[0] }}</p>
             <p class="text-[12px] text-muted truncate">{{ authService.currentUser()?.email }}</p>
           </div>
           <a routerLink="/profile" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Hồ sơ của tôi</a>
