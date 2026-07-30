@@ -34,15 +34,15 @@ export class HomeComponent implements OnInit {
   loadFilterOptions() {
     this.fieldService.getLocations().subscribe({
       next: (data) => this.locations.set(data),
-      error: () => this.locations.set([{ id: 'hcm', name: 'TP.HCM' }, { id: 'hn', name: 'Hà Nội' }]) // fallback mock if api fails
+      error: () => this.locations.set([])
     });
     this.fieldService.getBranches().subscribe({
       next: (data) => this.branches.set(data),
-      error: () => this.branches.set([{ id: 'b1', name: 'Chi nhánh Tân Bình' }, { id: 'b2', name: 'Chi nhánh Quận 10' }])
+      error: () => this.branches.set([])
     });
     this.fieldService.getFieldTypes().subscribe({
       next: (data) => this.fieldTypes.set(data),
-      error: () => this.fieldTypes.set([{ id: '5', name: 'Sân 5 người' }, { id: '7', name: 'Sân 7 người' }])
+      error: () => this.fieldTypes.set([])
     });
   }
 

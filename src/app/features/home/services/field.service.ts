@@ -71,7 +71,7 @@ export class FieldService {
   }
 
   getLocations(): Observable<any[]> {
-    return this.api.get('/locations');
+    return this.api.get('/locations/cities');
   }
 
   getBranches(): Observable<any[]> {
