@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { FieldService, Field } from '../../home/services/field.service';
 import { NotificationDropdownComponent } from '../../../shared/components/notification-dropdown/notification-dropdown.component';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +25,7 @@ export class HomeComponent implements OnInit {
   branches = signal<any[]>([]);
   fieldTypes = signal<any[]>([]);
 
-  constructor(public fieldService: FieldService) {}
+  constructor(public fieldService: FieldService, public authService: AuthService) {}
 
   ngOnInit() {
     this.fieldService.getFields().subscribe();

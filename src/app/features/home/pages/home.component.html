@@ -8,7 +8,36 @@
     
     <div class="flex items-center gap-4 relative">
       <app-notification-dropdown></app-notification-dropdown>
-      <a routerLink="/login" class="text-sm font-semibold hover:bg-surface-soft px-4 py-2 rounded-full transition-colors border border-hairline">Đăng nhập</a>
+      
+      <!-- User profile when logged in -->
+      <div *ngIf="authService.currentUser()" class="relative group cursor-pointer">
+        <div class="flex items-center gap-2 px-2 py-1 rounded-full border border-hairline hover:shadow-md transition-all duration-300 bg-canvas">
+          <svg viewBox="0 0 32 32" class="w-4 h-4 fill-ink ml-2 hidden md:block"><path d="M2 16h28M2 24h28M2 8h28" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg>
+          <img *ngIf="authService.currentUser()?.avatarUrl; else noAvatar" [src]="authService.currentUser()?.avatarUrl" class="w-8 h-8 rounded-full object-cover ml-1 md:ml-2">
+          <ng-template #noAvatar>
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-canvas font-bold text-[14px] ml-1 md:ml-2">
+              {{ (authService.currentUser()?.firstName?.[0] || authService.currentUser()?.full_name?.[0] || authService.currentUser()?.email?.[0] || 'U') | uppercase }}
+            </div>
+          </ng-template>
+        </div>
+        
+        <!-- Dropdown Menu -->
+        <div class="absolute right-0 top-[110%] w-56 bg-canvas rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-hairline py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top-right">
+          <div class="px-4 py-3 border-b border-hairline mb-2">
+            <p class="text-[14px] font-bold text-ink truncate">Xin chào, {{ authService.currentUser()?.firstName || authService.currentUser()?.full_name || authService.currentUser()?.email?.split('@')[0] }}</p>
+            <p class="text-[12px] text-muted truncate">{{ authService.currentUser()?.email }}</p>
+          </div>
+          <a routerLink="/profile" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Hồ sơ của tôi</a>
+          <a routerLink="/bookings" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Lịch sử đặt sân</a>
+          <div class="h-[1px] bg-hairline my-2"></div>
+          <button (click)="authService.logout().subscribe()" class="w-full text-left px-4 py-2.5 text-[14px] text-primary hover:bg-surface-soft transition-colors font-medium">Đăng xuất</button>
+        </div>
+      </div>
+
+      <!-- Login button when NOT logged in -->
+      <a *ngIf="!authService.currentUser()" routerLink="/login" class="text-[14px] font-semibold hover:bg-surface-soft px-5 py-2.5 rounded-full transition-colors border border-hairline shadow-sm">
+        Đăng nhập
+      </a>
     </div>
   </header>
 
