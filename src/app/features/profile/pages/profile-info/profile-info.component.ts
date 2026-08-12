@@ -22,6 +22,13 @@ export class ProfileInfoComponent implements OnInit {
   gender = signal<'male' | 'female' | 'other' | undefined>(undefined);
   bio = signal('');
 
+  isGenderDropdownOpen = signal(false);
+
+  selectGender(gender: 'male' | 'female' | 'other') {
+    this.gender.set(gender);
+    this.isGenderDropdownOpen.set(false);
+  }
+
   constructor(private profileService: ProfileService) {}
 
   ngOnInit() {

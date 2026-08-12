@@ -26,14 +26,36 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
+      <div class="relative">
         <label class="block text-[14px] font-bold text-ink uppercase mb-2">Giới tính</label>
-        <select [(ngModel)]="gender" class="w-full bg-canvas border border-border-strong rounded-md p-4 text-[16px] text-ink focus:outline-none focus:border-ink transition-colors">
-          <option [ngValue]="undefined">Chọn giới tính</option>
-          <option value="male">Nam</option>
-          <option value="female">Nữ</option>
-          <option value="other">Khác</option>
-        </select>
+        
+        <!-- Custom Dropdown Button -->
+        <div (click)="isGenderDropdownOpen.set(!isGenderDropdownOpen())" 
+             class="w-full bg-canvas border rounded-md p-4 text-[16px] text-ink cursor-pointer flex justify-between items-center transition-all duration-200"
+             [ngClass]="isGenderDropdownOpen() ? 'border-ink ring-1 ring-ink' : 'border-border-strong hover:border-ink'">
+          <span [class.text-muted]="!gender()">
+            {{ gender() === 'male' ? 'Nam' : gender() === 'female' ? 'Nữ' : gender() === 'other' ? 'Khác' : 'Chọn giới tính' }}
+          </span>
+          <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current text-muted transition-transform duration-300" [class.rotate-180]="isGenderDropdownOpen()">
+            <path d="M7 10l5 5 5-5z"></path>
+          </svg>
+        </div>
+
+        <!-- Full screen overlay to detect outside clicks -->
+        <div *ngIf="isGenderDropdownOpen()" class="fixed inset-0 z-10" (click)="isGenderDropdownOpen.set(false)"></div>
+
+        <!-- Custom Dropdown Menu -->
+        <div *ngIf="isGenderDropdownOpen()" class="absolute top-full left-0 right-0 mt-2 bg-canvas border border-hairline rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] py-2 z-20 overflow-hidden transform origin-top transition-all duration-200">
+          <div (click)="selectGender('male')" class="px-4 py-3 text-[16px] text-ink hover:bg-surface-soft cursor-pointer transition-colors flex items-center justify-between font-medium">
+            Nam <svg *ngIf="gender() === 'male'" class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+          <div (click)="selectGender('female')" class="px-4 py-3 text-[16px] text-ink hover:bg-surface-soft cursor-pointer transition-colors flex items-center justify-between font-medium">
+            Nữ <svg *ngIf="gender() === 'female'" class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+          <div (click)="selectGender('other')" class="px-4 py-3 text-[16px] text-ink hover:bg-surface-soft cursor-pointer transition-colors flex items-center justify-between font-medium">
+            Khác <svg *ngIf="gender() === 'other'" class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+          </div>
+        </div>
       </div>
 
       <div>

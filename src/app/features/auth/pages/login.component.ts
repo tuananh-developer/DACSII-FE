@@ -46,7 +46,14 @@ export class LoginComponent implements OnDestroy {
   handleMessage(event: MessageEvent) {
     if (event.data && event.data.accessToken && event.data.user) {
       this.authService.setAuthData(event.data.accessToken, event.data.user);
-      this.router.navigate(['/']);
+      
+      const user = event.data.user;
+      // If user logs in via Google and doesn't have enough info, redirect to profile to fill it
+      if (!user.phone && !user.phone_number) {
+        this.router.navigate(['/profile/info']);
+      } else {
+        this.router.navigate(['/']);
+      }
     }
   }
 
