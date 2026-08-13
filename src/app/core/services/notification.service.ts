@@ -29,7 +29,9 @@ export class NotificationService {
     });
 
     this.setupListeners();
-    this.loadInitialNotifications();
+    if (localStorage.getItem('access_token')) {
+      this.loadInitialNotifications();
+    }
   }
 
   connect(userId: string) {
@@ -50,7 +52,7 @@ export class NotificationService {
     });
   }
 
-  private loadInitialNotifications() {
+  loadInitialNotifications() {
     this.http.get<AppNotification[]>(`${environment.apiUrl}/notification`).subscribe({
       next: (notifications) => {
         this.notificationsSubject.next(notifications);

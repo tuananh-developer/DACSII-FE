@@ -1,14 +1,15 @@
 import { Injectable, signal } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
 import { Observable, tap } from 'rxjs';
+import { NotificationService } from '../../../core/services/notification.service';
 
 export interface User {
   id: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  full_name: string;
   role: string;
-  avatarUrl?: string;
+  avatar_url?: string;
+  is_profile_complete?: boolean;
 }
 
 @Injectable({
@@ -17,7 +18,7 @@ export interface User {
 export class AuthService {
   currentUser = signal<User | null>(null);
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private notificationService: NotificationService) {}
 
   // 1. Initiate Login
   loginInitiate(email: string, password: string): Observable<any> {
@@ -27,6 +28,8 @@ export class AuthService {
   setAuthData(accessToken: string, user: User) {
     localStorage.setItem('access_token', accessToken);
     this.currentUser.set(user);
+    this.notificationService.connect(user.id);
+    this.notificationService.loadInitialNotifications();
   }
 
   // 2. Complete Login with OTP
@@ -50,8 +53,7 @@ export class AuthService {
     return this.api.post('/auth/register/complete', { email, verificationCode }).pipe(
       tap((res: any) => {
         if (res.accessToken) {
-          localStorage.setItem('access_token', res.accessToken);
-          this.currentUser.set(res.user);
+          this.setAuthData(res.accessToken, res.user);
         }
       })
     );
@@ -63,6 +65,7 @@ export class AuthService {
       tap(() => {
         localStorage.removeItem('access_token');
         this.currentUser.set(null);
+        this.notificationService.disconnect();
       })
     );
   }

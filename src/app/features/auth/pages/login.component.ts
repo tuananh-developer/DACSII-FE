@@ -49,7 +49,7 @@ export class LoginComponent implements OnDestroy {
       
       const user = event.data.user;
       // If user logs in via Google and doesn't have enough info, redirect to profile to fill it
-      if (!user.phone && !user.phone_number) {
+      if (!user.is_profile_complete) {
         this.router.navigate(['/profile/info']);
       } else {
         this.router.navigate(['/']);

@@ -45,14 +45,20 @@ export class ProfileInfoComponent implements OnInit {
 
   save() {
     this.isSaving.set(true);
-    this.profileService.updateProfile({
-      name: this.name(),
-      phone: this.phone(),
-      email: this.email(),
-      dateOfBirth: this.dateOfBirth() || undefined,
+    const payload: Partial<UserProfile> = {
+      name: this.name() || undefined,
       gender: this.gender(),
       bio: this.bio() || undefined
-    }).subscribe(updated => {
+    };
+
+    if (this.phone()) {
+      payload.phone = this.phone();
+    }
+    if (this.dateOfBirth()) {
+      payload.dateOfBirth = this.dateOfBirth();
+    }
+
+    this.profileService.updateProfile(payload).subscribe(updated => {
       this.profile.set(updated);
       this.isSaving.set(false);
       // Show success toast or message
