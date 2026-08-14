@@ -29,7 +29,7 @@
           </div>
           <a routerLink="/profile" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Hồ sơ của tôi</a>
           <a routerLink="/bookings" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Lịch sử đặt sân</a>
-          <a *ngIf="authService.currentUser()?.role === 'SUPER_ADMIN' || authService.currentUser()?.role === 'ADMIN'" routerLink="/admin" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Trang quản trị</a>
+          <a *ngIf="authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'branch_manager'" routerLink="/admin" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Trang quản trị</a>
           <div class="h-[1px] bg-hairline my-2"></div>
           <button (click)="authService.logout().subscribe()" class="w-full text-left px-4 py-2.5 text-[14px] text-primary hover:bg-surface-soft transition-colors font-medium">Đăng xuất</button>
         </div>
