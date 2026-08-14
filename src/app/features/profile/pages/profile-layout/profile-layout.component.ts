@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NotificationDropdownComponent } from '../../../../shared/components/notification-dropdown/notification-dropdown.component';
+import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
   selector: 'app-profile-layout',
@@ -15,4 +16,6 @@ export class ProfileLayoutComponent {
     { label: 'Lịch sử đặt sân', path: '/profile/bookings' },
     { label: 'Sân yêu thích', path: '/profile/wishlist' }
   ];
+
+  constructor(public authService: AuthService) {}
 }
