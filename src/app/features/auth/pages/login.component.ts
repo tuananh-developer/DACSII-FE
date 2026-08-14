@@ -48,9 +48,12 @@ export class LoginComponent implements OnDestroy {
       this.authService.setAuthData(event.data.accessToken, event.data.user);
       
       const user = event.data.user;
-      // If user logs in via Google and doesn't have enough info, redirect to profile to fill it
+      const roleName = typeof user.role === 'object' ? user.role.name : user.role;
+      
       if (!user.is_profile_complete) {
         this.router.navigate(['/profile/info']);
+      } else if (roleName === 'super_admin' || roleName === 'branch_manager') {
+        this.router.navigate(['/admin']);
       } else {
         this.router.navigate(['/']);
       }
@@ -90,7 +93,12 @@ export class LoginComponent implements OnDestroy {
     this.authService.loginComplete(this.email(), this.otpCode()).subscribe({
       next: () => {
         this.isLoading.set(false);
-        this.router.navigate(['/']); // Về trang chủ
+        const user = this.authService.currentUser();
+        if (user && (user.role === 'super_admin' || user.role === 'branch_manager')) {
+          this.router.navigate(['/admin']);
+        } else {
+          this.router.navigate(['/']);
+        }
       },
       error: (err) => {
         this.errorMessage.set(err.error?.message || 'Mã OTP không hợp lệ.');
