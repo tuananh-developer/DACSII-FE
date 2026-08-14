@@ -1,118 +1,146 @@
-<div class="min-h-screen bg-strike-canvas text-strike-ink font-sans tracking-tight flex">
+<div class="min-h-screen bg-[#f6f9fc] text-[#0d253d] font-sans tracking-tight flex">
 
   <!-- Sidebar (Dashboard Navigation) -->
-  <aside class="w-64 bg-white border-r border-strike-hairline hidden md:flex flex-col">
-    <div class="h-16 flex items-center px-6 font-bold text-lg text-strike-primary tracking-tighter">
+  <aside class="w-64 bg-white border-r border-[#e3e8ee] hidden md:flex flex-col z-10">
+    <div class="h-16 flex items-center px-6 font-semibold text-[18px] text-[#0d253d] tracking-tighter border-b border-[#e3e8ee]">
+      <svg viewBox="0 0 32 32" class="h-6 w-6 fill-[#533afd] mr-2"><path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.172-.179h-.011l-.176.185c-2.044 2.1-4.267 3.42-6.414 3.615l-.28.019-.267.006C5.377 31 2.5 28.584 2.5 24.522l.005-.469c.026-.928.23-1.768.83-3.244l.216-.524c.966-2.298 5.083-10.87 7.11-14.886l.528-1.038C12.53 2.016 13.982 1 16 1z"></path></svg>
       NexusSport Admin
     </div>
     
-    <nav class="flex-1 px-4 py-6 space-y-2">
-      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium bg-strike-canvas text-strike-primary rounded-md">
+    <nav class="flex-1 px-4 py-6 space-y-1">
+      <button (click)="setTab('OVERVIEW')" [ngClass]="activeTab === 'OVERVIEW' ? 'bg-[#f6f9fc] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center px-4 py-2.5 text-[14px] rounded-[8px] transition-colors">
         Tổng quan
-      </a>
-      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-strike-ink-mute hover:bg-strike-canvas hover:text-strike-ink rounded-md transition-colors">
+      </button>
+      <button (click)="setTab('FIELDS')" [ngClass]="activeTab === 'FIELDS' ? 'bg-[#f6f9fc] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center px-4 py-2.5 text-[14px] rounded-[8px] transition-colors">
         Quản lý Sân
-      </a>
-      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-strike-ink-mute hover:bg-strike-canvas hover:text-strike-ink rounded-md transition-colors">
-        Lịch đặt (Bookings)
-      </a>
-      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-strike-ink-mute hover:bg-strike-canvas hover:text-strike-ink rounded-md transition-colors">
-        Tài chính
-      </a>
-      <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-strike-ink-mute hover:bg-strike-canvas hover:text-strike-ink rounded-md transition-colors">
+      </button>
+      <button (click)="setTab('USERS')" [ngClass]="activeTab === 'USERS' ? 'bg-[#f6f9fc] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center px-4 py-2.5 text-[14px] rounded-[8px] transition-colors">
         Khách hàng
-      </a>
+      </button>
+      <button (click)="setTab('BOOKINGS')" [ngClass]="activeTab === 'BOOKINGS' ? 'bg-[#f6f9fc] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center px-4 py-2.5 text-[14px] rounded-[8px] transition-colors">
+        Lịch đặt (Bookings)
+      </button>
     </nav>
   </aside>
 
   <!-- Main Content -->
-  <main class="flex-1 flex flex-col">
+  <main class="flex-1 flex flex-col h-screen overflow-y-auto">
     <!-- Topbar -->
-    <header class="h-16 bg-white border-b border-strike-hairline flex items-center justify-between px-8">
-      <h1 class="text-xl font-medium tracking-tight">Hôm nay</h1>
+    <header class="h-16 bg-white border-b border-[#e3e8ee] flex items-center justify-between px-8 sticky top-0 z-10">
+      <h1 class="text-[18px] font-medium tracking-tight text-[#0d253d]">
+        {{ activeTab === 'OVERVIEW' ? 'Hôm nay' : (activeTab === 'FIELDS' ? 'Quản lý Sân Bóng' : 'Hệ thống') }}
+      </h1>
       <div class="flex items-center gap-4">
-        <button class="bg-strike-primary hover:bg-strike-primary-press text-white px-4 py-2 rounded-full text-sm font-medium transition-colors shadow-sm">
-          Tạo đặt sân
-        </button>
+        <div class="w-8 h-8 bg-[#f6f9fc] rounded-full border border-[#e3e8ee] flex items-center justify-center">
+          <svg viewBox="0 0 32 32" class="w-4 h-4 fill-[#0d253d]"><path d="M16 16a7 7 0 1 0-7-7 7 7 0 0 0 7 7zm0-12a5 5 0 1 1-5 5 5 5 0 0 1 5-5zM26 30h-2v-4a5 5 0 0 0-5-5h-6a5 5 0 0 0-5 5v4H6v-4a7 7 0 0 1 7-7h6a7 7 0 0 1 7 7z"></path></svg>
+        </div>
       </div>
     </header>
 
     <!-- Dashboard Content -->
     <div class="p-8 max-w-6xl mx-auto w-full">
       
-      <!-- Metrics Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        
-        <!-- Metric Card (Strike Style) -->
-        <div class="bg-white p-6 rounded-lg border border-strike-hairline shadow-sm">
-          <h3 class="text-sm font-medium text-strike-ink-mute mb-2">Doanh thu hôm nay</h3>
-          <div class="text-3xl font-light tracking-tight tabular-nums flex items-baseline gap-2">
-            ₫{{ revenue | number:'1.0-0' }}
-            <span class="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+12.5%</span>
+      <!-- OVERVIEW TAB -->
+      <ng-container *ngIf="activeTab === 'OVERVIEW'">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div class="bg-white p-6 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
+            <h3 class="text-[14px] font-medium text-[#64748d] mb-2">Doanh thu hôm nay</h3>
+            <div class="text-[28px] font-light tracking-tight tabular-nums flex items-baseline gap-2">
+              ₫{{ revenue | number:'1.0-0' }}
+              <span class="text-[12px] font-semibold text-[#166534] bg-[#dcfce7] px-2 py-0.5 rounded-full">+12.5%</span>
+            </div>
           </div>
+          <div class="bg-white p-6 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
+            <h3 class="text-[14px] font-medium text-[#64748d] mb-2">Lượt đặt sân</h3>
+            <div class="text-[28px] font-light tracking-tight tabular-nums flex items-baseline gap-2">
+              {{ bookings }}
+              <span class="text-[12px] font-semibold text-[#166534] bg-[#dcfce7] px-2 py-0.5 rounded-full">+4</span>
+            </div>
+          </div>
+          <div class="bg-white p-6 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
+            <h3 class="text-[14px] font-medium text-[#64748d] mb-2">Đang thi đấu</h3>
+            <div class="text-[28px] font-light tracking-tight tabular-nums flex items-baseline gap-2">
+              8 <span class="text-[16px] text-[#64748d] font-normal">/ 12 sân</span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- FIELDS TAB (CRUD) -->
+      <ng-container *ngIf="activeTab === 'FIELDS' && !showFieldForm">
+        <app-crud-table 
+          title="Danh sách Sân bóng" 
+          [columns]="fieldColumns" 
+          [data]="fieldsData"
+          addLabel="Thêm sân mới"
+          (onAdd)="openAddField()"
+          (onEdit)="openEditField($event)"
+          (onDelete)="deleteField($event)">
+        </app-crud-table>
+      </ng-container>
+
+      <!-- FIELD FORM (Add/Edit) -->
+      <div *ngIf="activeTab === 'FIELDS' && showFieldForm" class="bg-white rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] p-6 max-w-2xl mx-auto">
+        <div class="mb-6 flex justify-between items-center border-b border-[#e3e8ee] pb-4">
+          <h2 class="text-[18px] font-medium text-[#0d253d]">{{ editingFieldId ? 'Cập nhật Sân bóng' : 'Thêm Sân bóng mới' }}</h2>
+          <button (click)="cancelFieldForm()" class="text-[#64748d] hover:text-[#0d253d]">
+            <svg viewBox="0 0 32 32" class="w-5 h-5 fill-current"><path d="M27.71 5.71l-1.42-1.42L16 14.59 5.71 4.29 4.29 5.71 14.59 16 4.29 26.29l1.42 1.42L16 17.41l10.29 10.3 1.42-1.42L17.41 16z"></path></svg>
+          </button>
         </div>
 
-        <div class="bg-white p-6 rounded-lg border border-strike-hairline shadow-sm">
-          <h3 class="text-sm font-medium text-strike-ink-mute mb-2">Lượt đặt sân</h3>
-          <div class="text-3xl font-light tracking-tight tabular-nums flex items-baseline gap-2">
-            {{ bookings }}
-            <span class="text-sm font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">+4</span>
+        <form [formGroup]="fieldForm" (ngSubmit)="saveField()" class="space-y-5">
+          <div>
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Tên sân bóng</label>
+            <input type="text" formControlName="name" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3 py-2 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors" placeholder="VD: Sân số 1">
+            <span *ngIf="fieldForm.get('name')?.invalid && fieldForm.get('name')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Tên sân là bắt buộc</span>
           </div>
-        </div>
 
-        <div class="bg-white p-6 rounded-lg border border-strike-hairline shadow-sm">
-          <h3 class="text-sm font-medium text-strike-ink-mute mb-2">Đang thi đấu</h3>
-          <div class="text-3xl font-light tracking-tight tabular-nums flex items-baseline gap-2">
-            8 <span class="text-base text-strike-ink-mute font-normal">/ 12 sân</span>
+          <div>
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Giá mỗi giờ (VND)</label>
+            <input type="number" formControlName="price" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3 py-2 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors tabular-nums" placeholder="VD: 150000">
+            <span *ngIf="fieldForm.get('price')?.invalid && fieldForm.get('price')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Giá không hợp lệ</span>
           </div>
-        </div>
+
+          <div>
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Địa chỉ / Vị trí</label>
+            <input type="text" formControlName="address" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3 py-2 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors" placeholder="VD: Cụm sân A">
+          </div>
+
+          <div>
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Trạng thái</label>
+            <select formControlName="status" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3 py-2 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
+              <option value="ACTIVE">Đang hoạt động (ACTIVE)</option>
+              <option value="INACTIVE">Ngưng hoạt động (INACTIVE)</option>
+            </select>
+          </div>
+
+          <div class="pt-4 border-t border-[#e3e8ee] flex justify-end gap-3">
+            <button type="button" (click)="cancelFieldForm()" class="px-4 py-2 text-[14px] font-medium text-[#64748d] hover:text-[#0d253d] transition-colors">Hủy</button>
+            <button type="submit" class="bg-[#533afd] hover:bg-[#4434d4] text-white font-medium text-[14px] py-2 px-6 rounded-[6px] transition-colors shadow-sm">
+              Lưu thay đổi
+            </button>
+          </div>
+        </form>
       </div>
 
-      <!-- Table Section (Strike Style) -->
-      <div class="bg-white rounded-lg border border-strike-hairline shadow-sm overflow-hidden">
-        <div class="px-6 py-4 border-b border-strike-hairline bg-white flex justify-between items-center">
-          <h2 class="text-lg font-medium">Giao dịch gần đây</h2>
-          <button class="text-sm font-medium text-strike-primary hover:text-strike-primary-press">Xem tất cả</button>
+      <!-- USERS TAB (CRUD) -->
+      <ng-container *ngIf="activeTab === 'USERS'">
+        <app-crud-table 
+          title="Khách hàng" 
+          [columns]="userColumns" 
+          [data]="usersData"
+          [showAdd]="false"
+          (onEdit)="$event"
+          (onDelete)="$event">
+        </app-crud-table>
+      </ng-container>
+
+      <ng-container *ngIf="activeTab === 'BOOKINGS'">
+        <div class="text-center py-20 text-[#64748d]">
+          Module quản lý booking sẽ được cập nhật trong phiên bản tiếp theo.
         </div>
-        
-        <table class="w-full text-left text-sm">
-          <thead class="bg-strike-canvas text-strike-ink-mute border-b border-strike-hairline">
-            <tr>
-              <th class="px-6 py-3 font-medium">Khách hàng</th>
-              <th class="px-6 py-3 font-medium">Sân</th>
-              <th class="px-6 py-3 font-medium">Thời gian</th>
-              <th class="px-6 py-3 font-medium text-right">Số tiền</th>
-              <th class="px-6 py-3 font-medium text-right">Trạng thái</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-strike-hairline text-strike-ink">
-            <tr class="hover:bg-strike-canvas transition-colors">
-              <td class="px-6 py-4 font-medium">Nguyễn Văn A</td>
-              <td class="px-6 py-4 text-strike-ink-mute">Sân số 1 (5 người)</td>
-              <td class="px-6 py-4 text-strike-ink-mute tabular-nums">18:00 - 19:30</td>
-              <td class="px-6 py-4 text-right tabular-nums font-medium">₫350,000</td>
-              <td class="px-6 py-4 text-right">
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">
-                  Thành công
-                </span>
-              </td>
-            </tr>
-            <tr class="hover:bg-strike-canvas transition-colors">
-              <td class="px-6 py-4 font-medium">Trần Văn B</td>
-              <td class="px-6 py-4 text-strike-ink-mute">Sân số 3 (7 người)</td>
-              <td class="px-6 py-4 text-strike-ink-mute tabular-nums">19:30 - 21:00</td>
-              <td class="px-6 py-4 text-right tabular-nums font-medium">₫500,000</td>
-              <td class="px-6 py-4 text-right">
-                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-50 text-yellow-700">
-                  Chờ thanh toán
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      </ng-container>
 
     </div>
   </main>
-
 </div>

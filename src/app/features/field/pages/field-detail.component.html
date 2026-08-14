@@ -103,6 +103,47 @@
           {{ field()!.description || 'Sân bóng chất lượng cao với hệ thống đèn chiếu sáng tiêu chuẩn. Phù hợp cho các giải đấu phong trào và giao hữu cuối tuần. Có khu vực căng tin giải khát và phòng thay đồ sạch sẽ.' }}
         </p>
       </div>
+
+      <!-- Reviews Section (Airbnb Style) -->
+      <div class="py-12 border-b border-hairline">
+        <div class="flex items-center gap-4 mb-8">
+          <div class="flex items-center gap-2">
+            <svg viewBox="0 0 32 32" class="w-8 h-8 fill-ink"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
+            <span class="text-[64px] font-bold text-ink leading-[1.1] tracking-[-1px]">{{ field()!.rating }}</span>
+          </div>
+          <div>
+            <div class="text-[20px] font-semibold text-ink">Khách yêu thích</div>
+            <div class="text-[16px] text-muted">Một trong những sân được đánh giá cao nhất trên NexusSport</div>
+            <div class="text-[16px] font-semibold text-ink underline mt-1">{{ field()!.reviewsCount }} đánh giá</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+          <div *ngFor="let review of reviews() | slice:0:6" class="flex flex-col gap-3">
+            <div class="flex items-center gap-4">
+              <img [src]="review.authorAvatar || 'https://ui-avatars.com/api/?name=User&background=random'" class="w-12 h-12 rounded-full object-cover">
+              <div>
+                <h4 class="text-[16px] font-semibold text-ink">{{ review.authorName || 'Người dùng' }}</h4>
+                <div class="flex items-center gap-2 text-[14px] text-muted">
+                  <span>{{ review.date }}</span>
+                  <span>·</span>
+                  <div class="flex gap-0.5">
+                    <svg *ngFor="let i of [1,2,3,4,5]" viewBox="0 0 32 32" class="w-2.5 h-2.5" [ngClass]="i <= review.rating ? 'fill-ink' : 'fill-hairline'"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p class="text-[16px] text-ink leading-relaxed font-light line-clamp-3">
+              {{ review.content }}
+            </p>
+            <button class="text-[16px] font-semibold text-ink underline text-left w-fit hover:opacity-70 transition-opacity">Hiển thị thêm</button>
+          </div>
+        </div>
+        
+        <button class="mt-10 bg-canvas text-ink border border-ink font-semibold px-6 py-3 rounded-lg hover:bg-surface-soft transition-colors text-[16px]">
+          Hiển thị tất cả {{ field()!.reviewsCount }} đánh giá
+        </button>
+      </div>
     </div>
 
     <!-- Right Column (Sticky Booking Card) -->

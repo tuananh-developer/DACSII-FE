@@ -1,39 +1,34 @@
-<div class="min-h-screen bg-canvas font-sans pb-24">
-  <!-- Header Nav -->
-  <header class="h-20 flex items-center justify-between px-6 md:px-12 xl:px-24 border-b border-hairline bg-canvas sticky top-0 z-50">
-    <a routerLink="/" class="text-primary font-bold text-2xl flex items-center gap-2 hover:opacity-80 transition-opacity">
-      <svg viewBox="0 0 32 32" class="h-8 w-8 fill-current"><path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.172-.179h-.011l-.176.185c-2.044 2.1-4.267 3.42-6.414 3.615l-.28.019-.267.006C5.377 31 2.5 28.584 2.5 24.522l.005-.469c.026-.928.23-1.768.83-3.244l.216-.524c.966-2.298 5.083-10.87 7.11-14.886l.528-1.038C12.53 2.016 13.982 1 16 1z"></path></svg>
+<div class="min-h-screen bg-[#f6f9fc] font-sans pb-24 text-[#0d253d]">
+  <!-- Header Nav (Strike Style - Floating on mesh if we had one, but we use white bar) -->
+  <header class="h-[72px] flex items-center justify-between px-6 md:px-12 xl:px-24 bg-white sticky top-0 z-50 border-b border-[#e3e8ee]">
+    <a routerLink="/" class="text-[#0d253d] font-semibold text-[20px] flex items-center gap-2 hover:opacity-80 transition-opacity tracking-tight">
+      <svg viewBox="0 0 32 32" class="h-6 w-6 fill-[#533afd]"><path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.172-.179h-.011l-.176.185c-2.044 2.1-4.267 3.42-6.414 3.615l-.28.019-.267.006C5.377 31 2.5 28.584 2.5 24.522l.005-.469c.026-.928.23-1.768.83-3.244l.216-.524c.966-2.298 5.083-10.87 7.11-14.886l.528-1.038C12.53 2.016 13.982 1 16 1z"></path></svg>
       NexusSport
     </a>
   </header>
 
-  <div *ngIf="bookingData()" class="px-6 md:px-12 xl:px-24 pt-12 pb-6 max-w-6xl mx-auto flex flex-col md:flex-row gap-12 lg:gap-24">
+  <div *ngIf="bookingData()" class="px-6 md:px-12 xl:px-24 pt-12 pb-6 max-w-6xl mx-auto flex flex-col md:flex-row gap-8 lg:gap-16">
     
     <!-- Left Column (Payment Info & Form) -->
     <div class="flex-1">
-      <div class="flex items-center gap-4 mb-8 pb-8 border-b border-hairline">
-        <button (click)="router.navigate(['/fields', bookingData()!.fieldId])" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-soft transition-colors text-ink">
+      <div class="flex items-center gap-4 mb-8">
+        <button (click)="router.navigate(['/fields', bookingData()!.fieldId])" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#e3e8ee] transition-colors text-[#64748d]">
           <svg viewBox="0 0 32 32" class="w-4 h-4 fill-none stroke-current stroke-2"><path d="M20 28L8.7 16.7a1 1 0 0 1 0-1.4L20 4"></path></svg>
         </button>
-        <h1 class="text-[32px] font-semibold text-ink">Xác nhận và thanh toán</h1>
+        <h1 class="text-[32px] font-light text-[#0d253d] tracking-[-0.64px]">Hoàn tất thanh toán</h1>
       </div>
 
-      <!-- Information -->
-      <div class="py-6 border-b border-hairline">
-        <h2 class="text-[22px] font-semibold text-ink mb-6">Chuyến đi của bạn</h2>
+      <div class="bg-white rounded-[12px] p-8 shadow-[0_1px_3px_rgba(0,55,112,0.08)] mb-6">
+        <h2 class="text-[20px] font-light text-[#0d253d] tracking-[-0.2px] mb-6">Thông tin đặt sân</h2>
         
-        <div class="flex justify-between items-start mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h3 class="font-semibold text-ink text-[16px]">Ngày đá</h3>
-            <p class="text-muted text-[14px] mt-1">{{ bookingData()!.date | date:'dd/MM/yyyy' }}</p>
+            <div class="text-[13px] text-[#64748d] mb-1">Ngày đá</div>
+            <div class="text-[15px] font-light">{{ bookingData()!.date | date:'dd/MM/yyyy' }}</div>
           </div>
-          <button (click)="router.navigate(['/fields', bookingData()!.fieldId])" class="text-[16px] font-medium text-ink underline hover:text-muted transition-colors">Chỉnh sửa</button>
-        </div>
-
-        <div class="flex justify-between items-start">
           <div>
-            <h3 class="font-semibold text-ink text-[16px]">Khung giờ</h3>
-            <div class="text-muted text-[14px] mt-1">
+            <div class="text-[13px] text-[#64748d] mb-1">Khung giờ</div>
+            <div class="text-[15px] font-light tabular-nums">
               <span *ngFor="let slot of bookingData()!.slots; let last = last">
                 {{ slot.startTime }} - {{ slot.endTime }}<span *ngIf="!last">, </span>
               </span>
@@ -42,90 +37,108 @@
         </div>
       </div>
 
-      <!-- Note -->
-      <div class="py-8 border-b border-hairline">
-        <h2 class="text-[22px] font-semibold text-ink mb-4">Ghi chú cho chủ sân (Tùy chọn)</h2>
-        <textarea [(ngModel)]="note" rows="3" placeholder="Ví dụ: Đội hình 7 người, cần thêm 2 bình nước..." class="w-full bg-canvas border border-border-strong rounded-md p-4 text-[16px] text-ink focus:outline-none focus:border-ink transition-colors"></textarea>
-      </div>
+      <div class="bg-white rounded-[12px] p-8 shadow-[0_1px_3px_rgba(0,55,112,0.08)] mb-6">
+        <h2 class="text-[20px] font-light text-[#0d253d] tracking-[-0.2px] mb-6">Phương thức thanh toán</h2>
+        
+        <!-- Payment Methods Grid (Strike pill style) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <!-- VNPay -->
+          <label class="cursor-pointer">
+            <input type="radio" name="paymentMethod" value="vnpay" [(ngModel)]="paymentMethod" class="peer sr-only">
+            <div class="rounded-[8px] border border-[#e3e8ee] p-4 flex items-center gap-4 peer-checked:border-[#533afd] peer-checked:bg-[#f6f9fc] transition-colors">
+              <div class="w-10 h-10 bg-white border border-[#e3e8ee] rounded-full flex items-center justify-center">
+                <svg viewBox="0 0 32 32" class="w-5 h-5 fill-[#533afd]"><path d="M4 8h24v16H4z"></path></svg>
+              </div>
+              <div>
+                <div class="text-[15px] font-medium text-[#0d253d]">VNPay</div>
+                <div class="text-[13px] text-[#64748d]">Ví điện tử / ATM</div>
+              </div>
+            </div>
+          </label>
 
-      <!-- Payment Method Placeholder -->
-      <div class="py-8 border-b border-hairline">
-        <h2 class="text-[22px] font-semibold text-ink mb-6">Thanh toán bằng</h2>
-        <div class="flex items-center gap-4 border border-ink rounded-lg p-4 bg-surface-soft">
-          <svg viewBox="0 0 32 32" class="w-8 h-8 fill-primary"><path d="M4 8h24v16H4z"></path></svg>
-          <div class="flex-1">
-            <h3 class="font-semibold text-ink text-[16px]">VNPay</h3>
-            <p class="text-muted text-[14px]">Chuyển hướng đến cổng thanh toán an toàn</p>
-          </div>
+          <!-- Momo -->
+          <label class="cursor-pointer">
+            <input type="radio" name="paymentMethod" value="momo" [(ngModel)]="paymentMethod" class="peer sr-only">
+            <div class="rounded-[8px] border border-[#e3e8ee] p-4 flex items-center gap-4 peer-checked:border-[#533afd] peer-checked:bg-[#f6f9fc] transition-colors">
+              <div class="w-10 h-10 bg-[#a50064] rounded-full flex items-center justify-center">
+                <svg viewBox="0 0 32 32" class="w-5 h-5 fill-white"><path d="M16 6a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"></path></svg>
+              </div>
+              <div>
+                <div class="text-[15px] font-medium text-[#0d253d]">Momo</div>
+                <div class="text-[13px] text-[#64748d]">Quét mã QR</div>
+              </div>
+            </div>
+          </label>
         </div>
       </div>
 
-      <!-- Required Checkbox -->
-      <div class="py-8 border-b border-hairline">
-        <p class="text-[12px] text-muted-soft">Bằng việc chọn nút bên dưới, tôi đồng ý với Nội quy chung của chủ sân, Quy tắc an toàn cơ bản đối với khách, và Chính sách đặt lại và hoàn tiền của NexusSport.</p>
+      <div class="bg-white rounded-[12px] p-8 shadow-[0_1px_3px_rgba(0,55,112,0.08)] mb-6">
+        <h2 class="text-[20px] font-light text-[#0d253d] tracking-[-0.2px] mb-4">Ghi chú (Tùy chọn)</h2>
+        <textarea [(ngModel)]="note" rows="3" placeholder="Yêu cầu thêm về nước uống, trọng tài..." class="w-full bg-white border border-[#a8c3de] rounded-[6px] p-3 text-[15px] text-[#0d253d] focus:outline-none focus:border-[#533afd] transition-colors placeholder-[#64748d]"></textarea>
       </div>
 
-      <button (click)="submitBooking()" [disabled]="isSubmitting()" class="mt-8 bg-primary hover:bg-primary-active text-canvas font-bold text-[16px] py-4 px-8 rounded-lg transition-transform active:scale-[0.98] w-full md:w-auto flex items-center justify-center gap-2">
-        <svg *ngIf="isSubmitting()" class="w-5 h-5 animate-spin text-canvas" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-        Xác nhận và thanh toán
+      <p class="text-[13px] text-[#64748d] mb-6">
+        Bằng việc nhấp vào nút bên dưới, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi.
+      </p>
+
+      <button (click)="submitBooking()" [disabled]="isSubmitting()" class="w-full md:w-auto bg-[#533afd] hover:bg-[#4434d4] active:bg-[#2e2b8c] text-white font-normal text-[16px] py-[14px] px-8 rounded-full transition-all flex items-center justify-center gap-2 shadow-sm disabled:opacity-70 disabled:cursor-not-allowed">
+        <svg *ngIf="isSubmitting()" class="w-5 h-5 animate-spin" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        Thanh toán ₫{{ finalPrice | number:'1.0-0' }}
       </button>
 
     </div>
 
-    <!-- Right Column (Sticky Summary Card) -->
-    <div class="w-full md:w-[400px] shrink-0">
-      <div class="sticky top-28 bg-canvas border border-hairline shadow-float rounded-2xl p-6">
+    <!-- Right Column (Sticky Summary Card - Strike Style) -->
+    <div class="w-full md:w-[380px] shrink-0">
+      <div class="sticky top-28 bg-white border border-[#e3e8ee] shadow-[0_8px_24px_rgba(0,55,112,0.08)] rounded-[16px] p-6">
         
         <!-- Field Summary -->
-        <div class="flex gap-4 pb-6 border-b border-hairline">
-          <img [src]="bookingData()!.field.imageUrl" class="w-[124px] h-[106px] object-cover rounded-md">
-          <div class="flex flex-col justify-between">
-            <div>
-              <p class="text-[12px] text-muted mb-1">Sân bóng đá</p>
-              <h3 class="font-medium text-[14px] text-ink line-clamp-2">{{ bookingData()!.field.name }}</h3>
-            </div>
-            <div class="text-[12px] font-medium flex items-center gap-1">
-              <svg viewBox="0 0 32 32" class="w-3 h-3 fill-current"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
-              {{ bookingData()!.field.rating }} <span class="text-muted">({{ bookingData()!.field.reviewsCount }} đánh giá)</span>
-            </div>
+        <div class="flex gap-4 pb-6 border-b border-[#e3e8ee]">
+          <div class="w-[80px] h-[80px] rounded-[8px] bg-slate-100 overflow-hidden shrink-0 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)]">
+            <img [src]="bookingData()!.field.imageUrl" class="w-full h-full object-cover">
+          </div>
+          <div class="flex flex-col justify-center">
+            <h3 class="font-medium text-[16px] text-[#0d253d] line-clamp-2 leading-tight">{{ bookingData()!.field.name }}</h3>
+            <p class="text-[13px] text-[#64748d] mt-1">{{ bookingData()!.field.address }}</p>
           </div>
         </div>
 
-        <div class="py-6 border-b border-hairline">
-          <h2 class="text-[22px] font-semibold text-ink mb-4">Chi tiết giá</h2>
+        <div class="py-6 border-b border-[#e3e8ee]">
           
-          <div class="flex justify-between text-[16px] text-ink mb-4">
-            <span>Tiền sân x {{ bookingData()!.slots.length }} giờ</span>
+          <div class="flex justify-between text-[15px] font-light text-[#0d253d] mb-4 tabular-nums">
+            <span>Tiền sân ({{ bookingData()!.slots.length }} giờ)</span>
             <span>₫{{ bookingData()!.totalPrice | number:'1.0-0' }}</span>
           </div>
           
-          <!-- Voucher -->
+          <!-- Voucher Form (Strike Style) -->
           <div class="mb-4">
             <div *ngIf="!appliedVoucher()" class="flex gap-2">
-              <input type="text" [(ngModel)]="voucherCode" placeholder="Mã giảm giá" class="flex-1 bg-canvas border border-border-strong rounded-md px-3 py-2 text-[14px] focus:outline-none focus:border-ink">
-              <button (click)="applyVoucher()" [disabled]="!voucherCode() || isApplyingVoucher()" class="bg-ink text-canvas px-4 py-2 rounded-md font-medium text-[14px] disabled:opacity-50">Áp dụng</button>
+              <input type="text" [(ngModel)]="voucherCode" placeholder="Mã giảm giá" class="flex-1 bg-white border border-[#a8c3de] rounded-[6px] px-3 py-2 text-[14px] focus:outline-none focus:border-[#533afd] placeholder-[#64748d] transition-colors uppercase">
+              <button (click)="applyVoucher()" [disabled]="!voucherCode() || isApplyingVoucher()" class="bg-[#f6f9fc] hover:bg-[#e3e8ee] text-[#0d253d] px-4 py-2 rounded-[6px] font-medium text-[14px] disabled:opacity-50 transition-colors border border-[#e3e8ee]">Áp dụng</button>
             </div>
-            <div *ngIf="appliedVoucher()" class="flex justify-between items-center text-[16px] text-primary bg-surface-soft p-3 rounded-md">
-              <div class="flex flex-col">
-                <span class="font-medium flex items-center gap-1">
-                  <svg viewBox="0 0 32 32" class="w-4 h-4 fill-current"><path d="M28 6H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h24a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM16 22a6 6 0 1 1 6-6 6 6 0 0 1-6 6z"></path></svg>
+            
+            <!-- Applied Voucher Tag -->
+            <div *ngIf="appliedVoucher()" class="flex justify-between items-center bg-[#f6f9fc] border border-[#e3e8ee] p-3 rounded-[8px]">
+              <div class="flex flex-col gap-0.5">
+                <span class="font-medium text-[14px] text-[#0d253d] flex items-center gap-1.5">
+                  <svg viewBox="0 0 32 32" class="w-4 h-4 fill-[#ea2261]"><path d="M28 6H4a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h24a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zM16 22a6 6 0 1 1 6-6 6 6 0 0 1-6 6z"></path></svg>
                   Mã {{ appliedVoucher()!.code }}
                 </span>
-                <span class="text-[12px] text-ink">-{{ appliedVoucher()!.discountPercentage }}% (Tối đa ₫{{ appliedVoucher()!.maxDiscount | number:'1.0-0' }})</span>
+                <span class="text-[12px] text-[#64748d] tabular-nums">-{{ appliedVoucher()!.discountPercentage }}% (Tối đa ₫{{ appliedVoucher()!.maxDiscount | number:'1.0-0' }})</span>
               </div>
-              <button (click)="removeVoucher()" class="text-ink underline text-[12px]">Xóa</button>
+              <button (click)="removeVoucher()" class="text-[#64748d] hover:text-[#ea2261] text-[13px] font-medium transition-colors">Gỡ bỏ</button>
             </div>
           </div>
 
-          <div *ngIf="appliedVoucher()" class="flex justify-between text-[16px] text-primary mb-2">
-            <span>Giảm giá</span>
-            <span>-₫{{ (bookingData()!.totalPrice - finalPrice) | number:'1.0-0' }}</span>
+          <div *ngIf="appliedVoucher()" class="flex justify-between text-[15px] font-light text-[#ea2261] mb-2 tabular-nums">
+            <span>Giảm giá khuyến mãi</span>
+            <span>- ₫{{ (bookingData()!.totalPrice - finalPrice) | number:'1.0-0' }}</span>
           </div>
         </div>
 
-        <div class="pt-6 flex justify-between text-[16px] font-semibold text-ink">
-          <span>Tổng cộng (VND)</span>
-          <span>₫{{ finalPrice | number:'1.0-0' }}</span>
+        <div class="pt-6 flex justify-between items-center text-[#0d253d]">
+          <span class="text-[16px] font-medium">Tổng thanh toán</span>
+          <span class="text-[24px] font-light tracking-tight tabular-nums">₫{{ finalPrice | number:'1.0-0' }}</span>
         </div>
 
       </div>

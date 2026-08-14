@@ -4,11 +4,12 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProfileService } from '../../services/profile.service';
 import { BookingHistoryItem } from '../../models/profile.model';
+import { BookingTableComponent } from '../../components/booking-table.component';
 
 @Component({
   selector: 'app-profile-bookings',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, BookingTableComponent],
   templateUrl: './profile-bookings.component.html'
 })
 export class ProfileBookingsComponent implements OnInit {

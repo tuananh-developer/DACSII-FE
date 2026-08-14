@@ -81,4 +81,8 @@ export class FieldService {
   getFieldTypes(): Observable<any[]> {
     return this.api.get('/field-types');
   }
+
+  getFieldReviews(fieldId: string): Observable<any[]> {
+    return this.api.get(`/reviews/field/${fieldId}`);
+  }
 }

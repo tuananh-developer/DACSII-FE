@@ -13,7 +13,7 @@
       <div *ngIf="authService.currentUser()" class="relative group cursor-pointer">
         <div class="flex items-center gap-2 px-2 py-1 rounded-full border border-hairline hover:shadow-md transition-all duration-300 bg-canvas">
           <svg viewBox="0 0 32 32" class="w-4 h-4 fill-ink ml-2 hidden md:block"><path d="M2 16h28M2 24h28M2 8h28" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg>
-          <img *ngIf="authService.currentUser()?.avatarUrl; else noAvatar" [src]="authService.currentUser()?.avatarUrl" class="w-8 h-8 rounded-full object-cover ml-1 md:ml-2">
+          <img *ngIf="authService.currentUser()?.avatar_url; else noAvatar" [src]="authService.currentUser()?.avatar_url" class="w-8 h-8 rounded-full object-cover ml-1 md:ml-2">
           <ng-template #noAvatar>
             <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-canvas font-bold text-[14px] ml-1 md:ml-2">
               {{ (authService.currentUser()?.full_name?.[0] || authService.currentUser()?.email?.[0] || 'U') | uppercase }}

@@ -5,6 +5,48 @@ import { FormsModule } from '@angular/forms';
 import { BookingService } from '../../services/booking.service';
 import { Voucher, BookingRequest } from '../../models/booking.model';
 
+// --- Strategy Pattern for Payments ---
+export interface PaymentStrategy {
+  pay(amount: number, response: any, router: Router): void;
+}
+
+export class VNPayStrategy implements PaymentStrategy {
+  pay(amount: number, response: any, router: Router): void {
+    if (response.paymentUrl) {
+      window.location.href = response.paymentUrl;
+    } else {
+      router.navigate(['/booking/success'], { queryParams: { id: response.id, method: 'vnpay' } });
+    }
+  }
+}
+
+export class MomoStrategy implements PaymentStrategy {
+  pay(amount: number, response: any, router: Router): void {
+    if (response.momoUrl) {
+      window.location.href = response.momoUrl;
+    } else {
+      router.navigate(['/booking/success'], { queryParams: { id: response.id, method: 'momo' } });
+    }
+  }
+}
+
+export class PaymentContext {
+  private strategy: PaymentStrategy;
+
+  constructor(strategy: PaymentStrategy) {
+    this.strategy = strategy;
+  }
+
+  setStrategy(strategy: PaymentStrategy) {
+    this.strategy = strategy;
+  }
+
+  executeStrategy(amount: number, response: any, router: Router) {
+    this.strategy.pay(amount, response, router);
+  }
+}
+// -----------------------------------
+
 @Component({
   selector: 'app-booking-checkout',
   standalone: true,
@@ -18,6 +60,8 @@ export class BookingCheckoutComponent implements OnInit {
   isApplyingVoucher = signal(false);
   isSubmitting = signal(false);
   note = signal<string>('');
+  paymentMethod = 'vnpay'; // Bound to radio buttons
+  paymentContext = new PaymentContext(new VNPayStrategy());
 
   constructor(
     public router: Router,
@@ -82,19 +126,20 @@ export class BookingCheckoutComponent implements OnInit {
       voucherCode: this.appliedVoucher()?.code
     };
 
+    // Update strategy based on user selection
+    if (this.paymentMethod === 'momo') {
+      this.paymentContext.setStrategy(new MomoStrategy());
+    } else {
+      this.paymentContext.setStrategy(new VNPayStrategy());
+    }
+
     this.bookingService.createBooking(request).subscribe({
       next: (response) => {
         this.isSubmitting.set(false);
-        // Save response for success page or redirect to payment
         localStorage.removeItem('pending_booking');
         
-        // Mock payment redirect
-        if (response.paymentUrl) {
-           // Simulate redirecting to VNPay
-           window.location.href = `/booking/success?id=${response.id}`;
-        } else {
-           this.router.navigate(['/booking/success'], { queryParams: { id: response.id } });
-        }
+        // Execute Payment Strategy
+        this.paymentContext.executeStrategy(this.finalPrice, response, this.router);
       },
       error: () => {
         this.isSubmitting.set(false);

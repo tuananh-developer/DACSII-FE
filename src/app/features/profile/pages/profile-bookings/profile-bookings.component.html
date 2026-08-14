@@ -1,95 +1,71 @@
-<div class="max-w-4xl">
-  <h1 class="text-[32px] font-semibold text-ink mb-6">Lịch sử đặt sân</h1>
-
-  <!-- Tabs -->
-  <div class="flex gap-6 border-b border-hairline mb-8">
-    <button (click)="setTab('UPCOMING')" [ngClass]="activeTab() === 'UPCOMING' ? 'border-ink text-ink font-semibold' : 'border-transparent text-muted hover:border-hairline'" class="pb-3 border-b-2 text-[16px] transition-all">Sắp tới</button>
-    <button (click)="setTab('COMPLETED')" [ngClass]="activeTab() === 'COMPLETED' ? 'border-ink text-ink font-semibold' : 'border-transparent text-muted hover:border-hairline'" class="pb-3 border-b-2 text-[16px] transition-all">Đã hoàn thành</button>
-    <button (click)="setTab('CANCELLED')" [ngClass]="activeTab() === 'CANCELLED' ? 'border-ink text-ink font-semibold' : 'border-transparent text-muted hover:border-hairline'" class="pb-3 border-b-2 text-[16px] transition-all">Đã hủy</button>
+<div class="max-w-5xl text-[#0d253d] font-sans">
+  <div class="mb-8">
+    <h1 class="text-[32px] font-light tracking-[-0.64px] text-[#0d253d]">Lịch sử đặt sân</h1>
+    <p class="text-[14px] text-[#64748d] mt-1">Theo dõi và quản lý các giao dịch của bạn</p>
   </div>
 
-  <div *ngIf="isLoading()" class="space-y-6">
-    <div *ngFor="let i of [1,2,3]" class="flex flex-col sm:flex-row gap-6 p-6 border border-hairline rounded-2xl bg-canvas animate-pulse">
-      <div class="w-full sm:w-[160px] h-[120px] bg-surface-strong rounded-xl shrink-0"></div>
-      <div class="flex-1 flex flex-col justify-between py-1">
-        <div>
-          <div class="flex justify-between items-start mb-2">
-            <div class="h-3 w-16 bg-surface-strong rounded"></div>
-            <div class="h-6 w-20 bg-surface-strong rounded"></div>
-          </div>
-          <div class="h-5 w-48 bg-surface-strong rounded mb-2"></div>
-          <div class="h-4 w-32 bg-surface-strong rounded"></div>
-        </div>
-        <div class="flex items-center justify-between mt-4">
-          <div class="h-5 w-24 bg-surface-strong rounded"></div>
-          <div class="h-9 w-24 bg-surface-strong rounded"></div>
-        </div>
-      </div>
-    </div>
+  <!-- Tabs (Strike Style) -->
+  <div class="flex gap-1 border-b border-[#e3e8ee] mb-8 bg-transparent">
+    <button (click)="setTab('UPCOMING')" 
+      [ngClass]="activeTab() === 'UPCOMING' ? 'border-[#533afd] text-[#533afd]' : 'border-transparent text-[#64748d] hover:text-[#0d253d] hover:border-[#e3e8ee]'" 
+      class="pb-3 px-4 border-b-2 text-[14px] font-medium transition-all">Sắp tới</button>
+    <button (click)="setTab('COMPLETED')" 
+      [ngClass]="activeTab() === 'COMPLETED' ? 'border-[#533afd] text-[#533afd]' : 'border-transparent text-[#64748d] hover:text-[#0d253d] hover:border-[#e3e8ee]'" 
+      class="pb-3 px-4 border-b-2 text-[14px] font-medium transition-all">Đã hoàn thành</button>
+    <button (click)="setTab('CANCELLED')" 
+      [ngClass]="activeTab() === 'CANCELLED' ? 'border-[#533afd] text-[#533afd]' : 'border-transparent text-[#64748d] hover:text-[#0d253d] hover:border-[#e3e8ee]'" 
+      class="pb-3 px-4 border-b-2 text-[14px] font-medium transition-all">Đã hủy</button>
+  </div>
+
+  <div *ngIf="isLoading()" class="space-y-4 animate-pulse">
+    <div class="h-10 bg-[#e3e8ee] rounded-[8px] w-full mb-4"></div>
+    <div class="h-16 bg-[#f6f9fc] rounded-[8px] w-full"></div>
+    <div class="h-16 bg-[#f6f9fc] rounded-[8px] w-full"></div>
+    <div class="h-16 bg-[#f6f9fc] rounded-[8px] w-full"></div>
   </div>
 
   <div *ngIf="!isLoading()">
-    <div *ngIf="filteredBookings().length === 0" class="text-center py-16 bg-surface-soft rounded-xl border border-hairline">
-      <svg viewBox="0 0 32 32" class="w-12 h-12 fill-muted mx-auto mb-4"><path d="M26 6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 18H6V8h20v16zM12 12h8v2h-8zM12 16h8v2h-8z"></path></svg>
-      <h3 class="text-[18px] font-semibold text-ink mb-2">Chưa có chuyến đi nào</h3>
-      <p class="text-[14px] text-muted mb-6">Bạn chưa có lịch đặt sân nào trong mục này.</p>
-      <button routerLink="/" class="bg-ink hover:bg-black text-canvas font-bold text-[14px] py-3 px-6 rounded-lg transition-transform active:scale-[0.98]">Tìm kiếm sân</button>
+    
+    <!-- Empty State -->
+    <div *ngIf="filteredBookings().length === 0" class="text-center py-20 bg-white rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
+      <div class="w-16 h-16 bg-[#f6f9fc] rounded-full flex items-center justify-center mx-auto mb-4 border border-[#e3e8ee]">
+        <svg viewBox="0 0 32 32" class="w-8 h-8 fill-[#64748d]"><path d="M26 6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 18H6V8h20v16zM12 12h8v2h-8zM12 16h8v2h-8z"></path></svg>
+      </div>
+      <h3 class="text-[18px] font-medium text-[#0d253d] mb-2">Chưa có giao dịch nào</h3>
+      <p class="text-[14px] text-[#64748d] mb-6">Bạn chưa có lịch đặt sân nào trong mục này.</p>
+      <button routerLink="/" class="bg-[#533afd] hover:bg-[#4434d4] text-white font-medium text-[14px] py-2 px-6 rounded-full transition-colors shadow-sm">Tìm kiếm sân</button>
     </div>
 
-    <div class="space-y-6">
-      <!-- Booking Card -->
-      <div *ngFor="let booking of filteredBookings()" class="flex flex-col sm:flex-row gap-6 p-6 border border-hairline rounded-2xl bg-canvas hover:shadow-float transition-shadow">
-        <img [src]="booking.fieldImageUrl" class="w-full sm:w-[160px] h-[120px] object-cover rounded-xl shrink-0 cursor-pointer" [routerLink]="['/fields', booking.fieldId]">
-        
-        <div class="flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-start mb-1">
-              <p class="text-[12px] text-muted uppercase font-bold">{{ booking.id }}</p>
-              <span class="text-[12px] font-bold px-2 py-1 rounded-md" 
-                [ngClass]="{
-                  'bg-surface-strong text-ink': booking.status === 'UPCOMING',
-                  'bg-green-100 text-green-800': booking.status === 'COMPLETED',
-                  'bg-red-100 text-red-800': booking.status === 'CANCELLED'
-                }">
-                {{ booking.status === 'UPCOMING' ? 'SẮP TỚI' : (booking.status === 'COMPLETED' ? 'HOÀN THÀNH' : 'ĐÃ HỦY') }}
-              </span>
-            </div>
-            <h3 class="text-[18px] font-semibold text-ink cursor-pointer hover:underline" [routerLink]="['/fields', booking.fieldId]">{{ booking.fieldName }}</h3>
-            <p class="text-[14px] text-ink mt-1">{{ booking.date | date:'dd/MM/yyyy' }} &bull; {{ booking.timeSlots }}</p>
-          </div>
-          
-          <div class="flex items-center justify-between mt-4 sm:mt-0">
-            <span class="font-semibold text-ink text-[16px]">₫{{ booking.totalPrice | number:'1.0-0' }}</span>
-            
-            <div class="flex gap-2">
-              <button *ngIf="booking.status === 'COMPLETED' && !booking.isReviewed" (click)="openReviewModal(booking)" class="bg-primary hover:bg-primary-active text-canvas text-[14px] font-bold py-2 px-4 rounded-lg">Đánh giá</button>
-              <span *ngIf="booking.status === 'COMPLETED' && booking.isReviewed" class="text-muted text-[14px] italic py-2">Đã đánh giá</span>
-              <button class="bg-surface-strong hover:bg-hairline text-ink text-[14px] font-bold py-2 px-4 rounded-lg">Chi tiết</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Data Table (Dumb Component) -->
+    <app-booking-table 
+      *ngIf="filteredBookings().length > 0"
+      [bookings]="filteredBookings()"
+      (onReview)="openReviewModal($event)">
+    </app-booking-table>
+
   </div>
 </div>
 
-<!-- Review Modal Scrim & Dialog -->
+<!-- Review Modal Scrim & Dialog (Strike Style) -->
 <div *ngIf="showReviewModal()" class="fixed inset-0 z-[100] flex items-center justify-center">
-  <div class="absolute inset-0 bg-scrim opacity-50" (click)="closeReviewModal()"></div>
-  <div class="relative bg-canvas w-full max-w-lg mx-4 rounded-2xl shadow-float flex flex-col max-h-[90vh]">
-    <div class="flex items-center justify-between p-6 border-b border-hairline">
-      <h2 class="text-[20px] font-semibold text-ink">Đánh giá sân bóng</h2>
-      <button (click)="closeReviewModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-soft text-ink">
+  <div class="absolute inset-0 bg-[#0d253d] opacity-40 backdrop-blur-sm" (click)="closeReviewModal()"></div>
+  <div class="relative bg-white w-full max-w-lg mx-4 rounded-[16px] shadow-[0_20px_40px_rgba(0,0,0,0.2)] flex flex-col max-h-[90vh] overflow-hidden border border-[#e3e8ee]">
+    
+    <div class="flex items-center justify-between p-6 border-b border-[#e3e8ee] bg-[#f6f9fc]">
+      <h2 class="text-[18px] font-semibold text-[#0d253d]">Đánh giá chất lượng</h2>
+      <button (click)="closeReviewModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#e3e8ee] text-[#64748d] transition-colors">
         <svg viewBox="0 0 32 32" class="w-4 h-4 fill-current"><path d="M27.71 5.71l-1.42-1.42L16 14.59 5.71 4.29 4.29 5.71 14.59 16 4.29 26.29l1.42 1.42L16 17.41l10.29 10.3 1.42-1.42L17.41 16z"></path></svg>
       </button>
     </div>
     
     <div class="p-6 overflow-y-auto">
-      <h3 class="font-medium text-ink mb-2">{{ selectedBooking()?.fieldName }}</h3>
-      <p class="text-sm text-muted mb-6">{{ selectedBooking()?.date | date:'dd/MM/yyyy' }}</p>
+      <div class="bg-[#f6f9fc] border border-[#e3e8ee] p-4 rounded-[8px] mb-8">
+        <h3 class="font-medium text-[15px] text-[#0d253d]">{{ selectedBooking()?.fieldName }}</h3>
+        <p class="text-[13px] text-[#64748d] mt-1">Ngày thi đấu: {{ selectedBooking()?.date | date:'dd/MM/yyyy' }}</p>
+      </div>
 
       <div class="mb-8">
-        <label class="block text-[16px] font-semibold text-ink mb-4 text-center">Bạn cảm thấy sân thế nào?</label>
+        <label class="block text-[15px] font-medium text-[#0d253d] mb-4 text-center">Trải nghiệm của bạn như thế nào?</label>
         <div class="flex justify-center gap-2">
           <svg *ngFor="let star of [1,2,3,4,5]" 
                (click)="setRating(star)"
@@ -97,22 +73,22 @@
                (mouseleave)="hoverRating = 0"
                viewBox="0 0 32 32" 
                class="w-10 h-10 cursor-pointer transition-colors"
-               [ngClass]="star <= (hoverRating || reviewRating()) ? 'fill-primary' : 'fill-hairline'">
+               [ngClass]="star <= (hoverRating || reviewRating()) ? 'fill-[#ea2261]' : 'fill-[#e3e8ee]'">
             <path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path>
           </svg>
         </div>
       </div>
 
       <div>
-        <label class="block text-[14px] font-bold text-ink mb-2">Nhận xét của bạn (Tùy chọn)</label>
-        <textarea [(ngModel)]="reviewComment" rows="4" placeholder="Chia sẻ trải nghiệm của bạn..." class="w-full bg-canvas border border-border-strong rounded-md p-4 text-[16px] text-ink focus:outline-none focus:border-ink transition-colors"></textarea>
+        <label class="block text-[14px] font-medium text-[#0d253d] mb-2">Nhận xét thêm (Tùy chọn)</label>
+        <textarea [(ngModel)]="reviewComment" rows="4" placeholder="Điều gì làm bạn hài lòng hoặc chưa hài lòng?" class="w-full bg-white border border-[#a8c3de] rounded-[6px] p-3 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] transition-colors placeholder-[#64748d]"></textarea>
       </div>
     </div>
 
-    <div class="p-6 border-t border-hairline flex justify-end gap-4">
-      <button (click)="closeReviewModal()" class="px-6 py-3 font-semibold text-ink underline rounded-lg hover:bg-surface-soft">Hủy</button>
-      <button (click)="submitReview()" [disabled]="reviewRating() === 0 || isSubmittingReview()" class="bg-ink hover:bg-black disabled:bg-surface-strong disabled:text-muted disabled:cursor-not-allowed text-canvas font-bold text-[16px] py-3 px-8 rounded-lg transition-transform flex items-center justify-center gap-2">
-        <svg *ngIf="isSubmittingReview()" class="w-5 h-5 animate-spin text-canvas" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+    <div class="p-6 border-t border-[#e3e8ee] flex justify-end gap-3 bg-[#f6f9fc]">
+      <button (click)="closeReviewModal()" class="px-5 py-2 text-[14px] font-medium text-[#64748d] hover:text-[#0d253d] transition-colors">Hủy</button>
+      <button (click)="submitReview()" [disabled]="reviewRating() === 0 || isSubmittingReview()" class="bg-[#533afd] hover:bg-[#4434d4] disabled:bg-[#e3e8ee] disabled:text-[#64748d] disabled:cursor-not-allowed text-white font-medium text-[14px] py-2 px-6 rounded-full transition-all flex items-center justify-center gap-2 shadow-sm">
+        <svg *ngIf="isSubmittingReview()" class="w-4 h-4 animate-spin text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
         Gửi đánh giá
       </button>
     </div>
