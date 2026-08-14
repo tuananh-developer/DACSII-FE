@@ -58,8 +58,7 @@ export class HomeComponent implements OnInit {
       q: this.searchQuery(),
       location: this.searchLocation(),
       branch: this.searchBranch(),
-      type: this.searchType(),
-      date: this.searchDate()
+      type: this.searchType()
     }).subscribe();
   }
 }

@@ -25,7 +25,8 @@ export class NotificationService {
 
   constructor(private http: HttpClient) {
     this.socket = io(environment.apiUrl.replace('/api', ''), {
-      autoConnect: false // Connect manually when authenticated
+      autoConnect: false, // Connect manually when authenticated
+      transports: ['websocket'] // Fix polling 400 Bad Request
     });
 
     this.setupListeners();
@@ -53,10 +54,13 @@ export class NotificationService {
   }
 
   loadInitialNotifications() {
-    this.http.get<AppNotification[]>(`${environment.apiUrl}/notification`).subscribe({
-      next: (notifications) => {
-        this.notificationsSubject.next(notifications);
-        this.updateUnreadCount();
+    this.http.get<any>(`${environment.apiUrl}/notification`).subscribe({
+      next: (res) => {
+        const notifications = res.data || res.items || res;
+        if (Array.isArray(notifications)) {
+          this.notificationsSubject.next(notifications);
+          this.updateUnreadCount();
+        }
       },
       error: () => {}
     });
