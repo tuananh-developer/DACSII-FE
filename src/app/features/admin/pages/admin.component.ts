@@ -60,7 +60,7 @@ export interface CourtStatusItem {
   templateUrl: './admin.component.html'
 })
 export class AdminComponent implements OnInit, OnDestroy {
-  activeTab: 'OVERVIEW' | 'FIELDS' | 'USERS' | 'BOOKINGS' = 'OVERVIEW';
+  activeTab: 'OVERVIEW' | 'BRANCHES' | 'FIELDS' | 'USERS' | 'BOOKINGS' = 'OVERVIEW';
   
   // Dashboard Metrics
   revenue = 0;
@@ -79,10 +79,22 @@ export class AdminComponent implements OnInit, OnDestroy {
   fieldTypes: any[] = [];
   branches: any[] = [];
   utilities: any[] = [];
-  locations: any[] = [];
+  cities: any[] = [];
+  wards: any[] = [];
+  availableManagers: any[] = [];
   rawBookings: any[] = [];
   
   // Generic Tables Configs
+  branchColumns: ColumnDefinition[] = [
+    { key: 'displayId', header: 'Mã CN' },
+    { key: 'name', header: 'Tên Chi Nhánh' },
+    { key: 'fullAddress', header: 'Địa Chỉ' },
+    { key: 'phone', header: 'Số Điện Thoại' },
+    { key: 'managerName', header: 'Quản Lý' },
+    { key: 'operatingHours', header: 'Giờ Mở Cửa' }
+  ];
+  branchesData: any[] = [];
+
   fieldColumns: ColumnDefinition[] = [
     { key: 'displayId', header: 'Mã Sân' },
     { key: 'name', header: 'Tên Sân' },
@@ -91,7 +103,6 @@ export class AdminComponent implements OnInit, OnDestroy {
     { key: 'utilitiesCount', header: 'Tiện ích' },
     { key: 'status', header: 'Trạng thái', type: 'status' }
   ];
-  
   fieldsData: any[] = [];
 
   userColumns: ColumnDefinition[] = [
@@ -101,16 +112,21 @@ export class AdminComponent implements OnInit, OnDestroy {
     { key: 'role', header: 'Vai trò' },
     { key: 'status', header: 'Trạng thái', type: 'status' }
   ];
-
   usersData: any[] = [];
 
-  // Form State
+  // Form State - Fields
   showFieldForm = false;
   fieldForm: FormGroup;
   editingFieldId: string | null = null;
   isSavingField = false;
   selectedUtilityIds: number[] = [];
   selectedFiles: File[] = [];
+
+  // Form State - Branches
+  showBranchForm = false;
+  branchForm: FormGroup;
+  editingBranchId: string | null = null;
+  isSavingBranch = false;
 
   // Quick Action Modal State
   selectedCourtForAction: CourtStatusItem | null = null;
@@ -134,6 +150,18 @@ export class AdminComponent implements OnInit, OnDestroy {
       status: [true, Validators.required]
     });
 
+    this.branchForm = this.fb.group({
+      name: ['', Validators.required],
+      phone_number: ['', [Validators.required, Validators.pattern(/^[0-9]{9,11}$/)]],
+      open_time: ['06:00:00', [Validators.required, Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/)]],
+      close_time: ['23:00:00', [Validators.required, Validators.pattern(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$/)]],
+      cityId: ['', Validators.required],
+      wardId: ['', Validators.required],
+      street: ['', Validators.required],
+      manager_id: [''],
+      description: ['']
+    });
+
     this.quickBookForm = this.fb.group({
       customerName: ['', Validators.required],
       customerPhone: ['', [Validators.required, Validators.pattern(/^[0-9]{9,11}$/)]],
@@ -144,7 +172,9 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadFieldTypes();
+    this.loadCities();
     this.loadBranches();
+    this.loadAvailableManagers();
     this.loadUtilities();
     this.loadUsers();
     this.loadFields();
@@ -196,25 +226,62 @@ export class AdminComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadCities() {
+    this.api.get<any[]>('/locations/cities').subscribe({
+      next: (cities) => {
+        this.cities = Array.isArray(cities) ? cities : [];
+        if (this.cities.length > 0 && !this.branchForm.get('cityId')?.value) {
+          this.branchForm.patchValue({ cityId: this.cities[0].id });
+          this.onCityChange(this.cities[0].id);
+        }
+      }
+    });
+  }
+
+  onCityChange(cityId: any) {
+    if (!cityId) return;
+    this.api.get<any[]>(`/locations/wards/${cityId}`).subscribe({
+      next: (wards) => {
+        this.wards = Array.isArray(wards) ? wards : [];
+        if (this.wards.length > 0 && !this.branchForm.get('wardId')?.value) {
+          this.branchForm.patchValue({ wardId: this.wards[0].id });
+        }
+      }
+    });
+  }
+
+  loadAvailableManagers() {
+    this.api.get<any[]>('/branches/available-managers').subscribe({
+      next: (managers) => {
+        this.availableManagers = Array.isArray(managers) ? managers : [];
+      },
+      error: () => {
+        this.availableManagers = [];
+      }
+    });
+  }
+
   loadBranches() {
     this.api.get<any[]>('/branches').subscribe({
       next: (branches) => {
-        this.branches = Array.isArray(branches) ? branches : (branches as any)?.data || [];
-        if (this.branches.length === 0) {
-          this.api.get<any[]>('/locations/cities').subscribe({
-            next: (cities) => {
-              this.locations = Array.isArray(cities) ? cities : [];
-            }
-          });
+        const list = Array.isArray(branches) ? branches : (branches as any)?.data || [];
+        this.branches = list;
+        this.branchesData = list.map((b: any) => ({
+          id: b.id,
+          displayId: b.id ? b.id.substring(0, 8).toUpperCase() : 'N/A',
+          name: b.name,
+          phone: b.phone_number || 'Chưa có',
+          operatingHours: `${b.open_time || '06:00'} - ${b.close_time || '23:00'}`,
+          managerName: b.manager?.full_name || 'Chưa gán',
+          fullAddress: b.address ? `${b.address.street || ''}, ${b.address.ward_name || ''}, ${b.address.city_name || ''}` : (b.address || 'Hà Nội'),
+          raw: b
+        }));
+
+        if (this.branches.length > 0 && !this.fieldForm.get('branch_id')?.value) {
+          this.fieldForm.patchValue({ branch_id: this.branches[0].id });
         }
       },
-      error: () => {
-        this.api.get<any[]>('/locations/cities').subscribe({
-          next: (cities) => {
-            this.locations = Array.isArray(cities) ? cities : [];
-          }
-        });
-      }
+      error: (err) => console.error('Lỗi tải chi nhánh', err)
     });
   }
 
@@ -508,9 +575,10 @@ export class AdminComponent implements OnInit, OnDestroy {
     });
   }
 
-  setTab(tab: 'OVERVIEW' | 'FIELDS' | 'USERS' | 'BOOKINGS') {
+  setTab(tab: 'OVERVIEW' | 'BRANCHES' | 'FIELDS' | 'USERS' | 'BOOKINGS') {
     this.activeTab = tab;
     this.showFieldForm = false;
+    this.showBranchForm = false;
   }
 
   // --- Utility Selection Toggle ---
@@ -532,14 +600,128 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
   }
 
-  // --- 5. Field Management CRUD (Backend Connected) ---
-  openAddField() {
+  // --- 5. Branch Management CRUD ---
+  openAddBranch() {
+    this.editingBranchId = null;
+    const defaultCity = this.cities.length > 0 ? this.cities[0].id : '';
+    this.branchForm.reset({
+      name: '',
+      phone_number: '',
+      open_time: '06:00:00',
+      close_time: '23:00:00',
+      cityId: defaultCity,
+      wardId: '',
+      street: '',
+      manager_id: '',
+      description: ''
+    });
+    if (defaultCity) {
+      this.onCityChange(defaultCity);
+    }
+    this.showBranchForm = true;
+  }
+
+  openEditBranch(branchItem: any) {
+    this.editingBranchId = branchItem.id;
+    const raw = branchItem.raw || {};
+    const addr = raw.address || {};
+    
+    this.branchForm.patchValue({
+      name: raw.name || '',
+      phone_number: raw.phone_number || '',
+      open_time: raw.open_time || '06:00:00',
+      close_time: raw.close_time || '23:00:00',
+      cityId: addr.city_id || (this.cities[0]?.id || ''),
+      wardId: addr.ward_id || '',
+      street: addr.street || '',
+      manager_id: raw.manager_id || raw.manager?.id || '',
+      description: raw.description || ''
+    });
+    
+    if (addr.city_id) {
+      this.onCityChange(addr.city_id);
+    }
+    this.showBranchForm = true;
+  }
+
+  deleteBranch(branchItem: any) {
+    if (confirm(`Bạn có chắc chắn muốn xóa chi nhánh "${branchItem.name}"? Tất cả sân thuộc chi nhánh này cũng sẽ bị ảnh hưởng.`)) {
+      this.api.delete(`/branches/${branchItem.id}`).subscribe({
+        next: () => {
+          this.loadBranches();
+        },
+        error: (err) => {
+          alert('Lỗi: ' + (err.error?.message || 'Không thể xóa chi nhánh'));
+        }
+      });
+    }
+  }
+
+  saveBranch() {
+    if (this.branchForm.invalid) {
+      this.branchForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSavingBranch = true;
+    const fv = this.branchForm.value;
+    const payload: any = {
+      name: fv.name,
+      phone_number: fv.phone_number,
+      open_time: fv.open_time,
+      close_time: fv.close_time,
+      street: fv.street,
+      cityId: Number(fv.cityId),
+      wardId: Number(fv.wardId),
+      description: fv.description || ''
+    };
+
+    if (fv.manager_id) {
+      payload.manager_id = fv.manager_id;
+    }
+
+    if (this.editingBranchId) {
+      this.api.put(`/branches/${this.editingBranchId}`, payload).subscribe({
+        next: () => {
+          this.isSavingBranch = false;
+          this.showBranchForm = false;
+          this.loadBranches();
+          this.loadAvailableManagers();
+        },
+        error: (err) => {
+          this.isSavingBranch = false;
+          alert('Lỗi: ' + (err.error?.message || 'Không thể cập nhật chi nhánh'));
+        }
+      });
+    } else {
+      this.api.post('/branches', payload).subscribe({
+        next: () => {
+          this.isSavingBranch = false;
+          this.showBranchForm = false;
+          this.loadBranches();
+          this.loadAvailableManagers();
+        },
+        error: (err) => {
+          this.isSavingBranch = false;
+          alert('Lỗi: ' + (err.error?.message || 'Không thể tạo chi nhánh mới'));
+        }
+      });
+    }
+  }
+
+  cancelBranchForm() {
+    this.showBranchForm = false;
+    this.editingBranchId = null;
+  }
+
+  // --- 6. Field Management CRUD (Backend Connected) ---
+  openAddField(presetBranchId?: string) {
     this.editingFieldId = null;
     this.selectedUtilityIds = [];
     this.selectedFiles = [];
 
     const defaultTypeId = this.fieldTypes.length > 0 ? this.fieldTypes[0].id : '';
-    const defaultBranchId = this.branches.length > 0 ? this.branches[0].id : '';
+    const defaultBranchId = presetBranchId || (this.branches.length > 0 ? this.branches[0].id : '');
     
     this.fieldForm.reset({
       name: '',
@@ -549,6 +731,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       status: true
     });
     this.showFieldForm = true;
+    this.activeTab = 'FIELDS';
   }
 
   openEditField(field: any) {
@@ -590,7 +773,6 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.isSavingField = true;
     const formData = this.fieldForm.value;
 
-    // Payload according to CreateFieldDto in backend
     const payload: any = {
       name: formData.name,
       fieldTypeId: formData.field_type_id,
@@ -599,15 +781,13 @@ export class AdminComponent implements OnInit, OnDestroy {
       utilityIds: this.selectedUtilityIds
     };
 
-    // Only add branchId if user is Admin or if provided
     if (formData.branch_id) {
       payload.branchId = formData.branch_id;
     }
 
     if (this.editingFieldId) {
       this.fieldService.updateField(this.editingFieldId, payload).subscribe({
-        next: (updatedField) => {
-          // If files are selected, upload images
+        next: () => {
           if (this.selectedFiles.length > 0) {
             this.uploadFieldImages(this.editingFieldId!, this.selectedFiles);
           } else {
@@ -664,7 +844,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.editingFieldId = null;
   }
 
-  // --- 6. Quick Action Modal Handlers ---
+  // --- 7. Quick Action Modal Handlers ---
   openQuickBook(court: CourtStatusItem) {
     this.selectedCourtForAction = court;
     this.quickBookForm.reset({

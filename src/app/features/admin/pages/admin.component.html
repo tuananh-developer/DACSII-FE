@@ -26,6 +26,12 @@
         <span *ngIf="activePitchesCount > 0" class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
       </button>
 
+      <!-- Tab Quản lý Chi Nhánh -->
+      <button (click)="setTab('BRANCHES')" [ngClass]="activeTab === 'BRANCHES' ? 'bg-[#f0efff] text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-[8px] transition-colors">
+        <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"></path></svg>
+        <span>Quản lý Chi Nhánh</span>
+      </button>
+
       <button (click)="setTab('FIELDS')" [ngClass]="activeTab === 'FIELDS' ? 'bg-[#f0efff] text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-[8px] transition-colors">
         <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>
         <span>Quản lý Sân bóng</span>
@@ -57,7 +63,7 @@
     <header class="h-16 bg-white border-b border-[#e3e8ee] flex items-center justify-between px-8 sticky top-0 z-20">
       <div class="flex items-center gap-3">
         <h1 class="text-[18px] font-semibold tracking-tight text-[#0d253d]">
-          {{ activeTab === 'OVERVIEW' ? 'Giám Sát Sân Trực Tiếp' : (activeTab === 'FIELDS' ? 'Quản Lý Sân Bóng' : (activeTab === 'USERS' ? 'Quản Lý Khách Hàng' : 'Quản Lý Lịch Đặt Sân')) }}
+          {{ activeTab === 'OVERVIEW' ? 'Giám Sát Sân Trực Tiếp' : (activeTab === 'BRANCHES' ? 'Quản Lý Chi Nhánh' : (activeTab === 'FIELDS' ? 'Quản Lý Sân Bóng' : (activeTab === 'USERS' ? 'Quản Lý Khách Hàng' : 'Quản Lý Lịch Đặt Sân'))) }}
         </h1>
         <span *ngIf="activeTab === 'OVERVIEW'" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#dcfce7] text-[#166534] border border-[#bbf7d0]">
           <span class="w-1.5 h-1.5 rounded-full bg-[#166534] animate-pulse"></span>
@@ -66,7 +72,7 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <button (click)="loadFields(); loadBookingsAndCalculateCourts()" class="p-2 text-[#64748d] hover:text-[#0d253d] hover:bg-[#f6f9fc] rounded-[6px] transition-colors" title="Làm mới dữ liệu">
+        <button (click)="loadBranches(); loadFields(); loadBookingsAndCalculateCourts()" class="p-2 text-[#64748d] hover:text-[#0d253d] hover:bg-[#f6f9fc] rounded-[6px] transition-colors" title="Làm mới dữ liệu">
           <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg>
         </button>
         <div class="flex items-center gap-2 pl-3 border-l border-[#e3e8ee]">
@@ -200,7 +206,7 @@
             <div *ngIf="filteredCourtStatuses.length === 0" class="py-16 text-center text-[#64748d]">
               <svg viewBox="0 0 24 24" class="w-12 h-12 fill-[#cbd5e1] mx-auto mb-3"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>
               <p class="text-[15px] font-medium text-[#0d253d]">Không tìm thấy sân nào</p>
-              <p class="text-[13px] text-[#64748d] mt-1">Vui lòng thử đổi bộ lọc hoặc thêm sân mới vào hệ thống.</p>
+              <p class="text-[13px] text-[#64748d] mt-1">Vui lòng tạo chi nhánh và thêm sân bóng mới vào hệ thống.</p>
             </div>
 
             <!-- Grid Layout for Pitches -->
@@ -375,9 +381,127 @@
       </ng-container>
 
       <!-- ======================================================== -->
-      <!-- TAB 2: QUẢN LÝ SÂN (FIELDS MANAGEMENT CRUD - BACKEND ALIGNED) -->
+      <!-- TAB 2: QUẢN LÝ CHI NHÁNH (BRANCHES MANAGEMENT CRUD) -->
+      <!-- ======================================================== -->
+      <ng-container *ngIf="activeTab === 'BRANCHES' && !showBranchForm">
+        <app-crud-table 
+          title="Danh sách Chi Nhánh Hệ Thống" 
+          [columns]="branchColumns" 
+          [data]="branchesData"
+          addLabel="Tạo chi nhánh mới"
+          (onAdd)="openAddBranch()"
+          (onEdit)="openEditBranch($event)"
+          (onDelete)="deleteBranch($event)">
+        </app-crud-table>
+      </ng-container>
+
+      <!-- BRANCH FORM (Create / Edit Branch) -->
+      <div *ngIf="activeTab === 'BRANCHES' && showBranchForm" class="bg-white rounded-[14px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] p-6 max-w-3xl mx-auto">
+        <div class="mb-6 flex justify-between items-center border-b border-[#e3e8ee] pb-4">
+          <div>
+            <h2 class="text-[18px] font-bold text-[#0d253d]">{{ editingBranchId ? 'Cập nhật Chi Nhánh' : 'Tạo Chi Nhánh Mới' }}</h2>
+            <p class="text-[13px] text-[#64748d] mt-0.5">Chi nhánh là cơ sở chứa các cụm sân bóng và phân công Quản lý</p>
+          </div>
+          <button (click)="cancelBranchForm()" class="text-[#64748d] hover:text-[#0d253d] p-1">
+            <svg viewBox="0 0 32 32" class="w-5 h-5 fill-current"><path d="M27.71 5.71l-1.42-1.42L16 14.59 5.71 4.29 4.29 5.71 14.59 16 4.29 26.29l1.42 1.42L16 17.41l10.29 10.3 1.42-1.42L17.41 16z"></path></svg>
+          </button>
+        </div>
+
+        <form [formGroup]="branchForm" (ngSubmit)="saveBranch()" class="space-y-5">
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Tên chi nhánh -->
+            <div>
+              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Tên chi nhánh <span class="text-[#dc2626]">*</span></label>
+              <input type="text" formControlName="name" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: Sân bóng NexusSport - Cơ sở Cầu Giấy">
+              <span *ngIf="branchForm.get('name')?.invalid && branchForm.get('name')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Tên chi nhánh là bắt buộc</span>
+            </div>
+
+            <!-- SĐT chi nhánh -->
+            <div>
+              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Số điện thoại liên hệ <span class="text-[#dc2626]">*</span></label>
+              <input type="tel" formControlName="phone_number" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: 0987654321">
+              <span *ngIf="branchForm.get('phone_number')?.invalid && branchForm.get('phone_number')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Số điện thoại không hợp lệ</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Giờ mở cửa -->
+            <div>
+              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Giờ mở cửa (HH:mm:ss) <span class="text-[#dc2626]">*</span></label>
+              <input type="text" formControlName="open_time" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="06:00:00">
+            </div>
+
+            <!-- Giờ đóng cửa -->
+            <div>
+              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Giờ đóng cửa (HH:mm:ss) <span class="text-[#dc2626]">*</span></label>
+              <input type="text" formControlName="close_time" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="23:00:00">
+            </div>
+          </div>
+
+          <!-- Địa chỉ: Thành phố & Phường xã -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Tỉnh / Thành phố <span class="text-[#dc2626]">*</span></label>
+              <select formControlName="cityId" (change)="onCityChange($any($event.target).value)" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]">
+                <option *ngFor="let c of cities" [value]="c.id">{{ c.name }}</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Phường / Xã <span class="text-[#dc2626]">*</span></label>
+              <select formControlName="wardId" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]">
+                <option *ngFor="let w of wards" [value]="w.id">{{ w.name }}</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Tên đường / Số nhà -->
+          <div>
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Số nhà, tên đường (street) <span class="text-[#dc2626]">*</span></label>
+            <input type="text" formControlName="street" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: 123 Đường Cầu Giấy">
+            <span *ngIf="branchForm.get('street')?.invalid && branchForm.get('street')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Vui lòng nhập địa chỉ cụ thể</span>
+          </div>
+
+          <!-- Phân công Quản lý chi nhánh -->
+          <div>
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Phân công Quản lý chi nhánh (Manager)</label>
+            <select formControlName="manager_id" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]">
+              <option value="">-- Chưa gán người quản lý --</option>
+              <option *ngFor="let m of availableManagers" [value]="m.id">{{ m.full_name }} ({{ m.phone_number || 'Chưa có SĐT' }})</option>
+            </select>
+            <p class="text-[11px] text-[#64748d] mt-1">Chỉ hiển thị các tài khoản vai trò Manager chưa được gán chi nhánh.</p>
+          </div>
+
+          <!-- Mô tả chi nhánh -->
+          <div>
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Mô tả chi nhánh</label>
+            <textarea formControlName="description" rows="3" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: Cơ sở mới nâng cấp, cụm sân 7 người và 11 người tiêu chuẩn FIFA..."></textarea>
+          </div>
+
+          <div class="pt-4 border-t border-[#e3e8ee] flex justify-end gap-3">
+            <button type="button" (click)="cancelBranchForm()" [disabled]="isSavingBranch" class="px-5 py-2.5 text-[14px] font-medium text-[#64748d] hover:text-[#0d253d]">
+              Hủy
+            </button>
+            <button type="submit" [disabled]="isSavingBranch" class="bg-[#533afd] hover:bg-[#4434d4] text-white font-semibold text-[14px] py-2.5 px-6 rounded-[8px] shadow-sm flex items-center gap-2">
+              <span *ngIf="isSavingBranch" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+              {{ isSavingBranch ? 'Đang lưu...' : (editingBranchId ? 'Cập nhật chi nhánh' : 'Tạo chi nhánh mới') }}
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- ======================================================== -->
+      <!-- TAB 3: QUẢN LÝ SÂN (FIELDS MANAGEMENT CRUD - BACKEND ALIGNED) -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'FIELDS' && !showFieldForm">
+        <div class="mb-4 flex items-center justify-between">
+          <div class="text-[13px] text-[#64748d]">
+            Mỗi sân bóng phải trực thuộc một Chi Nhánh cụ thể. Bạn có thể thêm nhiều sân cho từng chi nhánh.
+          </div>
+        </div>
+
         <app-crud-table 
           title="Danh sách Sân bóng" 
           [columns]="fieldColumns" 
@@ -420,15 +544,16 @@
           </div>
 
           <!-- 3. Chi nhánh (branchId) -->
-          <div *ngIf="isAdmin">
+          <div>
             <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Chi nhánh trực thuộc (branchId) <span class="text-[#dc2626]">*</span></label>
-            <select formControlName="branch_id" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
-              <option *ngFor="let b of branches" [value]="b.id">{{ b.name }} ({{ b.address?.street || b.address || 'Hà Nội' }})</option>
+            <select *ngIf="branches.length > 0" formControlName="branch_id" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
+              <option *ngFor="let b of branches" [value]="b.id">{{ b.name }} ({{ b.address?.street || b.address?.city_name || 'Chi nhánh' }})</option>
             </select>
-          </div>
 
-          <div *ngIf="!isAdmin" class="p-3 bg-[#f0efff] rounded-[8px] border border-[#e0ddfc] text-[13px] text-[#533afd]">
-            🏢 Chi nhánh: Tự động gán theo Chi nhánh được phân công của Quản lý.
+            <div *ngIf="branches.length === 0" class="p-3 bg-[#fee2e2] rounded-[8px] border border-[#fecaca] text-[13px] text-[#991b1b] flex items-center justify-between">
+              <span>⚠️ Hệ thống chưa có chi nhánh nào! Bạn cần tạo chi nhánh trước khi tạo sân bóng.</span>
+              <button type="button" (click)="setTab('BRANCHES'); openAddBranch()" class="px-3 py-1 bg-[#dc2626] text-white rounded font-bold text-[12px] hover:bg-[#b91c1c]">Tạo chi nhánh ngay</button>
+            </div>
           </div>
 
           <!-- 4. Tiện ích sân bóng (utilityIds) -->
@@ -482,7 +607,7 @@
       </div>
 
       <!-- ======================================================== -->
-      <!-- TAB 3: KHÁCH HÀNG (USERS MANAGEMENT) -->
+      <!-- TAB 4: KHÁCH HÀNG (USERS MANAGEMENT) -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'USERS'">
         <app-crud-table 
@@ -495,7 +620,7 @@
       </ng-container>
 
       <!-- ======================================================== -->
-      <!-- TAB 4: LỊCH ĐẶT SÂN (BOOKINGS) -->
+      <!-- TAB 5: LỊCH ĐẶT SÂN (BOOKINGS) -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'BOOKINGS'">
         <div class="bg-white rounded-[14px] border border-[#e3e8ee] p-8 shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
