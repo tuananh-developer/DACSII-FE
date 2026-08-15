@@ -85,4 +85,17 @@ export class FieldService {
   getFieldReviews(fieldId: string): Observable<any[]> {
     return this.api.get(`/reviews/field/${fieldId}`);
   }
+
+  createField(payload: any): Observable<any> {
+    return this.api.post('/fields', payload);
+  }
+
+  updateField(id: string, payload: any): Observable<any> {
+    return this.api.put(`/fields/${id}`, payload);
+  }
+
+  deleteField(id: string): Observable<any> {
+    return this.api.delete(`/fields/${id}`);
+  }
 }
+
