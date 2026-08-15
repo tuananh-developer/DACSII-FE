@@ -18,6 +18,8 @@ export interface CourtStatusItem {
   address: string;
   pricePerHour: number;
   isActive: boolean;
+  utilities: any[];
+  images: any[];
   
   // Real-time status
   status: 'IN_PROGRESS' | 'AVAILABLE';
@@ -76,6 +78,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   // Backend Dynamic Data (No mock)
   fieldTypes: any[] = [];
   branches: any[] = [];
+  utilities: any[] = [];
   locations: any[] = [];
   rawBookings: any[] = [];
   
@@ -84,8 +87,8 @@ export class AdminComponent implements OnInit, OnDestroy {
     { key: 'displayId', header: 'Mã Sân' },
     { key: 'name', header: 'Tên Sân' },
     { key: 'fieldTypeName', header: 'Loại Sân' },
-    { key: 'price', header: 'Giá / Giờ', type: 'currency' },
-    { key: 'address', header: 'Khu vực / Chi nhánh' },
+    { key: 'branchName', header: 'Chi nhánh' },
+    { key: 'utilitiesCount', header: 'Tiện ích' },
     { key: 'status', header: 'Trạng thái', type: 'status' }
   ];
   
@@ -106,6 +109,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   fieldForm: FormGroup;
   editingFieldId: string | null = null;
   isSavingField = false;
+  selectedUtilityIds: number[] = [];
+  selectedFiles: File[] = [];
 
   // Quick Action Modal State
   selectedCourtForAction: CourtStatusItem | null = null;
@@ -123,12 +128,10 @@ export class AdminComponent implements OnInit, OnDestroy {
   ) {
     this.fieldForm = this.fb.group({
       name: ['', Validators.required],
-      price: ['', [Validators.required, Validators.min(0)]],
       field_type_id: ['', Validators.required],
       branch_id: [''],
-      address: [''],
       description: [''],
-      status: ['ACTIVE', Validators.required]
+      status: [true, Validators.required]
     });
 
     this.quickBookForm = this.fb.group({
@@ -142,6 +145,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.loadFieldTypes();
     this.loadBranches();
+    this.loadUtilities();
     this.loadUsers();
     this.loadFields();
     this.loadBookingsAndCalculateCourts();
@@ -165,6 +169,11 @@ export class AdminComponent implements OnInit, OnDestroy {
   get isBranchManager(): boolean {
     const role = this.currentUser?.role;
     return role === 'branch_manager' || role === 'manager';
+  }
+
+  get isAdmin(): boolean {
+    const role = this.currentUser?.role;
+    return role === 'super_admin' || role === 'admin';
   }
 
   get userRoleDisplay(): string {
@@ -192,7 +201,6 @@ export class AdminComponent implements OnInit, OnDestroy {
       next: (branches) => {
         this.branches = Array.isArray(branches) ? branches : (branches as any)?.data || [];
         if (this.branches.length === 0) {
-          // If branches table is empty, load locations as fallback
           this.api.get<any[]>('/locations/cities').subscribe({
             next: (cities) => {
               this.locations = Array.isArray(cities) ? cities : [];
@@ -207,6 +215,15 @@ export class AdminComponent implements OnInit, OnDestroy {
           }
         });
       }
+    });
+  }
+
+  loadUtilities() {
+    this.api.get<any[]>('/utilities').subscribe({
+      next: (utils) => {
+        this.utilities = Array.isArray(utils) ? utils : (utils as any)?.data || [];
+      },
+      error: (err) => console.error('Lỗi tải tiện ích', err)
     });
   }
 
@@ -234,24 +251,28 @@ export class AdminComponent implements OnInit, OnDestroy {
         const rawFields = res.data || (Array.isArray(res) ? res : []);
         this.fieldsData = rawFields.map((f: any) => {
           const typeName = f.fieldType?.name || f.field_type?.name || this.getFieldTypeName(f.field_type_id || f.fieldTypeId) || 'Sân tiêu chuẩn';
-          const branchName = f.branch?.name || f.location?.address || f.address || 'Chi nhánh chính';
+          const branchName = f.branch?.name || f.branch?.address?.city_name || f.address || 'Chi nhánh chính';
+          const isAct = f.status !== false && f.is_active !== false;
+          const utilsCount = f.utilities ? `${f.utilities.length} tiện ích` : '0 tiện ích';
           return {
             id: f.id,
             displayId: f.id.substring(0, 8).toUpperCase(),
             name: f.name,
-            price: f.price_per_hour || f.price || f.base_price || 0,
-            status: f.is_active !== false && f.status !== false ? 'ACTIVE' : 'INACTIVE',
+            status: isAct ? 'ACTIVE' : 'INACTIVE',
             address: branchName,
+            branchName: branchName,
             fieldTypeName: typeName,
             fieldTypeId: f.field_type_id || f.fieldTypeId || f.fieldType?.id,
             branchId: f.branch_id || f.branchId || f.branch?.id,
             description: f.description || '',
+            utilities: f.utilities || [],
+            utilitiesCount: utilsCount,
+            images: f.images || [],
             rawId: f.id,
             rawField: f
           };
         });
 
-        // After loading fields, refresh court statuses
         this.calculateCourtStatuses();
       },
       error: (err) => console.error('Lỗi tải danh sách sân bóng', err)
@@ -259,31 +280,20 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   loadBookingsAndCalculateCourts() {
-    // 1. Try /bookings/management/all (Primary manager/admin endpoint)
     this.api.get<any>('/bookings/management/all?limit=100').subscribe({
       next: (res) => {
         this.rawBookings = res.data || (Array.isArray(res) ? res : []);
         this.calculateCourtStatuses();
       },
       error: () => {
-        // 2. Fallback to /bookings/active
         this.api.get<any>('/bookings/active').subscribe({
           next: (res) => {
             this.rawBookings = res.data || (Array.isArray(res) ? res : []);
             this.calculateCourtStatuses();
           },
           error: () => {
-            // 3. Fallback to /bookings/me
-            this.api.get<any>('/bookings/me').subscribe({
-              next: (res) => {
-                this.rawBookings = res.data || (Array.isArray(res) ? res : []);
-                this.calculateCourtStatuses();
-              },
-              error: () => {
-                this.rawBookings = [];
-                this.calculateCourtStatuses();
-              }
-            });
+            this.rawBookings = [];
+            this.calculateCourtStatuses();
           }
         });
       }
@@ -300,7 +310,6 @@ export class AdminComponent implements OnInit, OnDestroy {
   private parseTime(timeVal: any, dateVal?: any): { timeStr: string, timestamp: number } {
     if (!timeVal) return { timeStr: '00:00', timestamp: 0 };
     
-    // Case 1: ISO string or Date object (e.g. "2026-08-15T16:00:00.000Z")
     if (timeVal instanceof Date || (typeof timeVal === 'string' && timeVal.includes('T'))) {
       const d = new Date(timeVal);
       const h = String(d.getHours()).padStart(2, '0');
@@ -308,7 +317,6 @@ export class AdminComponent implements OnInit, OnDestroy {
       return { timeStr: `${h}:${m}`, timestamp: d.getTime() };
     }
     
-    // Case 2: Time string (e.g. "16:00" or "16:00:00")
     if (typeof timeVal === 'string' && timeVal.includes(':')) {
       const parts = timeVal.split(':').map(Number);
       const h = parts[0] || 0;
@@ -333,14 +341,12 @@ export class AdminComponent implements OnInit, OnDestroy {
     let availableCount = 0;
 
     const courts: CourtStatusItem[] = this.fieldsData.map(f => {
-      // Find all bookings for this field
       const fieldBookings = this.rawBookings.filter((b: any) => {
         const bookingFieldId = b.field_id || b.fieldId || b.field?.id;
         const bookingFieldName = b.fieldName || b.field?.name;
         return bookingFieldId === f.rawId || bookingFieldName === f.name;
       });
 
-      // Parse bookings
       const parsedBookings = fieldBookings.map((b: any) => {
         const dateVal = b.bookingDate || b.date || todayStr;
         const parsedStart = this.parseTime(b.start_time || b.startTime, dateVal);
@@ -349,7 +355,7 @@ export class AdminComponent implements OnInit, OnDestroy {
         const customerName = b.customerName || b.userProfile?.full_name || b.user?.userProfile?.full_name || b.customer_name || 'Khách đặt sân';
         const customerPhone = b.customerPhone || b.userProfile?.phone_number || b.user?.userProfile?.phone_number || b.customer_phone || '0987654321';
         const paymentStatus = (b.paymentStatus || b.payment_status || 'PAID') as 'PAID' | 'UNPAID';
-        const totalPrice = Number(b.total_price || b.totalPrice || b.total_amount || f.price || 200000);
+        const totalPrice = Number(b.total_price || b.totalPrice || b.total_amount || 200000);
 
         return {
           id: b.id || 'B-' + Math.random().toString(36).substr(2, 6),
@@ -366,12 +372,10 @@ export class AdminComponent implements OnInit, OnDestroy {
         };
       });
 
-      // Find if there is an active match right now (within time window)
       const activeMatch = parsedBookings.find(b => 
         b.status !== 'CANCELLED' && nowMs >= b.startMs && nowMs < b.endMs
       );
 
-      // Find upcoming bookings later today
       const upcomingBookings = parsedBookings
         .filter(b => b.status !== 'CANCELLED' && b.startMs > nowMs)
         .sort((a, b) => a.startMs - b.startMs);
@@ -429,10 +433,12 @@ export class AdminComponent implements OnInit, OnDestroy {
         fieldTypeId: f.fieldTypeId,
         fieldTypeName: f.fieldTypeName,
         branchId: f.branchId,
-        branchName: f.address,
+        branchName: f.branchName,
         address: f.address,
-        pricePerHour: f.price,
+        pricePerHour: f.rawField?.price || f.rawField?.base_price || 200000,
         isActive: f.status === 'ACTIVE',
+        utilities: f.utilities || [],
+        images: f.images || [],
         status,
         currentMatch: currentMatchObj,
         nextMatch: nextMatchData
@@ -507,35 +513,57 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.showFieldForm = false;
   }
 
+  // --- Utility Selection Toggle ---
+  toggleUtility(utilId: number) {
+    if (this.selectedUtilityIds.includes(utilId)) {
+      this.selectedUtilityIds = this.selectedUtilityIds.filter(id => id !== utilId);
+    } else {
+      this.selectedUtilityIds.push(utilId);
+    }
+  }
+
+  isUtilitySelected(utilId: number): boolean {
+    return this.selectedUtilityIds.includes(utilId);
+  }
+
+  onFilesSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      this.selectedFiles = Array.from(event.target.files);
+    }
+  }
+
   // --- 5. Field Management CRUD (Backend Connected) ---
   openAddField() {
     this.editingFieldId = null;
+    this.selectedUtilityIds = [];
+    this.selectedFiles = [];
+
     const defaultTypeId = this.fieldTypes.length > 0 ? this.fieldTypes[0].id : '';
     const defaultBranchId = this.branches.length > 0 ? this.branches[0].id : '';
     
     this.fieldForm.reset({
       name: '',
-      price: '',
       field_type_id: defaultTypeId,
       branch_id: defaultBranchId,
-      address: '',
       description: '',
-      status: 'ACTIVE'
+      status: true
     });
     this.showFieldForm = true;
   }
 
   openEditField(field: any) {
     this.editingFieldId = field.rawId;
+    this.selectedFiles = [];
     const raw = field.rawField || {};
+
+    this.selectedUtilityIds = (field.utilities || []).map((u: any) => u.id);
+
     this.fieldForm.patchValue({
       name: field.name,
-      price: field.price,
-      field_type_id: field.fieldTypeId || raw.field_type_id || raw.fieldTypeId || (this.fieldTypes[0]?.id || ''),
-      branch_id: field.branchId || raw.branch_id || raw.branchId || (this.branches[0]?.id || ''),
-      address: field.address,
+      field_type_id: field.fieldTypeId || raw.fieldTypeId || (this.fieldTypes[0]?.id || ''),
+      branch_id: field.branchId || raw.branchId || (this.branches[0]?.id || ''),
       description: raw.description || '',
-      status: field.status === 'ACTIVE' ? 'ACTIVE' : 'INACTIVE'
+      status: raw.status !== false
     });
     this.showFieldForm = true;
   }
@@ -562,31 +590,31 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.isSavingField = true;
     const formData = this.fieldForm.value;
 
-    // Construct valid payload compatible with both CreateFieldDto and legacy fields
+    // Payload according to CreateFieldDto in backend
     const payload: any = {
       name: formData.name,
-      price_per_hour: Number(formData.price),
       fieldTypeId: formData.field_type_id,
-      field_type_id: formData.field_type_id,
-      status: formData.status === 'ACTIVE',
-      is_active: formData.status === 'ACTIVE',
-      description: formData.description || ''
+      description: formData.description || '',
+      status: Boolean(formData.status),
+      utilityIds: this.selectedUtilityIds
     };
 
+    // Only add branchId if user is Admin or if provided
     if (formData.branch_id) {
       payload.branchId = formData.branch_id;
-      payload.branch_id = formData.branch_id;
-    }
-    if (formData.address) {
-      payload.address = formData.address;
     }
 
     if (this.editingFieldId) {
       this.fieldService.updateField(this.editingFieldId, payload).subscribe({
-        next: () => {
-          this.isSavingField = false;
-          this.showFieldForm = false;
-          this.loadFields();
+        next: (updatedField) => {
+          // If files are selected, upload images
+          if (this.selectedFiles.length > 0) {
+            this.uploadFieldImages(this.editingFieldId!, this.selectedFiles);
+          } else {
+            this.isSavingField = false;
+            this.showFieldForm = false;
+            this.loadFields();
+          }
         },
         error: (err) => {
           this.isSavingField = false;
@@ -595,10 +623,15 @@ export class AdminComponent implements OnInit, OnDestroy {
       });
     } else {
       this.fieldService.createField(payload).subscribe({
-        next: () => {
-          this.isSavingField = false;
-          this.showFieldForm = false;
-          this.loadFields();
+        next: (createdField) => {
+          const newId = createdField.id || createdField.data?.id;
+          if (newId && this.selectedFiles.length > 0) {
+            this.uploadFieldImages(newId, this.selectedFiles);
+          } else {
+            this.isSavingField = false;
+            this.showFieldForm = false;
+            this.loadFields();
+          }
         },
         error: (err) => {
           this.isSavingField = false;
@@ -606,6 +639,24 @@ export class AdminComponent implements OnInit, OnDestroy {
         }
       });
     }
+  }
+
+  private uploadFieldImages(fieldId: string, files: File[]) {
+    const formData = new FormData();
+    files.forEach(f => formData.append('images', f));
+
+    this.api.post(`/fields/${fieldId}/images`, formData).subscribe({
+      next: () => {
+        this.isSavingField = false;
+        this.showFieldForm = false;
+        this.loadFields();
+      },
+      error: () => {
+        this.isSavingField = false;
+        this.showFieldForm = false;
+        this.loadFields();
+      }
+    });
   }
 
   cancelFieldForm() {
@@ -657,7 +708,6 @@ export class AdminComponent implements OnInit, OnDestroy {
       status: 'CONFIRMED'
     };
 
-    // Try posting to backend management create endpoint
     this.api.post('/bookings/management/create', {
       fieldId: this.selectedCourtForAction.id,
       date: now.toISOString().split('T')[0],
@@ -673,7 +723,6 @@ export class AdminComponent implements OnInit, OnDestroy {
         this.closeQuickBook();
       },
       error: () => {
-        // Fallback optimistic update
         this.rawBookings.push(newBooking);
         this.calculateCourtStatuses();
         this.closeQuickBook();

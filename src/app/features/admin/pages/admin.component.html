@@ -221,7 +221,7 @@
                       <div class="text-[12px] text-[#64748d] mt-0.5 flex items-center gap-1.5">
                         <span class="font-medium text-[#533afd]">{{ court.fieldTypeName }}</span>
                         <span>•</span>
-                        <span>₫{{ court.pricePerHour | number:'1.0-0' }}/h</span>
+                        <span>{{ court.branchName }}</span>
                       </div>
                     </div>
 
@@ -375,11 +375,11 @@
       </ng-container>
 
       <!-- ======================================================== -->
-      <!-- TAB 2: QUẢN LÝ SÂN (FIELDS MANAGEMENT CRUD - NO MOCK DATA) -->
+      <!-- TAB 2: QUẢN LÝ SÂN (FIELDS MANAGEMENT CRUD - BACKEND ALIGNED) -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'FIELDS' && !showFieldForm">
         <app-crud-table 
-          title="Danh sách Sân bóng (Dữ liệu Backend)" 
+          title="Danh sách Sân bóng" 
           [columns]="fieldColumns" 
           [data]="fieldsData"
           addLabel="Thêm sân mới"
@@ -389,12 +389,12 @@
         </app-crud-table>
       </ng-container>
 
-      <!-- FIELD FORM (Add / Edit Field with Backend Data) -->
+      <!-- FIELD FORM (Add / Edit Field with Backend DTO: name, fieldTypeId, branchId, utilityIds, description, status) -->
       <div *ngIf="activeTab === 'FIELDS' && showFieldForm" class="bg-white rounded-[14px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] p-6 max-w-2xl mx-auto">
         <div class="mb-6 flex justify-between items-center border-b border-[#e3e8ee] pb-4">
           <div>
             <h2 class="text-[18px] font-bold text-[#0d253d]">{{ editingFieldId ? 'Cập nhật Sân bóng' : 'Thêm Sân bóng mới' }}</h2>
-            <p class="text-[13px] text-[#64748d] mt-0.5">Dữ liệu được lưu trực tiếp vào cơ sở dữ liệu backend</p>
+            <p class="text-[13px] text-[#64748d] mt-0.5">Dữ liệu theo đúng schema CreateFieldDto của Backend</p>
           </div>
           <button (click)="cancelFieldForm()" class="text-[#64748d] hover:text-[#0d253d] p-1">
             <svg viewBox="0 0 32 32" class="w-5 h-5 fill-current"><path d="M27.71 5.71l-1.42-1.42L16 14.59 5.71 4.29 4.29 5.71 14.59 16 4.29 26.29l1.42 1.42L16 17.41l10.29 10.3 1.42-1.42L17.41 16z"></path></svg>
@@ -403,55 +403,68 @@
 
         <form [formGroup]="fieldForm" (ngSubmit)="saveField()" class="space-y-5">
           
-          <!-- Tên sân -->
+          <!-- 1. Tên sân (name) -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Tên sân bóng <span class="text-[#dc2626]">*</span></label>
-            <input type="text" formControlName="name" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors" placeholder="VD: Sân bóng số 1 (7 người)">
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Tên sân bóng (name) <span class="text-[#dc2626]">*</span></label>
+            <input type="text" formControlName="name" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors" placeholder="VD: Sân 5A, Sân 7 số 1">
             <span *ngIf="fieldForm.get('name')?.invalid && fieldForm.get('name')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Tên sân là bắt buộc</span>
           </div>
 
-          <!-- Loại sân (Dynamic from /field-types) -->
+          <!-- 2. Loại sân (fieldTypeId) -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Loại sân bóng (Danh mục Backend) <span class="text-[#dc2626]">*</span></label>
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Loại sân bóng (fieldTypeId) <span class="text-[#dc2626]">*</span></label>
             <select formControlName="field_type_id" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
               <option *ngFor="let type of fieldTypes" [value]="type.id">{{ type.name }}</option>
             </select>
             <span *ngIf="fieldForm.get('field_type_id')?.invalid && fieldForm.get('field_type_id')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Vui lòng chọn loại sân</span>
           </div>
 
-          <!-- Chi nhánh / Địa điểm -->
-          <div *ngIf="branches.length > 0">
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Chi nhánh trực thuộc</label>
+          <!-- 3. Chi nhánh (branchId) -->
+          <div *ngIf="isAdmin">
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Chi nhánh trực thuộc (branchId) <span class="text-[#dc2626]">*</span></label>
             <select formControlName="branch_id" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
-              <option *ngFor="let b of branches" [value]="b.id">{{ b.name }} ({{ b.address }})</option>
+              <option *ngFor="let b of branches" [value]="b.id">{{ b.name }} ({{ b.address?.street || b.address || 'Hà Nội' }})</option>
             </select>
           </div>
 
-          <!-- Giá mỗi giờ -->
-          <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Giá thuê mỗi giờ (VND) <span class="text-[#dc2626]">*</span></label>
-            <input type="number" formControlName="price" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors tabular-nums" placeholder="VD: 250000">
-            <span *ngIf="fieldForm.get('price')?.invalid && fieldForm.get('price')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Giá không hợp lệ (tối thiểu 0 VND)</span>
+          <div *ngIf="!isAdmin" class="p-3 bg-[#f0efff] rounded-[8px] border border-[#e0ddfc] text-[13px] text-[#533afd]">
+            🏢 Chi nhánh: Tự động gán theo Chi nhánh được phân công của Quản lý.
           </div>
 
-          <!-- Vị trí / Địa chỉ -->
-          <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Vị trí cụ thể / Khu vực</label>
-            <input type="text" formControlName="address" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors" placeholder="VD: Khu sân A, Cụm sân Trung tâm">
+          <!-- 4. Tiện ích sân bóng (utilityIds) -->
+          <div *ngIf="utilities.length > 0">
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-2">Tiện ích sân bóng (utilityIds)</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+              <div *ngFor="let u of utilities" 
+                   (click)="toggleUtility(u.id)"
+                   [ngClass]="isUtilitySelected(u.id) ? 'bg-[#533afd] text-white border-[#533afd]' : 'bg-[#f8fafc] text-[#475569] border-[#e2e8f0] hover:bg-[#f1f5f9]'"
+                   class="p-2.5 rounded-[8px] border text-[13px] font-medium flex items-center gap-2 cursor-pointer select-none transition-all">
+                <span *ngIf="isUtilitySelected(u.id)" class="text-white font-bold">✓</span>
+                <span *ngIf="!isUtilitySelected(u.id)" class="text-[#94a3b8]">+</span>
+                <span class="truncate">{{ u.name }}</span>
+              </div>
+            </div>
           </div>
 
-          <!-- Mô tả -->
+          <!-- 5. Mô tả (description) -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Mô tả đặc điểm sân</label>
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Mô tả đặc điểm sân (description)</label>
             <textarea formControlName="description" rows="3" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors" placeholder="VD: Cỏ nhân tạo tiêu chuẩn FIFA, hệ thống đèn chiếu sáng cao áp..."></textarea>
           </div>
 
-          <!-- Trạng thái hoạt động -->
+          <!-- 6. Upload hình ảnh sân -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Trạng thái sân</label>
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Hình ảnh sân bóng</label>
+            <input type="file" multiple accept="image/*" (change)="onFilesSelected($event)" class="w-full text-[13px] text-[#64748d] file:mr-4 file:py-2 file:px-4 file:rounded-[6px] file:border-0 file:text-[13px] file:font-semibold file:bg-[#f0efff] file:text-[#533afd] hover:file:bg-[#e0ddfc]">
+            <p class="text-[11px] text-[#64748d] mt-1">Ảnh sẽ được tự động tải lên và liên kết với sân bóng.</p>
+          </div>
+
+          <!-- 7. Trạng thái hoạt động (status) -->
+          <div>
+            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Trạng thái sân (status)</label>
             <select formControlName="status" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
-              <option value="ACTIVE">Hoạt động bình thường (ACTIVE)</option>
-              <option value="INACTIVE">Tạm ngưng hoạt động / Bảo trì (INACTIVE)</option>
+              <option [ngValue]="true">Hoạt động bình thường (true)</option>
+              <option [ngValue]="false">Tạm ngưng hoạt động / Bảo trì (false)</option>
             </select>
           </div>
 
