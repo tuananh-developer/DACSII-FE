@@ -1,105 +1,142 @@
-<div class="min-h-screen bg-[#f6f9fc] text-[#0d253d] font-sans tracking-tight flex">
+<div class="min-h-screen bg-[#f6f9fc] text-[#0d253d] font-sans antialiased flex">
 
-  <!-- Sidebar (Dashboard Navigation) -->
-  <aside class="w-64 bg-white border-r border-[#e3e8ee] hidden md:flex flex-col z-10 shrink-0">
-    <div class="h-16 flex items-center px-6 font-semibold text-[17px] text-[#0d253d] tracking-tight border-b border-[#e3e8ee] gap-2">
-      <svg viewBox="0 0 32 32" class="h-6 w-6 fill-[#533afd]"><path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.172-.179h-.011l-.176.185c-2.044 2.1-4.267 3.42-6.414 3.615l-.28.019-.267.006C5.377 31 2.5 28.584 2.5 24.522l.005-.469c.026-.928.23-1.768.83-3.244l.216-.524c.966-2.298 5.083-10.87 7.11-14.886l.528-1.038C12.53 2.016 13.982 1 16 1z"></path></svg>
-      <span>NexusSport</span>
-      <span class="text-[10px] font-bold uppercase tracking-wider bg-[#f0efff] text-[#533afd] px-1.5 py-0.5 rounded border border-[#e0ddfc]">Manager</span>
+  <!-- ======================================================== -->
+  <!-- SIDEBAR (DASHBOARD NAVIGATION - STRIKE STYLE)           -->
+  <!-- ======================================================== -->
+  <aside class="w-64 bg-white border-r border-[#e3e8ee] hidden md:flex flex-col z-10 shrink-0 select-none">
+    
+    <!-- Brand Header -->
+    <div class="h-16 flex items-center px-6 border-b border-[#e3e8ee] justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-7 h-7 rounded-[8px] bg-[#533afd] flex items-center justify-center text-white shadow-xs">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"></path></svg>
+        </div>
+        <span class="font-semibold text-[17px] text-[#0d253d] tracking-tight">NexusSport</span>
+      </div>
+      <span class="text-[10px] font-bold uppercase tracking-wider bg-[#f0efff] text-[#533afd] px-2 py-0.5 rounded-full border border-[#e0ddfc]">Console</span>
     </div>
     
+    <!-- Manager Identity Card -->
     <div class="p-4 border-b border-[#e3e8ee] bg-[#fafcff]">
-      <div class="text-[12px] text-[#64748d] font-medium">Vai trò tài khoản</div>
-      <div class="text-[13px] font-semibold text-[#0d253d] mt-0.5 truncate">{{ userRoleDisplay }}</div>
-      <div class="text-[11px] text-[#533afd] font-medium mt-1 flex items-center gap-1.5">
-        <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
-        {{ currentUser?.full_name || currentUser?.email || 'Quản lý sân' }}
+      <div class="text-[11px] font-semibold uppercase tracking-wider text-[#64748d]">Phiên Đăng Nhập</div>
+      <div class="text-[14px] font-medium text-[#0d253d] mt-0.5 truncate">{{ currentUser?.full_name || currentUser?.email || 'Quản trị viên' }}</div>
+      <div class="mt-1.5 flex items-center gap-2">
+        <span class="inline-flex items-center gap-1 text-[11px] font-medium text-[#166534] bg-[#dcfce7] px-2 py-0.5 rounded-full border border-[#bbf7d0]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#166534] animate-pulse"></span>
+          {{ isBranchManager ? 'Branch Manager' : (isAdmin ? 'System Admin' : 'Staff') }}
+        </span>
       </div>
     </div>
 
-    <nav class="flex-1 px-4 py-4 space-y-1">
-      <button (click)="setTab('OVERVIEW')" [ngClass]="activeTab === 'OVERVIEW' ? 'bg-[#f0efff] text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center justify-between px-3.5 py-2.5 text-[14px] rounded-[8px] transition-colors">
+    <!-- Navigation Items -->
+    <nav class="flex-1 px-3 py-4 space-y-1">
+      
+      <!-- 1. Real-time Monitoring Overview -->
+      <button (click)="setTab('OVERVIEW')" 
+              [ngClass]="activeTab === 'OVERVIEW' ? 'bg-[#f0efff] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d] font-normal'" 
+              class="w-full flex items-center justify-between px-3.5 py-2.5 text-[14px] rounded-full transition-all cursor-pointer">
         <div class="flex items-center gap-2.5">
           <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"></path></svg>
-          <span>Giám sát & Tổng quan</span>
+          <span>Giám sát trực tiếp</span>
         </div>
-        <span *ngIf="activePitchesCount > 0" class="w-2 h-2 rounded-full bg-[#10b981] animate-pulse"></span>
+        <span *ngIf="activePitchesCount > 0" class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10b981] opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-[#10b981]"></span>
+        </span>
       </button>
 
-      <!-- Tab Quản lý Chi Nhánh -->
-      <button (click)="setTab('BRANCHES')" [ngClass]="activeTab === 'BRANCHES' ? 'bg-[#f0efff] text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-[8px] transition-colors">
+      <!-- 2. Quản lý Chi Nhánh (Branches) -->
+      <button (click)="setTab('BRANCHES')" 
+              [ngClass]="activeTab === 'BRANCHES' ? 'bg-[#f0efff] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d] font-normal'" 
+              class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-full transition-all cursor-pointer">
         <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"></path></svg>
         <span>Quản lý Chi Nhánh</span>
       </button>
 
-      <button (click)="setTab('FIELDS')" [ngClass]="activeTab === 'FIELDS' ? 'bg-[#f0efff] text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-[8px] transition-colors">
+      <!-- 3. Quản lý Sân Bóng (Fields) -->
+      <button (click)="setTab('FIELDS')" 
+              [ngClass]="activeTab === 'FIELDS' ? 'bg-[#f0efff] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d] font-normal'" 
+              class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-full transition-all cursor-pointer">
         <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"></path></svg>
         <span>Quản lý Sân bóng</span>
       </button>
 
-      <button (click)="setTab('BOOKINGS')" [ngClass]="activeTab === 'BOOKINGS' ? 'bg-[#f0efff] text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-[8px] transition-colors">
+      <!-- 4. Lịch Đặt Sân (Bookings) -->
+      <button (click)="setTab('BOOKINGS')" 
+              [ngClass]="activeTab === 'BOOKINGS' ? 'bg-[#f0efff] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d] font-normal'" 
+              class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-full transition-all cursor-pointer">
         <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"></path></svg>
         <span>Lịch đặt sân</span>
       </button>
 
-      <button (click)="setTab('USERS')" [ngClass]="activeTab === 'USERS' ? 'bg-[#f0efff] text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d]'" class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-[8px] transition-colors">
+      <!-- 5. Khách Hàng (Users) -->
+      <button (click)="setTab('USERS')" 
+              [ngClass]="activeTab === 'USERS' ? 'bg-[#f0efff] text-[#533afd] font-semibold' : 'text-[#64748d] hover:bg-[#f6f9fc] hover:text-[#0d253d] font-normal'" 
+              class="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-[14px] rounded-full transition-all cursor-pointer">
         <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 3s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg>
-        <span>Khách hàng</span>
+        <span>Khách hàng & Tài khoản</span>
       </button>
     </nav>
 
+    <!-- Bottom Portal Exit -->
     <div class="p-4 border-t border-[#e3e8ee]">
-      <a routerLink="/" class="flex items-center gap-2 text-[13px] font-medium text-[#64748d] hover:text-[#0d253d] transition-colors py-2 px-3 rounded-[6px] hover:bg-[#f6f9fc]">
+      <a routerLink="/" class="flex items-center gap-2 text-[13px] font-medium text-[#64748d] hover:text-[#0d253d] transition-colors py-2 px-3 rounded-full hover:bg-[#f6f9fc]">
         <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
-        Về trang chủ khách
+        Về trang công cộng
       </a>
     </div>
   </aside>
 
-  <!-- Main Content Area -->
+  <!-- ======================================================== -->
+  <!-- MAIN WORKSPACE                                           -->
+  <!-- ======================================================== -->
   <main class="flex-1 flex flex-col h-screen overflow-y-auto">
     
-    <!-- Topbar -->
-    <header class="h-16 bg-white border-b border-[#e3e8ee] flex items-center justify-between px-8 sticky top-0 z-20">
+    <!-- Topbar Header -->
+    <header class="h-16 bg-white/90 backdrop-blur-md border-b border-[#e3e8ee] flex items-center justify-between px-8 sticky top-0 z-20">
       <div class="flex items-center gap-3">
-        <h1 class="text-[18px] font-semibold tracking-tight text-[#0d253d]">
+        <h1 class="text-[19px] font-medium tracking-tight text-[#0d253d]">
           {{ activeTab === 'OVERVIEW' ? 'Giám Sát Sân Trực Tiếp' : (activeTab === 'BRANCHES' ? 'Quản Lý Chi Nhánh' : (activeTab === 'FIELDS' ? 'Quản Lý Sân Bóng' : (activeTab === 'USERS' ? 'Quản Lý Khách Hàng' : 'Quản Lý Lịch Đặt Sân'))) }}
         </h1>
-        <span *ngIf="activeTab === 'OVERVIEW'" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-[#dcfce7] text-[#166534] border border-[#bbf7d0]">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#166534] animate-pulse"></span>
-          Live Từng Giây
+        <span *ngIf="activeTab === 'OVERVIEW'" class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[11px] font-semibold bg-[#dcfce7] text-[#166534] border border-[#bbf7d0]">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#166534] animate-ping"></span>
+          Realtime Ticking
         </span>
       </div>
 
-      <div class="flex items-center gap-4">
-        <button (click)="loadBranches(); loadFields(); loadBookingsAndCalculateCourts()" class="p-2 text-[#64748d] hover:text-[#0d253d] hover:bg-[#f6f9fc] rounded-[6px] transition-colors" title="Làm mới dữ liệu">
+      <!-- Header Controls -->
+      <div class="flex items-center gap-3">
+        <button (click)="loadBranches(); loadFields(); loadBookingsAndCalculateCourts()" 
+                class="p-2 text-[#64748d] hover:text-[#533afd] hover:bg-[#f0efff] rounded-full transition-all cursor-pointer" 
+                title="Đồng bộ dữ liệu">
           <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg>
         </button>
-        <div class="flex items-center gap-2 pl-3 border-l border-[#e3e8ee]">
-          <div class="w-8 h-8 rounded-full bg-[#533afd] text-white flex items-center justify-center font-bold text-[13px] shadow-xs">
+        
+        <div class="flex items-center gap-2.5 pl-3 border-l border-[#e3e8ee]">
+          <div class="w-8 h-8 rounded-full bg-[#533afd] text-white flex items-center justify-center font-medium text-[13px] shadow-sm">
             {{ (currentUser?.full_name?.[0] || currentUser?.email?.[0] || 'M') | uppercase }}
           </div>
           <div class="hidden sm:block text-left">
-            <div class="text-[13px] font-semibold text-[#0d253d] leading-none">{{ currentUser?.full_name || currentUser?.email?.split('@')?.[0] || 'Manager' }}</div>
-            <div class="text-[11px] text-[#64748d] mt-0.5">{{ currentUser?.role || 'Quản lý' }}</div>
+            <div class="text-[13px] font-medium text-[#0d253d] leading-none">{{ currentUser?.full_name || currentUser?.email?.split('@')?.[0] || 'Manager' }}</div>
+            <div class="text-[11px] text-[#64748d] mt-0.5">{{ userRoleDisplay }}</div>
           </div>
         </div>
       </div>
     </header>
 
-    <!-- Dashboard Content Body -->
+    <!-- Workspace Viewport -->
     <div class="p-6 md:p-8 max-w-7xl mx-auto w-full">
       
       <!-- ======================================================== -->
-      <!-- TAB 1: OVERVIEW & REAL-TIME COURT MONITORING (BRANCH MANAGER) -->
+      <!-- TAB 1: OVERVIEW & REAL-TIME COURT MONITORING             -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'OVERVIEW'">
         
-        <!-- KPI METRICS SUMMARY -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+        <!-- KPI METRICS SUMMARY (4-UP STRIP) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 mb-8">
           
-          <!-- Sân Đang Đá (Live Active Courts) -->
-          <div class="bg-white p-5 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.06)] hover:border-[#10b981] transition-all">
+          <!-- Sân Đang Đá -->
+          <div class="bg-white p-5 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] hover:border-[#10b981] transition-all">
             <div class="flex items-center justify-between mb-2">
               <span class="text-[13px] font-medium text-[#64748d]">Sân đang đá</span>
               <span class="relative flex h-2.5 w-2.5">
@@ -107,51 +144,51 @@
                 <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#10b981]"></span>
               </span>
             </div>
-            <div class="text-[28px] font-bold text-[#0d253d] tracking-tight tabular-nums flex items-baseline gap-1.5">
+            <div class="text-[32px] font-light text-[#0d253d] tracking-tight tabular-nums flex items-baseline gap-1.5">
               {{ activePitchesCount }}
               <span class="text-[13px] font-normal text-[#64748d]">/ {{ courtStatuses.length }} sân</span>
             </div>
-            <div class="mt-2 text-[12px] font-medium text-[#166534] bg-[#dcfce7] px-2 py-0.5 rounded-[4px] inline-block">
+            <div class="mt-2 text-[11px] font-semibold text-[#166534] bg-[#dcfce7] px-2.5 py-0.5 rounded-full inline-block">
               Trận đấu đang diễn ra
             </div>
           </div>
 
-          <!-- Sân Đang Trống (Available Courts) -->
-          <div class="bg-white p-5 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.06)] hover:border-[#533afd] transition-all">
+          <!-- Sân Đang Trống -->
+          <div class="bg-white p-5 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] hover:border-[#533afd] transition-all">
             <div class="flex items-center justify-between mb-2">
               <span class="text-[13px] font-medium text-[#64748d]">Sân đang trống</span>
               <span class="w-2.5 h-2.5 rounded-full bg-[#64748d]"></span>
             </div>
-            <div class="text-[28px] font-bold text-[#0d253d] tracking-tight tabular-nums flex items-baseline gap-1.5">
+            <div class="text-[32px] font-light text-[#0d253d] tracking-tight tabular-nums flex items-baseline gap-1.5">
               {{ availablePitchesCount }}
               <span class="text-[13px] font-normal text-[#64748d]">sân sẵn sàng</span>
             </div>
-            <div class="mt-2 text-[12px] font-medium text-[#1e40af] bg-[#dbeafe] px-2 py-0.5 rounded-[4px] inline-block">
-              Có thể nhận khách ngay
+            <div class="mt-2 text-[11px] font-semibold text-[#533afd] bg-[#f0efff] px-2.5 py-0.5 rounded-full inline-block">
+              Sẵn sàng nhận khách
             </div>
           </div>
 
           <!-- Doanh thu hôm nay -->
-          <div class="bg-white p-5 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.06)]">
+          <div class="bg-white p-5 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
             <div class="flex items-center justify-between mb-2">
               <span class="text-[13px] font-medium text-[#64748d]">Doanh thu hôm nay</span>
               <svg viewBox="0 0 24 24" class="w-4 h-4 fill-[#10b981]"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.12H14.3c-.05-.62-.48-1.61-1.96-1.61-1.39 0-2.28.64-2.28 1.49 0 .8.54 1.39 2.5 1.87 2.67.64 4.35 1.58 4.35 3.93 0 1.98-1.53 3.04-3.5 3.34z"></path></svg>
             </div>
-            <div class="text-[28px] font-bold text-[#0d253d] tracking-tight tabular-nums">
+            <div class="text-[32px] font-light text-[#0d253d] tracking-tight tabular-nums">
               ₫{{ revenue | number:'1.0-0' }}
             </div>
             <div class="mt-2 text-[12px] text-[#64748d]">
-              Từ các đơn đặt hôm nay
+              Từ đơn đặt sân trực tiếp & online
             </div>
           </div>
 
           <!-- Lượt đặt sân hôm nay -->
-          <div class="bg-white p-5 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.06)]">
+          <div class="bg-white p-5 rounded-[12px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
             <div class="flex items-center justify-between mb-2">
               <span class="text-[13px] font-medium text-[#64748d]">Tổng lượt đặt hôm nay</span>
               <svg viewBox="0 0 24 24" class="w-4 h-4 fill-[#533afd]"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"></path></svg>
             </div>
-            <div class="text-[28px] font-bold text-[#0d253d] tracking-tight tabular-nums">
+            <div class="text-[32px] font-light text-[#0d253d] tracking-tight tabular-nums">
               {{ bookings }}
             </div>
             <div class="mt-2 text-[12px] text-[#64748d]">
@@ -161,39 +198,48 @@
         </div>
 
         <!-- REAL-TIME COURT MONITORING BOARD -->
-        <div class="bg-white rounded-[16px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] overflow-hidden mb-8">
+        <div class="bg-white rounded-[14px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] overflow-hidden mb-8">
           
-          <!-- Board Toolbar & Filters -->
-          <div class="p-6 border-b border-[#e3e8ee] bg-[#fcfdff] flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <!-- Board Toolbar & Segmented Controls -->
+          <div class="p-6 border-b border-[#e3e8ee] bg-white flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 class="text-[17px] font-bold text-[#0d253d] flex items-center gap-2">
+              <h2 class="text-[18px] font-medium text-[#0d253d] tracking-tight flex items-center gap-2">
                 <svg viewBox="0 0 24 24" class="w-5 h-5 fill-[#533afd]"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>
                 Bảng Giám Sát Sân Thời Gian Thực
               </h2>
-              <p class="text-[13px] text-[#64748d] mt-0.5">Tự động đếm lùi thời gian còn lại của các trận đấu và cập nhật lịch đặt tiếp theo</p>
+              <p class="text-[13px] text-[#64748d] mt-0.5">Tự động đếm lùi thời gian trận đấu đang đá và cập nhật lịch đặt tiếp theo</p>
             </div>
 
-            <!-- Filter Buttons -->
+            <!-- Pill Filter Group -->
             <div class="flex flex-wrap items-center gap-2">
               
-              <!-- Status Filter Pills -->
-              <div class="bg-[#f0efff] p-1 rounded-[8px] flex items-center gap-1 border border-[#e0ddfc]">
-                <button (click)="setCourtFilterStatus('ALL')" [ngClass]="courtFilterStatus === 'ALL' ? 'bg-white text-[#533afd] font-bold shadow-xs' : 'text-[#64748d] hover:text-[#0d253d]'" class="px-3 py-1.5 text-[12px] rounded-[6px] transition-all">
+              <div class="bg-[#f6f9fc] p-1 rounded-full flex items-center gap-1 border border-[#e3e8ee]">
+                <button (click)="setCourtFilterStatus('ALL')" 
+                        [ngClass]="courtFilterStatus === 'ALL' ? 'bg-white text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:text-[#0d253d] font-normal'" 
+                        class="px-3.5 py-1.5 text-[12px] rounded-full transition-all cursor-pointer">
                   Tất cả ({{ courtStatuses.length }})
                 </button>
-                <button (click)="setCourtFilterStatus('IN_PROGRESS')" [ngClass]="courtFilterStatus === 'IN_PROGRESS' ? 'bg-white text-[#166534] font-bold shadow-xs' : 'text-[#64748d] hover:text-[#0d253d]'" class="px-3 py-1.5 text-[12px] rounded-[6px] transition-all flex items-center gap-1.5">
-                  <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                <button (click)="setCourtFilterStatus('IN_PROGRESS')" 
+                        [ngClass]="courtFilterStatus === 'IN_PROGRESS' ? 'bg-white text-[#166534] font-semibold shadow-xs' : 'text-[#64748d] hover:text-[#0d253d] font-normal'" 
+                        class="px-3.5 py-1.5 text-[12px] rounded-full transition-all flex items-center gap-1.5 cursor-pointer">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>
                   Đang đá ({{ activePitchesCount }})
                 </button>
-                <button (click)="setCourtFilterStatus('AVAILABLE')" [ngClass]="courtFilterStatus === 'AVAILABLE' ? 'bg-white text-[#1e40af] font-bold shadow-xs' : 'text-[#64748d] hover:text-[#0d253d]'" class="px-3 py-1.5 text-[12px] rounded-[6px] transition-all">
+                <button (click)="setCourtFilterStatus('AVAILABLE')" 
+                        [ngClass]="courtFilterStatus === 'AVAILABLE' ? 'bg-white text-[#533afd] font-semibold shadow-xs' : 'text-[#64748d] hover:text-[#0d253d] font-normal'" 
+                        class="px-3.5 py-1.5 text-[12px] rounded-full transition-all cursor-pointer">
                   Đang trống ({{ availablePitchesCount }})
                 </button>
               </div>
 
-              <!-- Search Court Input -->
+              <!-- Quick Search Input -->
               <div class="relative">
-                <input type="text" [(ngModel)]="courtSearchQuery" (input)="applyCourtFilters()" placeholder="Tìm tên sân, khách..." class="bg-white border border-[#a8c3de] rounded-[8px] pl-8 pr-3 py-1.5 text-[13px] focus:outline-none focus:border-[#533afd] transition-colors w-48">
-                <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-[#64748d] absolute left-2.5 top-2.5"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                <input type="text" 
+                       [(ngModel)]="courtSearchQuery" 
+                       (input)="applyCourtFilters()" 
+                       placeholder="Tìm kiếm sân..." 
+                       class="bg-white border border-[#a8c3de] rounded-full pl-8 pr-3.5 py-1.5 text-[13px] text-[#0d253d] placeholder-[#94a3b8] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all w-48">
+                <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-[#64748d] absolute left-3 top-2.5"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
               </div>
 
             </div>
@@ -204,64 +250,66 @@
             
             <!-- Empty State -->
             <div *ngIf="filteredCourtStatuses.length === 0" class="py-16 text-center text-[#64748d]">
-              <svg viewBox="0 0 24 24" class="w-12 h-12 fill-[#cbd5e1] mx-auto mb-3"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>
-              <p class="text-[15px] font-medium text-[#0d253d]">Không tìm thấy sân nào</p>
-              <p class="text-[13px] text-[#64748d] mt-1">Vui lòng tạo chi nhánh và thêm sân bóng mới vào hệ thống.</p>
+              <div class="w-12 h-12 rounded-full bg-[#f6f9fc] text-[#64748d] flex items-center justify-center mx-auto mb-3 border border-[#e3e8ee]">
+                <svg viewBox="0 0 24 24" class="w-6 h-6 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"></path></svg>
+              </div>
+              <p class="text-[15px] font-medium text-[#0d253d]">Không có sân bóng nào</p>
+              <p class="text-[13px] text-[#64748d] mt-1">Hãy tạo chi nhánh và thêm sân mới để bắt đầu giám sát.</p>
             </div>
 
-            <!-- Grid Layout for Pitches -->
+            <!-- Pitch Cards -->
             <div *ngIf="filteredCourtStatuses.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               
               <div *ngFor="let court of filteredCourtStatuses" 
-                   [ngClass]="court.status === 'IN_PROGRESS' ? 'border-[#86efac] bg-gradient-to-b from-[#f0fdf4] to-white shadow-[0_4px_12px_rgba(22,101,52,0.08)]' : 'border-[#e3e8ee] bg-white shadow-[0_1px_3px_rgba(0,55,112,0.06)] hover:border-[#cbd5e1]'" 
-                   class="rounded-[14px] border p-5.5 flex flex-col justify-between transition-all duration-200">
+                   [ngClass]="court.status === 'IN_PROGRESS' ? 'border-[#86efac] bg-gradient-to-b from-[#f0fdf4] to-white shadow-[0_4px_12px_rgba(22,101,52,0.06)]' : 'border-[#e3e8ee] bg-white shadow-[0_1px_3px_rgba(0,55,112,0.08)] hover:border-[#cbd5e1]'" 
+                   class="rounded-[14px] border p-5 flex flex-col justify-between transition-all">
                 
-                <!-- Card Header: Name, Type, Status Pill -->
                 <div>
-                  <div class="flex items-start justify-between gap-2 mb-3">
+                  <!-- Card Top: Name, ID, Badges -->
+                  <div class="flex items-start justify-between gap-2 mb-3.5">
                     <div>
                       <div class="flex items-center gap-2">
-                        <h3 class="text-[16px] font-bold text-[#0d253d]">{{ court.name }}</h3>
-                        <span class="text-[11px] font-medium text-[#64748d] bg-[#f1f5f9] px-2 py-0.5 rounded-[4px]">{{ court.displayId }}</span>
+                        <h3 class="text-[16px] font-semibold text-[#0d253d]">{{ court.name }}</h3>
+                        <span class="text-[11px] font-mono text-[#64748d] bg-[#f1f5f9] px-2 py-0.5 rounded-[4px]">{{ court.displayId }}</span>
                       </div>
-                      <div class="text-[12px] text-[#64748d] mt-0.5 flex items-center gap-1.5">
+                      <div class="text-[12px] text-[#64748d] mt-1 flex items-center gap-1.5">
                         <span class="font-medium text-[#533afd]">{{ court.fieldTypeName }}</span>
                         <span>•</span>
-                        <span>{{ court.branchName }}</span>
+                        <span class="truncate">{{ court.branchName }}</span>
                       </div>
                     </div>
 
-                    <!-- Status Badge -->
+                    <!-- Status Pill -->
                     <span *ngIf="court.status === 'IN_PROGRESS'" class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-[#166534] text-white flex items-center gap-1.5 shadow-xs">
-                      <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
+                      <span class="w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>
                       ĐANG ĐÁ
                     </span>
 
-                    <span *ngIf="court.status === 'AVAILABLE'" class="px-2.5 py-1 text-[11px] font-bold rounded-full bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0]">
+                    <span *ngIf="court.status === 'AVAILABLE'" class="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-[#f1f5f9] text-[#475569] border border-[#e2e8f0]">
                       ĐANG TRỐNG
                     </span>
                   </div>
 
                   <!-- CASE 1: SÂN ĐANG ĐÁ (IN PROGRESS) -->
-                  <div *ngIf="court.status === 'IN_PROGRESS' && court.currentMatch" class="space-y-4">
+                  <div *ngIf="court.status === 'IN_PROGRESS' && court.currentMatch" class="space-y-3.5">
                     
-                    <!-- Live Countdown Display Box -->
+                    <!-- Live Countdown Panel -->
                     <div class="bg-white p-4 rounded-[10px] border border-[#bbf7d0] shadow-xs">
                       <div class="text-[11px] font-bold uppercase tracking-wider text-[#166534] flex items-center justify-between mb-1">
                         <span>Thời gian còn lại</span>
-                        <span class="tabular-nums font-mono text-[13px] bg-[#dcfce7] px-2 py-0.5 rounded text-[#166534]">
+                        <span class="tabular-nums font-mono text-[12px] bg-[#dcfce7] px-2 py-0.5 rounded text-[#166534]">
                           {{ court.currentMatch.startTime }} - {{ court.currentMatch.endTime }}
                         </span>
                       </div>
 
                       <!-- Big Countdown Digits -->
-                      <div class="text-[26px] font-black text-[#15803d] tracking-tight font-mono tabular-nums flex items-baseline gap-1 my-1">
+                      <div class="text-[26px] font-bold text-[#15803d] tracking-tight font-mono tabular-nums flex items-baseline gap-1.5 my-1">
                         ⏱️ {{ court.currentMatch.remainingFormatted }}
-                        <span class="text-[12px] font-normal text-[#166534]">({{ court.currentMatch.remainingMinutes }} phút còn lại)</span>
+                        <span class="text-[12px] font-normal text-[#166534]">({{ court.currentMatch.remainingMinutes }}p)</span>
                       </div>
 
-                      <!-- Match Progress Bar -->
-                      <div class="w-full bg-[#e2e8f0] h-2.5 rounded-full overflow-hidden mt-2 relative">
+                      <!-- Progress Bar -->
+                      <div class="w-full bg-[#e2e8f0] h-2 rounded-full overflow-hidden mt-2 relative">
                         <div class="bg-[#10b981] h-full rounded-full transition-all duration-1000" [style.width.%]="court.currentMatch.progressPercent"></div>
                       </div>
                       <div class="flex justify-between items-center text-[10px] text-[#64748d] mt-1">
@@ -270,20 +318,20 @@
                       </div>
                     </div>
 
-                    <!-- Current Match Customer Details -->
+                    <!-- Customer Info Card -->
                     <div class="bg-[#fafcff] p-3 rounded-[8px] border border-[#e3e8ee] text-[13px] space-y-1.5">
                       <div class="flex justify-between items-center">
                         <span class="text-[#64748d]">Khách đang đá:</span>
-                        <span class="font-semibold text-[#0d253d]">{{ court.currentMatch.customerName }}</span>
+                        <span class="font-medium text-[#0d253d]">{{ court.currentMatch.customerName }}</span>
                       </div>
                       <div class="flex justify-between items-center">
                         <span class="text-[#64748d]">Số điện thoại:</span>
-                        <span class="font-medium text-[#0d253d] tabular-nums">{{ court.currentMatch.customerPhone }}</span>
+                        <span class="font-mono text-[#0d253d] tabular-nums">{{ court.currentMatch.customerPhone }}</span>
                       </div>
                       <div class="flex justify-between items-center pt-1 border-t border-[#e3e8ee]">
                         <span class="text-[#64748d]">Thanh toán:</span>
-                        <span *ngIf="court.currentMatch.paymentStatus === 'PAID'" class="text-[11px] font-bold text-[#166534] bg-[#dcfce7] px-2 py-0.5 rounded">Đã thanh toán</span>
-                        <span *ngIf="court.currentMatch.paymentStatus === 'UNPAID'" class="text-[11px] font-bold text-[#991b1b] bg-[#fee2e2] px-2 py-0.5 rounded">Chưa thanh toán</span>
+                        <span *ngIf="court.currentMatch.paymentStatus === 'PAID'" class="text-[11px] font-semibold text-[#166534] bg-[#dcfce7] px-2 py-0.5 rounded-full">Đã thanh toán</span>
+                        <span *ngIf="court.currentMatch.paymentStatus === 'UNPAID'" class="text-[11px] font-semibold text-[#991b1b] bg-[#fee2e2] px-2 py-0.5 rounded-full">Chưa thanh toán</span>
                       </div>
                     </div>
 
@@ -291,11 +339,11 @@
                     <div class="p-3 rounded-[8px] bg-[#f8fafc] border border-[#e2e8f0]">
                       <div class="text-[11px] font-bold uppercase tracking-wider text-[#64748d] mb-1 flex items-center gap-1.5">
                         <svg viewBox="0 0 24 24" class="w-3.5 h-3.5 fill-current"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"></path></svg>
-                        Lịch tiếp theo
+                        Lịch tiếp theo hôm nay
                       </div>
                       
                       <div *ngIf="court.nextMatch" class="text-[13px]">
-                        <div class="font-bold text-[#533afd] flex items-center justify-between">
+                        <div class="font-semibold text-[#533afd] flex items-center justify-between">
                           <span>{{ court.nextMatch.startTime }} - {{ court.nextMatch.endTime }}</span>
                           <span class="text-[11px] font-normal text-[#64748d]">Sắp đá</span>
                         </div>
@@ -306,21 +354,21 @@
 
                       <div *ngIf="!court.nextMatch" class="text-[12px] text-[#15803d] font-medium flex items-center gap-1">
                         <span>✨</span>
-                        <span>Trống sau trận này (Sẵn sàng nhận khách mới)</span>
+                        <span>Trống sau trận này (Sẵn sàng nhận khách tiếp)</span>
                       </div>
                     </div>
 
                   </div>
 
                   <!-- CASE 2: SÂN ĐANG TRỐNG (AVAILABLE) -->
-                  <div *ngIf="court.status === 'AVAILABLE'" class="space-y-4">
+                  <div *ngIf="court.status === 'AVAILABLE'" class="space-y-3.5">
                     
                     <div class="p-4 rounded-[10px] bg-[#f8fafc] border border-[#e2e8f0] text-center">
-                      <div class="w-10 h-10 rounded-full bg-[#e0f2fe] text-[#0284c7] flex items-center justify-center mx-auto mb-2">
+                      <div class="w-9 h-9 rounded-full bg-[#f0efff] text-[#533afd] flex items-center justify-center mx-auto mb-2">
                         <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path></svg>
                       </div>
-                      <div class="text-[14px] font-bold text-[#0d253d]">Sân Hiện Đang Trống</div>
-                      <div class="text-[12px] text-[#64748d] mt-0.5">Sẵn sàng phục vụ hoặc nhận lịch đặt ngay</div>
+                      <div class="text-[14px] font-medium text-[#0d253d]">Sân Hiện Đang Trống</div>
+                      <div class="text-[12px] text-[#64748d] mt-0.5">Sẵn sàng nhận khách vãng lai hoặc đặt trước</div>
                     </div>
 
                     <!-- Lịch tiếp theo của sân trống -->
@@ -331,9 +379,9 @@
                       </div>
                       
                       <div *ngIf="court.nextMatch" class="text-[13px]">
-                        <div class="font-bold text-[#533afd] flex items-center justify-between">
+                        <div class="font-semibold text-[#533afd] flex items-center justify-between">
                           <span>{{ court.nextMatch.startTime }} - {{ court.nextMatch.endTime }}</span>
-                          <span class="text-[11px] font-semibold text-[#b45309] bg-[#fef3c7] px-2 py-0.5 rounded">Đã đặt</span>
+                          <span class="text-[11px] font-semibold text-[#b45309] bg-[#fef3c7] px-2 py-0.5 rounded-full">Đã đặt</span>
                         </div>
                         <div class="text-[12px] text-[#475569] mt-0.5 truncate">
                           {{ court.nextMatch.customerName }} • {{ court.nextMatch.customerPhone }}
@@ -349,20 +397,23 @@
 
                 </div>
 
-                <!-- Card Footer Actions -->
+                <!-- Card Actions (Pill Buttons) -->
                 <div class="pt-4 mt-4 border-t border-[#e3e8ee] flex items-center justify-end gap-2">
                   
                   <ng-container *ngIf="court.status === 'IN_PROGRESS'">
-                    <button (click)="extendMatch(court, 30)" class="px-3 py-1.5 text-[12px] font-semibold text-[#166534] bg-white border border-[#bbf7d0] hover:bg-[#dcfce7] rounded-[6px] transition-colors">
+                    <button (click)="extendMatch(court, 30)" 
+                            class="px-3.5 py-1.5 text-[12px] font-medium text-[#166534] bg-white border border-[#bbf7d0] hover:bg-[#dcfce7] rounded-full transition-colors cursor-pointer">
                       +30p Gia hạn
                     </button>
-                    <button (click)="finishMatchEarly(court)" class="px-3 py-1.5 text-[12px] font-semibold text-[#dc2626] bg-white border border-[#fecaca] hover:bg-[#fee2e2] rounded-[6px] transition-colors">
+                    <button (click)="finishMatchEarly(court)" 
+                            class="px-3.5 py-1.5 text-[12px] font-medium text-[#ea2261] bg-white border border-[#fecaca] hover:bg-[#fee2e2] rounded-full transition-colors cursor-pointer">
                       Kết thúc sớm
                     </button>
                   </ng-container>
 
                   <ng-container *ngIf="court.status === 'AVAILABLE'">
-                    <button (click)="openQuickBook(court)" class="w-full py-2 text-[13px] font-bold text-white bg-[#533afd] hover:bg-[#4434d4] rounded-[8px] transition-colors shadow-xs flex items-center justify-center gap-1.5">
+                    <button (click)="openQuickBook(court)" 
+                            class="w-full py-2 text-[13px] font-medium text-white bg-[#533afd] hover:bg-[#4434d4] active:bg-[#2e2b8c] rounded-full transition-all shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
                       <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"></path></svg>
                       Đặt Sân Trực Tiếp Cho Khách
                     </button>
@@ -381,11 +432,12 @@
       </ng-container>
 
       <!-- ======================================================== -->
-      <!-- TAB 2: QUẢN LÝ CHI NHÁNH (BRANCHES MANAGEMENT CRUD) -->
+      <!-- TAB 2: QUẢN LÝ CHI NHÁNH (BRANCHES MANAGEMENT CRUD)     -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'BRANCHES' && !showBranchForm">
         <app-crud-table 
           title="Danh sách Chi Nhánh Hệ Thống" 
+          subtitle="Các cơ sở thể thao trực thuộc cùng người quản lý được phân công"
           [columns]="branchColumns" 
           [data]="branchesData"
           addLabel="Tạo chi nhánh mới"
@@ -395,14 +447,14 @@
         </app-crud-table>
       </ng-container>
 
-      <!-- BRANCH FORM (Create / Edit Branch) -->
-      <div *ngIf="activeTab === 'BRANCHES' && showBranchForm" class="bg-white rounded-[14px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] p-6 max-w-3xl mx-auto">
+      <!-- BRANCH FORM (Create / Edit Branch - Strike Design Form) -->
+      <div *ngIf="activeTab === 'BRANCHES' && showBranchForm" class="bg-white rounded-[14px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] p-6 md:p-8 max-w-3xl mx-auto">
         <div class="mb-6 flex justify-between items-center border-b border-[#e3e8ee] pb-4">
           <div>
-            <h2 class="text-[18px] font-bold text-[#0d253d]">{{ editingBranchId ? 'Cập nhật Chi Nhánh' : 'Tạo Chi Nhánh Mới' }}</h2>
-            <p class="text-[13px] text-[#64748d] mt-0.5">Chi nhánh là cơ sở chứa các cụm sân bóng và phân công Quản lý</p>
+            <h2 class="text-[19px] font-medium text-[#0d253d] tracking-tight">{{ editingBranchId ? 'Cập nhật Chi Nhánh' : 'Tạo Chi Nhánh Mới' }}</h2>
+            <p class="text-[13px] text-[#64748d] mt-0.5">Khởi tạo cơ sở chi nhánh trước khi thêm các cụm sân bóng</p>
           </div>
-          <button (click)="cancelBranchForm()" class="text-[#64748d] hover:text-[#0d253d] p-1">
+          <button (click)="cancelBranchForm()" class="text-[#64748d] hover:text-[#0d253d] p-1.5 rounded-full hover:bg-[#f6f9fc] transition-colors cursor-pointer">
             <svg viewBox="0 0 32 32" class="w-5 h-5 fill-current"><path d="M27.71 5.71l-1.42-1.42L16 14.59 5.71 4.29 4.29 5.71 14.59 16 4.29 26.29l1.42 1.42L16 17.41l10.29 10.3 1.42-1.42L17.41 16z"></path></svg>
           </button>
         </div>
@@ -412,15 +464,15 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Tên chi nhánh -->
             <div>
-              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Tên chi nhánh <span class="text-[#dc2626]">*</span></label>
-              <input type="text" formControlName="name" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: Sân bóng NexusSport - Cơ sở Cầu Giấy">
+              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Tên chi nhánh <span class="text-[#ea2261]">*</span></label>
+              <input type="text" formControlName="name" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: Cơ sở Cầu Giấy">
               <span *ngIf="branchForm.get('name')?.invalid && branchForm.get('name')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Tên chi nhánh là bắt buộc</span>
             </div>
 
             <!-- SĐT chi nhánh -->
             <div>
-              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Số điện thoại liên hệ <span class="text-[#dc2626]">*</span></label>
-              <input type="tel" formControlName="phone_number" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: 0987654321">
+              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Số điện thoại liên hệ <span class="text-[#ea2261]">*</span></label>
+              <input type="tel" formControlName="phone_number" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: 0987654321">
               <span *ngIf="branchForm.get('phone_number')?.invalid && branchForm.get('phone_number')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Số điện thoại không hợp lệ</span>
             </div>
           </div>
@@ -428,29 +480,29 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <!-- Giờ mở cửa -->
             <div>
-              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Giờ mở cửa (HH:mm:ss) <span class="text-[#dc2626]">*</span></label>
-              <input type="text" formControlName="open_time" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="06:00:00">
+              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Giờ mở cửa (HH:mm:ss) <span class="text-[#ea2261]">*</span></label>
+              <input type="text" formControlName="open_time" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] font-mono focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="06:00:00">
             </div>
 
             <!-- Giờ đóng cửa -->
             <div>
-              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Giờ đóng cửa (HH:mm:ss) <span class="text-[#dc2626]">*</span></label>
-              <input type="text" formControlName="close_time" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="23:00:00">
+              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Giờ đóng cửa (HH:mm:ss) <span class="text-[#ea2261]">*</span></label>
+              <input type="text" formControlName="close_time" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] font-mono focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="23:00:00">
             </div>
           </div>
 
           <!-- Địa chỉ: Thành phố & Phường xã -->
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Tỉnh / Thành phố <span class="text-[#dc2626]">*</span></label>
-              <select formControlName="cityId" (change)="onCityChange($any($event.target).value)" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]">
+              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Tỉnh / Thành phố <span class="text-[#ea2261]">*</span></label>
+              <select formControlName="cityId" (change)="onCityChange($any($event.target).value)" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all">
                 <option *ngFor="let c of cities" [value]="c.id">{{ c.name }}</option>
               </select>
             </div>
 
             <div>
-              <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Phường / Xã <span class="text-[#dc2626]">*</span></label>
-              <select formControlName="wardId" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]">
+              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Phường / Xã <span class="text-[#ea2261]">*</span></label>
+              <select formControlName="wardId" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all">
                 <option *ngFor="let w of wards" [value]="w.id">{{ w.name }}</option>
               </select>
             </div>
@@ -458,32 +510,33 @@
 
           <!-- Tên đường / Số nhà -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Số nhà, tên đường (street) <span class="text-[#dc2626]">*</span></label>
-            <input type="text" formControlName="street" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: 123 Đường Cầu Giấy">
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Số nhà, tên đường (street) <span class="text-[#ea2261]">*</span></label>
+            <input type="text" formControlName="street" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: 123 Đường Cầu Giấy">
             <span *ngIf="branchForm.get('street')?.invalid && branchForm.get('street')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Vui lòng nhập địa chỉ cụ thể</span>
           </div>
 
           <!-- Phân công Quản lý chi nhánh -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Phân công Quản lý chi nhánh (Manager)</label>
-            <select formControlName="manager_id" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]">
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Phân công Quản lý chi nhánh (Manager)</label>
+            <select formControlName="manager_id" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all">
               <option value="">-- Chưa gán người quản lý --</option>
               <option *ngFor="let m of availableManagers" [value]="m.id">{{ m.full_name }} ({{ m.phone_number || 'Chưa có SĐT' }})</option>
             </select>
-            <p class="text-[11px] text-[#64748d] mt-1">Chỉ hiển thị các tài khoản vai trò Manager chưa được gán chi nhánh.</p>
+            <p class="text-[12px] text-[#64748d] mt-1">Chỉ các tài khoản vai trò Manager chưa được gán chi nhánh mới hiển thị ở đây.</p>
           </div>
 
           <!-- Mô tả chi nhánh -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Mô tả chi nhánh</label>
-            <textarea formControlName="description" rows="3" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: Cơ sở mới nâng cấp, cụm sân 7 người và 11 người tiêu chuẩn FIFA..."></textarea>
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Mô tả chi nhánh</label>
+            <textarea formControlName="description" rows="3" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: Cơ sở mới nâng cấp, cụm sân 7 người và 11 người tiêu chuẩn FIFA..."></textarea>
           </div>
 
+          <!-- Form Action Buttons -->
           <div class="pt-4 border-t border-[#e3e8ee] flex justify-end gap-3">
-            <button type="button" (click)="cancelBranchForm()" [disabled]="isSavingBranch" class="px-5 py-2.5 text-[14px] font-medium text-[#64748d] hover:text-[#0d253d]">
+            <button type="button" (click)="cancelBranchForm()" [disabled]="isSavingBranch" class="px-5 py-2 text-[14px] font-medium text-[#64748d] hover:text-[#0d253d] transition-colors rounded-full cursor-pointer">
               Hủy
             </button>
-            <button type="submit" [disabled]="isSavingBranch" class="bg-[#533afd] hover:bg-[#4434d4] text-white font-semibold text-[14px] py-2.5 px-6 rounded-[8px] shadow-sm flex items-center gap-2">
+            <button type="submit" [disabled]="isSavingBranch" class="bg-[#533afd] hover:bg-[#4434d4] active:bg-[#2e2b8c] text-white font-medium text-[14px] py-2 px-6 rounded-full shadow-sm flex items-center gap-2 cursor-pointer transition-all">
               <span *ngIf="isSavingBranch" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
               {{ isSavingBranch ? 'Đang lưu...' : (editingBranchId ? 'Cập nhật chi nhánh' : 'Tạo chi nhánh mới') }}
             </button>
@@ -493,17 +546,12 @@
       </div>
 
       <!-- ======================================================== -->
-      <!-- TAB 3: QUẢN LÝ SÂN (FIELDS MANAGEMENT CRUD - BACKEND ALIGNED) -->
+      <!-- TAB 3: QUẢN LÝ SÂN (FIELDS MANAGEMENT CRUD)             -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'FIELDS' && !showFieldForm">
-        <div class="mb-4 flex items-center justify-between">
-          <div class="text-[13px] text-[#64748d]">
-            Mỗi sân bóng phải trực thuộc một Chi Nhánh cụ thể. Bạn có thể thêm nhiều sân cho từng chi nhánh.
-          </div>
-        </div>
-
         <app-crud-table 
           title="Danh sách Sân bóng" 
+          subtitle="Tất cả các sân bóng thuộc các chi nhánh trong hệ thống"
           [columns]="fieldColumns" 
           [data]="fieldsData"
           addLabel="Thêm sân mới"
@@ -513,53 +561,52 @@
         </app-crud-table>
       </ng-container>
 
-      <!-- FIELD FORM (Add / Edit Field with Backend DTO: name, fieldTypeId, branchId, utilityIds, description, status) -->
-      <div *ngIf="activeTab === 'FIELDS' && showFieldForm" class="bg-white rounded-[14px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] p-6 max-w-2xl mx-auto">
+      <!-- FIELD FORM (Create / Edit Field) -->
+      <div *ngIf="activeTab === 'FIELDS' && showFieldForm" class="bg-white rounded-[14px] border border-[#e3e8ee] shadow-[0_1px_3px_rgba(0,55,112,0.08)] p-6 md:p-8 max-w-2xl mx-auto">
         <div class="mb-6 flex justify-between items-center border-b border-[#e3e8ee] pb-4">
           <div>
-            <h2 class="text-[18px] font-bold text-[#0d253d]">{{ editingFieldId ? 'Cập nhật Sân bóng' : 'Thêm Sân bóng mới' }}</h2>
-            <p class="text-[13px] text-[#64748d] mt-0.5">Dữ liệu theo đúng schema CreateFieldDto của Backend</p>
+            <h2 class="text-[19px] font-medium text-[#0d253d] tracking-tight">{{ editingFieldId ? 'Cập nhật Sân bóng' : 'Thêm Sân bóng mới' }}</h2>
+            <p class="text-[13px] text-[#64748d] mt-0.5">Dữ liệu cấu hình sân theo đúng chuẩn Backend</p>
           </div>
-          <button (click)="cancelFieldForm()" class="text-[#64748d] hover:text-[#0d253d] p-1">
+          <button (click)="cancelFieldForm()" class="text-[#64748d] hover:text-[#0d253d] p-1.5 rounded-full hover:bg-[#f6f9fc] transition-colors cursor-pointer">
             <svg viewBox="0 0 32 32" class="w-5 h-5 fill-current"><path d="M27.71 5.71l-1.42-1.42L16 14.59 5.71 4.29 4.29 5.71 14.59 16 4.29 26.29l1.42 1.42L16 17.41l10.29 10.3 1.42-1.42L17.41 16z"></path></svg>
           </button>
         </div>
 
         <form [formGroup]="fieldForm" (ngSubmit)="saveField()" class="space-y-5">
           
-          <!-- 1. Tên sân (name) -->
+          <!-- 1. Tên sân -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Tên sân bóng (name) <span class="text-[#dc2626]">*</span></label>
-            <input type="text" formControlName="name" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors" placeholder="VD: Sân 5A, Sân 7 số 1">
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Tên sân bóng <span class="text-[#ea2261]">*</span></label>
+            <input type="text" formControlName="name" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: Sân 5A, Sân 7 số 1">
             <span *ngIf="fieldForm.get('name')?.invalid && fieldForm.get('name')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Tên sân là bắt buộc</span>
           </div>
 
-          <!-- 2. Loại sân (fieldTypeId) -->
+          <!-- 2. Loại sân -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Loại sân bóng (fieldTypeId) <span class="text-[#dc2626]">*</span></label>
-            <select formControlName="field_type_id" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Loại sân bóng <span class="text-[#ea2261]">*</span></label>
+            <select formControlName="field_type_id" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all">
               <option *ngFor="let type of fieldTypes" [value]="type.id">{{ type.name }}</option>
             </select>
-            <span *ngIf="fieldForm.get('field_type_id')?.invalid && fieldForm.get('field_type_id')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Vui lòng chọn loại sân</span>
           </div>
 
-          <!-- 3. Chi nhánh (branchId) -->
+          <!-- 3. Chi nhánh -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Chi nhánh trực thuộc (branchId) <span class="text-[#dc2626]">*</span></label>
-            <select *ngIf="branches.length > 0" formControlName="branch_id" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Chi nhánh trực thuộc <span class="text-[#ea2261]">*</span></label>
+            <select *ngIf="branches.length > 0" formControlName="branch_id" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all">
               <option *ngFor="let b of branches" [value]="b.id">{{ b.name }} ({{ b.address?.street || b.address?.city_name || 'Chi nhánh' }})</option>
             </select>
 
             <div *ngIf="branches.length === 0" class="p-3 bg-[#fee2e2] rounded-[8px] border border-[#fecaca] text-[13px] text-[#991b1b] flex items-center justify-between">
-              <span>⚠️ Hệ thống chưa có chi nhánh nào! Bạn cần tạo chi nhánh trước khi tạo sân bóng.</span>
-              <button type="button" (click)="setTab('BRANCHES'); openAddBranch()" class="px-3 py-1 bg-[#dc2626] text-white rounded font-bold text-[12px] hover:bg-[#b91c1c]">Tạo chi nhánh ngay</button>
+              <span>⚠️ Hệ thống chưa có chi nhánh nào! Bạn cần tạo chi nhánh trước.</span>
+              <button type="button" (click)="setTab('BRANCHES'); openAddBranch()" class="px-3 py-1 bg-[#ea2261] text-white rounded-full font-semibold text-[12px] hover:bg-[#d41c55] cursor-pointer">Tạo chi nhánh ngay</button>
             </div>
           </div>
 
-          <!-- 4. Tiện ích sân bóng (utilityIds) -->
+          <!-- 4. Tiện ích sân bóng (Interactive Pills) -->
           <div *ngIf="utilities.length > 0">
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-2">Tiện ích sân bóng (utilityIds)</label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-2">Tiện ích sân bóng (utilityIds)</label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
               <div *ngFor="let u of utilities" 
                    (click)="toggleUtility(u.id)"
                    [ngClass]="isUtilitySelected(u.id) ? 'bg-[#533afd] text-white border-[#533afd]' : 'bg-[#f8fafc] text-[#475569] border-[#e2e8f0] hover:bg-[#f1f5f9]'"
@@ -571,33 +618,34 @@
             </div>
           </div>
 
-          <!-- 5. Mô tả (description) -->
+          <!-- 5. Mô tả -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Mô tả đặc điểm sân (description)</label>
-            <textarea formControlName="description" rows="3" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors" placeholder="VD: Cỏ nhân tạo tiêu chuẩn FIFA, hệ thống đèn chiếu sáng cao áp..."></textarea>
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Mô tả đặc điểm sân</label>
+            <textarea formControlName="description" rows="3" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: Cỏ nhân tạo chất lượng cao, dàn đèn LED cao áp..."></textarea>
           </div>
 
-          <!-- 6. Upload hình ảnh sân -->
+          <!-- 6. Upload ảnh -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Hình ảnh sân bóng</label>
-            <input type="file" multiple accept="image/*" (change)="onFilesSelected($event)" class="w-full text-[13px] text-[#64748d] file:mr-4 file:py-2 file:px-4 file:rounded-[6px] file:border-0 file:text-[13px] file:font-semibold file:bg-[#f0efff] file:text-[#533afd] hover:file:bg-[#e0ddfc]">
-            <p class="text-[11px] text-[#64748d] mt-1">Ảnh sẽ được tự động tải lên và liên kết với sân bóng.</p>
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Hình ảnh sân bóng</label>
+            <input type="file" multiple accept="image/*" (change)="onFilesSelected($event)" class="w-full text-[13px] text-[#64748d] file:mr-4 file:py-1.5 file:px-4 file:rounded-full file:border-0 file:text-[13px] file:font-semibold file:bg-[#f0efff] file:text-[#533afd] hover:file:bg-[#e0ddfc] cursor-pointer">
+            <p class="text-[11px] text-[#64748d] mt-1">Ảnh sẽ tự động tải lên và liên kết với sân bóng.</p>
           </div>
 
-          <!-- 7. Trạng thái hoạt động (status) -->
+          <!-- 7. Trạng thái -->
           <div>
-            <label class="block text-[13px] font-semibold text-[#0d253d] mb-1.5">Trạng thái sân (status)</label>
-            <select formControlName="status" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2.5 text-[14px] focus:outline-none focus:border-[#533afd] transition-colors">
-              <option [ngValue]="true">Hoạt động bình thường (true)</option>
-              <option [ngValue]="false">Tạm ngưng hoạt động / Bảo trì (false)</option>
+            <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Trạng thái sân</label>
+            <select formControlName="status" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all">
+              <option [ngValue]="true">Hoạt động bình thường</option>
+              <option [ngValue]="false">Tạm ngưng hoạt động / Bảo trì</option>
             </select>
           </div>
 
+          <!-- Actions -->
           <div class="pt-4 border-t border-[#e3e8ee] flex justify-end gap-3">
-            <button type="button" (click)="cancelFieldForm()" [disabled]="isSavingField" class="px-5 py-2.5 text-[14px] font-medium text-[#64748d] hover:text-[#0d253d] transition-colors">
+            <button type="button" (click)="cancelFieldForm()" [disabled]="isSavingField" class="px-5 py-2 text-[14px] font-medium text-[#64748d] hover:text-[#0d253d] transition-colors rounded-full cursor-pointer">
               Hủy
             </button>
-            <button type="submit" [disabled]="isSavingField" class="bg-[#533afd] hover:bg-[#4434d4] disabled:opacity-50 text-white font-semibold text-[14px] py-2.5 px-6 rounded-[8px] transition-colors shadow-sm flex items-center gap-2">
+            <button type="submit" [disabled]="isSavingField" class="bg-[#533afd] hover:bg-[#4434d4] active:bg-[#2e2b8c] text-white font-medium text-[14px] py-2 px-6 rounded-full shadow-sm flex items-center gap-2 cursor-pointer transition-all">
               <span *ngIf="isSavingField" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
               {{ isSavingField ? 'Đang lưu...' : (editingFieldId ? 'Cập nhật sân' : 'Thêm sân mới') }}
             </button>
@@ -607,11 +655,12 @@
       </div>
 
       <!-- ======================================================== -->
-      <!-- TAB 4: KHÁCH HÀNG (USERS MANAGEMENT) -->
+      <!-- TAB 4: KHÁCH HÀNG (USERS MANAGEMENT)                    -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'USERS'">
         <app-crud-table 
           title="Danh sách Khách hàng & Tài khoản" 
+          subtitle="Tất cả tài khoản người dùng đăng ký trong hệ thống"
           [columns]="userColumns" 
           [data]="usersData"
           [showAdd]="false"
@@ -620,13 +669,13 @@
       </ng-container>
 
       <!-- ======================================================== -->
-      <!-- TAB 5: LỊCH ĐẶT SÂN (BOOKINGS) -->
+      <!-- TAB 5: LỊCH ĐẶT SÂN (BOOKINGS)                          -->
       <!-- ======================================================== -->
       <ng-container *ngIf="activeTab === 'BOOKINGS'">
-        <div class="bg-white rounded-[14px] border border-[#e3e8ee] p-8 shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
+        <div class="bg-white rounded-[14px] border border-[#e3e8ee] p-6 md:p-8 shadow-[0_1px_3px_rgba(0,55,112,0.08)]">
           <div class="flex items-center justify-between mb-6 pb-4 border-b border-[#e3e8ee]">
             <div>
-              <h2 class="text-[18px] font-bold text-[#0d253d]">Quản Lý Tất Cả Lịch Đặt Sân</h2>
+              <h2 class="text-[19px] font-medium text-[#0d253d] tracking-tight">Quản Lý Lịch Đặt Sân</h2>
               <p class="text-[13px] text-[#64748d] mt-0.5">Danh sách các đơn đặt sân đang diễn ra và sắp tới</p>
             </div>
           </div>
@@ -638,22 +687,22 @@
           <div *ngIf="rawBookings.length > 0" class="divide-y divide-[#e3e8ee]">
             <div *ngFor="let b of rawBookings" class="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-[#f8fafc] px-3 rounded-[8px] transition-colors">
               <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-[8px] bg-[#f0efff] text-[#533afd] font-bold text-[13px] flex flex-col items-center justify-center border border-[#e0ddfc]">
+                <div class="w-14 h-14 rounded-[10px] bg-[#f0efff] text-[#533afd] font-semibold text-[13px] flex flex-col items-center justify-center border border-[#e0ddfc] font-mono tabular-nums">
                   <span>{{ b.start_time || b.startTime }}</span>
                   <span class="text-[10px] font-normal text-[#64748d]">{{ b.end_time || b.endTime }}</span>
                 </div>
                 <div>
-                  <h4 class="text-[15px] font-bold text-[#0d253d]">{{ b.fieldName || b.field?.name || 'Sân bóng' }}</h4>
+                  <h4 class="text-[15px] font-semibold text-[#0d253d]">{{ b.fieldName || b.field?.name || 'Sân bóng' }}</h4>
                   <div class="text-[13px] text-[#64748d] mt-0.5">
-                    {{ b.customerName || b.user?.userProfile?.full_name || 'Khách hàng' }} • {{ b.customerPhone || b.user?.userProfile?.phone_number || '0987654321' }}
+                    {{ b.customerName || b.user?.userProfile?.full_name || 'Khách hàng' }} • <span class="font-mono">{{ b.customerPhone || b.user?.userProfile?.phone_number || '0987654321' }}</span>
                   </div>
                 </div>
               </div>
 
               <div class="flex items-center gap-3">
-                <span class="text-[14px] font-bold text-[#0d253d] tabular-nums">₫{{ (b.total_price || b.totalPrice || 200000) | number:'1.0-0' }}</span>
-                <span *ngIf="b.paymentStatus === 'PAID' || b.payment_status === 'PAID'" class="px-2.5 py-1 text-[11px] font-bold rounded-[6px] bg-[#dcfce7] text-[#166534]">Đã thanh toán</span>
-                <span *ngIf="b.paymentStatus !== 'PAID' && b.payment_status !== 'PAID'" class="px-2.5 py-1 text-[11px] font-bold rounded-[6px] bg-[#fee2e2] text-[#991b1b]">Chưa thanh toán</span>
+                <span class="text-[15px] font-medium text-[#0d253d] font-mono tabular-nums">₫{{ (b.total_price || b.totalPrice || 200000) | number:'1.0-0' }}</span>
+                <span *ngIf="b.paymentStatus === 'PAID' || b.payment_status === 'PAID'" class="px-3 py-0.5 text-[11px] font-semibold rounded-full bg-[#dcfce7] text-[#166534] border border-[#bbf7d0]">Đã thanh toán</span>
+                <span *ngIf="b.paymentStatus !== 'PAID' && b.payment_status !== 'PAID'" class="px-3 py-0.5 text-[11px] font-semibold rounded-full bg-[#fee2e2] text-[#991b1b] border border-[#fecaca]">Chưa thanh toán</span>
               </div>
             </div>
           </div>
@@ -664,17 +713,17 @@
   </main>
 
   <!-- ======================================================== -->
-  <!-- MODAL: ĐẶT SÂN TRỰC TIẾP CHO KHÁCH VÃNG LAI (QUICK BOOK) -->
+  <!-- MODAL: ĐẶT SÂN TRỰC TIẾP CHO KHÁCH VÃNG LAI             -->
   <!-- ======================================================== -->
-  <div *ngIf="showQuickBookModal" class="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-[16px] border border-[#e3e8ee] shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-150">
+  <div *ngIf="showQuickBookModal" class="fixed inset-0 bg-[#0d253d]/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-[16px] border border-[#e3e8ee] shadow-[0_8px_24px_rgba(0,55,112,0.12)] max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-150">
       
       <div class="flex justify-between items-center pb-4 border-b border-[#e3e8ee] mb-5">
         <div>
-          <h3 class="text-[17px] font-bold text-[#0d253d]">Đặt Sân Nhanh (Khách Vãng Lai)</h3>
+          <h3 class="text-[18px] font-medium text-[#0d253d] tracking-tight">Đặt Sân Nhanh (Tại Quầy)</h3>
           <p class="text-[13px] text-[#533afd] font-semibold mt-0.5">{{ selectedCourtForAction?.name }}</p>
         </div>
-        <button (click)="closeQuickBook()" class="text-[#64748d] hover:text-[#0d253d] p-1">
+        <button (click)="closeQuickBook()" class="text-[#64748d] hover:text-[#0d253d] p-1.5 rounded-full hover:bg-[#f6f9fc] transition-colors cursor-pointer">
           <svg viewBox="0 0 24 24" class="w-5 h-5 fill-current"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
         </button>
       </div>
@@ -682,20 +731,20 @@
       <form [formGroup]="quickBookForm" (ngSubmit)="submitQuickBook()" class="space-y-4">
         
         <div>
-          <label class="block text-[13px] font-semibold text-[#0d253d] mb-1">Tên khách hàng</label>
-          <input type="text" formControlName="customerName" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: Anh Tuấn">
+          <label class="block text-[13px] font-medium text-[#0d253d] mb-1">Tên khách hàng</label>
+          <input type="text" formControlName="customerName" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd]" placeholder="VD: Anh Tuấn">
           <span *ngIf="quickBookForm.get('customerName')?.invalid && quickBookForm.get('customerName')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Vui lòng nhập tên khách</span>
         </div>
 
         <div>
-          <label class="block text-[13px] font-semibold text-[#0d253d] mb-1">Số điện thoại</label>
-          <input type="tel" formControlName="customerPhone" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2 text-[14px] focus:outline-none focus:border-[#533afd]" placeholder="VD: 0987654321">
+          <label class="block text-[13px] font-medium text-[#0d253d] mb-1">Số điện thoại</label>
+          <input type="tel" formControlName="customerPhone" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd]" placeholder="VD: 0987654321">
           <span *ngIf="quickBookForm.get('customerPhone')?.invalid && quickBookForm.get('customerPhone')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Số điện thoại không hợp lệ</span>
         </div>
 
         <div>
-          <label class="block text-[13px] font-semibold text-[#0d253d] mb-1">Thời lượng đá</label>
-          <select formControlName="durationMinutes" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2 text-[14px] focus:outline-none focus:border-[#533afd]">
+          <label class="block text-[13px] font-medium text-[#0d253d] mb-1">Thời lượng đá</label>
+          <select formControlName="durationMinutes" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd]">
             <option [value]="60">60 phút (1 giờ)</option>
             <option [value]="90">90 phút (1.5 giờ)</option>
             <option [value]="120">120 phút (2 giờ)</option>
@@ -703,18 +752,18 @@
         </div>
 
         <div>
-          <label class="block text-[13px] font-semibold text-[#0d253d] mb-1">Trạng thái thanh toán</label>
-          <select formControlName="paymentStatus" class="w-full bg-white border border-[#a8c3de] rounded-[8px] px-3.5 py-2 text-[14px] focus:outline-none focus:border-[#533afd]">
+          <label class="block text-[13px] font-medium text-[#0d253d] mb-1">Trạng thái thanh toán</label>
+          <select formControlName="paymentStatus" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd]">
             <option value="PAID">Đã thanh toán (Tiền mặt / Chuyển khoản)</option>
             <option value="UNPAID">Chưa thanh toán (Thanh toán sau)</option>
           </select>
         </div>
 
         <div class="pt-4 border-t border-[#e3e8ee] flex justify-end gap-3">
-          <button type="button" (click)="closeQuickBook()" class="px-4 py-2 text-[13px] font-medium text-[#64748d] hover:text-[#0d253d]">
+          <button type="button" (click)="closeQuickBook()" class="px-4 py-2 text-[13px] font-medium text-[#64748d] hover:text-[#0d253d] rounded-full cursor-pointer">
             Hủy
           </button>
-          <button type="submit" class="bg-[#533afd] hover:bg-[#4434d4] text-white font-bold text-[13px] py-2 px-5 rounded-[8px] transition-colors shadow-sm">
+          <button type="submit" class="bg-[#533afd] hover:bg-[#4434d4] active:bg-[#2e2b8c] text-white font-medium text-[13px] py-2 px-5 rounded-full shadow-sm cursor-pointer transition-all">
             Xác nhận đặt & Nhận sân
           </button>
         </div>
