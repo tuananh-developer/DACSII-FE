@@ -68,7 +68,9 @@ export class AuthService {
   setAuthData(accessToken: string, user: User) {
     localStorage.setItem('access_token', accessToken);
     this.currentUser.set(user);
-    this.notificationService.connect(user.id);
+    if (user && user.id) {
+      this.notificationService.connect(user.id);
+    }
     this.notificationService.loadInitialNotifications();
   }
 
@@ -76,8 +78,20 @@ export class AuthService {
   loginComplete(email: string, verificationCode: string): Observable<any> {
     return this.api.post('/auth/login/complete', { email, verificationCode }).pipe(
       tap((res: any) => {
-        if (res.accessToken) {
-          this.setAuthData(res.accessToken, res.user);
+        const token = res?.accessToken || res?.access_token || res?.data?.accessToken || res?.data?.access_token || res?.token || res?.data?.token;
+        const rawUser = res?.user || res?.data?.user || res?.account || res?.data?.account || {};
+        const roleName = rawUser.role ? (typeof rawUser.role === 'object' ? rawUser.role.name : rawUser.role) : '';
+        const mappedUser: User = {
+          id: rawUser.id || '',
+          email: rawUser.email || email,
+          full_name: rawUser.userProfile?.full_name || rawUser.full_name || '',
+          avatar_url: rawUser.userProfile?.avatar_url || rawUser.avatar_url,
+          role: roleName,
+          is_profile_complete: rawUser.userProfile?.is_profile_complete ?? rawUser.is_profile_complete ?? false,
+        };
+
+        if (token) {
+          this.setAuthData(token, mappedUser);
         }
       })
     );
@@ -92,8 +106,20 @@ export class AuthService {
   registerComplete(email: string, verificationCode: string): Observable<any> {
     return this.api.post('/auth/register/complete', { email, verificationCode }).pipe(
       tap((res: any) => {
-        if (res.accessToken) {
-          this.setAuthData(res.accessToken, res.user);
+        const token = res?.accessToken || res?.access_token || res?.data?.accessToken || res?.data?.access_token || res?.token || res?.data?.token;
+        const rawUser = res?.user || res?.data?.user || res?.account || res?.data?.account || {};
+        const roleName = rawUser.role ? (typeof rawUser.role === 'object' ? rawUser.role.name : rawUser.role) : '';
+        const mappedUser: User = {
+          id: rawUser.id || '',
+          email: rawUser.email || email,
+          full_name: rawUser.userProfile?.full_name || rawUser.full_name || '',
+          avatar_url: rawUser.userProfile?.avatar_url || rawUser.avatar_url,
+          role: roleName,
+          is_profile_complete: rawUser.userProfile?.is_profile_complete ?? rawUser.is_profile_complete ?? false,
+        };
+
+        if (token) {
+          this.setAuthData(token, mappedUser);
         }
       })
     );

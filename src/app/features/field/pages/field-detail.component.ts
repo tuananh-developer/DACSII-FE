@@ -5,6 +5,7 @@ import { FieldService, Field } from '../../home/services/field.service';
 import { BookingService } from '../../booking/services/booking.service';
 import { TimeSlot } from '../../booking/models/booking.model';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth/services/auth.service';
 
 @Component({
   selector: 'app-field-detail',
@@ -31,7 +32,8 @@ export class FieldDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private fieldService: FieldService,
-    private bookingService: BookingService
+    private bookingService: BookingService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -41,7 +43,14 @@ export class FieldDetailComponent implements OnInit {
         next: (res: any) => {
           const data = res.data || res;
           
-          const imagesList = data.images && Array.isArray(data.images) ? data.images : [];
+          let imagesList: any[] = [];
+          if (Array.isArray(data.images)) {
+            imagesList = data.images.map((img: any) => {
+              const url = typeof img === 'string' ? img : (img.url || img.image_url || img.imageUrl || img.path || '');
+              return { url, is_primary: img.is_primary || false };
+            }).filter((img: any) => !!img.url);
+          }
+          
           const primaryImage = imagesList.find((img: any) => img.is_primary)?.url || (imagesList.length > 0 ? imagesList[0].url : null);
           const branchAddress = data.branch?.address 
             ? `${data.branch.address.street ? data.branch.address.street + ', ' : ''}${data.branch.address.ward_name ? data.branch.address.ward_name + ', ' : ''}${data.branch.address.city_name || ''}`.replace(/,\s*$/, '')
@@ -135,7 +144,7 @@ export class FieldDetailComponent implements OnInit {
   goToCheckout() {
     if (this.selectedSlotIds().length === 0) return;
     
-    // Store selected booking data in local storage or state management before navigating
+    // Store selected booking data in local storage before navigating
     const bookingData = {
       fieldId: this.fieldId,
       field: this.field(),
@@ -145,6 +154,12 @@ export class FieldDetailComponent implements OnInit {
     };
     localStorage.setItem('pending_booking', JSON.stringify(bookingData));
     
+    const token = localStorage.getItem('access_token');
+    if (!token && !this.authService.currentUser()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
     this.router.navigate(['/booking/checkout']);
   }
 }

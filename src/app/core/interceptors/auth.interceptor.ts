@@ -31,6 +31,11 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(clonedReq).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 && !req.url.includes('/auth/login') && !req.url.includes('/auth/refresh') && !req.url.includes('/auth/logout')) {
+          // If user has NO token at all (guest user on public page), DO NOT refresh and DO NOT redirect!
+          if (!token) {
+            return throwError(() => error);
+          }
+
           if (!isRefreshing) {
             isRefreshing = true;
             refreshTokenSubject.next(null);
@@ -40,11 +45,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             return http.post<any>(`${environment.apiUrl}/auth/refresh`, {}, { withCredentials: true }).pipe(
               switchMap((res) => {
                 isRefreshing = false;
-                if (res && res.accessToken) {
-                  localStorage.setItem('access_token', res.accessToken);
-                  refreshTokenSubject.next(res.accessToken);
+                const newToken = res?.accessToken || res?.access_token || res?.data?.accessToken || res?.data?.access_token;
+                if (newToken) {
+                  localStorage.setItem('access_token', newToken);
+                  refreshTokenSubject.next(newToken);
                   const retriedReq = req.clone({
-                    headers: req.headers.set('Authorization', `Bearer ${res.accessToken}`),
+                    headers: req.headers.set('Authorization', `Bearer ${newToken}`),
                     withCredentials: true
                   });
                   return next(retriedReq);
@@ -52,24 +58,22 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 
                 localStorage.removeItem('access_token');
                 refreshTokenSubject.next(null);
-                router.navigate(['/']);
                 return throwError(() => new Error('Refresh failed'));
               }),
               catchError((refreshError) => {
                 isRefreshing = false;
                 refreshTokenSubject.next(null);
                 localStorage.removeItem('access_token');
-                router.navigate(['/']);
                 return throwError(() => refreshError);
               })
             );
           } else {
             return refreshTokenSubject.pipe(
-              filter(token => token !== null),
+              filter(t => t !== null),
               take(1),
-              switchMap((token) => {
+              switchMap((t) => {
                 const retriedReq = req.clone({
-                  headers: req.headers.set('Authorization', `Bearer ${token}`),
+                  headers: req.headers.set('Authorization', `Bearer ${t}`),
                   withCredentials: true
                 });
                 return next(retriedReq);

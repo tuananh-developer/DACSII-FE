@@ -46,22 +46,27 @@
 
   <!-- Image Gallery Grid (Dynamic) -->
   <div class="px-6 md:px-12 xl:px-24 max-w-7xl mx-auto mb-10">
-    <!-- Multiple images layout -->
-    <div *ngIf="field()!.images && field()!.images!.length > 1" class="grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative">
-      <div class="md:col-span-2 h-full cursor-pointer hover:opacity-90 transition-opacity bg-surface-strong">
-        <img [src]="field()!.images![0]?.url || field()!.imageUrl" class="w-full h-full object-cover" [alt]="field()!.name">
+    <!-- Multiple images layout (>= 3 images) -->
+    <div *ngIf="field()!.images && field()!.images!.length >= 3" class="grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative">
+      <div class="md:col-span-2 h-full cursor-pointer hover:opacity-95 transition-opacity bg-surface-strong">
+        <img [src]="field()!.images![0].url" class="w-full h-full object-cover" [alt]="field()!.name">
       </div>
       <div class="hidden md:flex flex-col gap-2 h-full">
-        <img *ngIf="field()!.images![1]" [src]="field()!.images![1].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer" [alt]="field()!.name">
-        <img *ngIf="field()!.images![2]" [src]="field()!.images![2].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer" [alt]="field()!.name">
-        <div *ngIf="!field()!.images![2] && field()!.images![1]" class="w-full h-[calc(50%-4px)] bg-surface-soft flex items-center justify-center text-muted text-xs">NexusSport</div>
+        <img *ngIf="field()!.images![1]" [src]="field()!.images![1].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <img *ngIf="field()!.images![2]" [src]="field()!.images![2].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
       </div>
       <div class="hidden md:flex flex-col gap-2 h-full">
-        <img *ngIf="field()!.images![3]" [src]="field()!.images![3].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer" [alt]="field()!.name">
-        <img *ngIf="field()!.images![4]" [src]="field()!.images![4].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer" [alt]="field()!.name">
-        <div *ngIf="!field()!.images![3]" class="w-full h-[calc(50%-4px)] bg-surface-soft flex items-center justify-center text-muted text-xs">NexusSport</div>
-        <div *ngIf="!field()!.images![4] && field()!.images![3]" class="w-full h-[calc(50%-4px)] bg-surface-soft flex items-center justify-center text-muted text-xs">NexusSport</div>
+        <img *ngIf="field()!.images![3]" [src]="field()!.images![3].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <img *ngIf="field()!.images![4]" [src]="field()!.images![4].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <img *ngIf="!field()!.images![4] && field()!.images![3]" [src]="field()!.images![0].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <img *ngIf="!field()!.images![3]" [src]="field()!.images![0].url" class="w-full h-full object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
       </div>
+    </div>
+
+    <!-- 2 images layout -->
+    <div *ngIf="field()!.images && field()!.images!.length === 2" class="grid grid-cols-1 md:grid-cols-2 gap-2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative">
+      <img [src]="field()!.images![0].url" class="w-full h-full object-cover" [alt]="field()!.name">
+      <img [src]="field()!.images![1].url" class="w-full h-full object-cover" [alt]="field()!.name">
     </div>
 
     <!-- Single image fallback -->
