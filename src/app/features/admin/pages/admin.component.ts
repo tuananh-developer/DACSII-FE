@@ -663,6 +663,113 @@ export class AdminComponent implements OnInit, OnDestroy {
     }
   }
 
+  // --- Coordinate parsing helper ---
+  parseGpsCoordinates(input: string): { lat: number; lng: number } | null {
+    if (!input || typeof input !== 'string') return null;
+    let text = input.trim();
+
+    // 1. Check Google Maps URL with @lat,lng (e.g. https://www.google.com/maps/@21.028511,105.854167,17z)
+    const atMatch = text.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+    if (atMatch) {
+      const lat = parseFloat(atMatch[1]);
+      const lng = parseFloat(atMatch[2]);
+      if (this.isValidGps(lat, lng)) return { lat, lng };
+    }
+
+    // 2. Check for !3d{lat}!4d{lng} in Google Maps embed URLs
+    const d3d4Match = text.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);
+    if (d3d4Match) {
+      const lat = parseFloat(d3d4Match[1]);
+      const lng = parseFloat(d3d4Match[2]);
+      if (this.isValidGps(lat, lng)) return { lat, lng };
+    }
+
+    // 3. Check for q= / query= / place/ in Google Maps URLs
+    const qMatch = text.match(/(?:q=|query=|place\/)(-?\d+(?:\.\d+)?)[,+ ]+(-?\d+(?:\.\d+)?)/i);
+    if (qMatch) {
+      const lat = parseFloat(qMatch[1]);
+      const lng = parseFloat(qMatch[2]);
+      if (this.isValidGps(lat, lng)) return { lat, lng };
+    }
+
+    // 4. Check DMS format (e.g. 21°01'42.6"N 105°51'15.0"E)
+    const dmsRegex = /(\d+(?:\.\d+)?)[°\s]+(\d+(?:\.\d+)?)?['\s]*([0-9.]+)?["\s]*([NSEWnsew])[\s,;]+(\d+(?:\.\d+)?)[°\s]+(\d+(?:\.\d+)?)?['\s]*([0-9.]+)?["\s]*([NSEWnsew])/;
+    const dmsMatch = text.match(dmsRegex);
+    if (dmsMatch) {
+      const parseDMS = (deg: string, min?: string, sec?: string, dir?: string) => {
+        let val = parseFloat(deg) + (parseFloat(min || '0') / 60) + (parseFloat(sec || '0') / 3600);
+        if (dir && ['S', 'W'].includes(dir.toUpperCase())) val = -val;
+        return val;
+      };
+      let lat = parseDMS(dmsMatch[1], dmsMatch[2], dmsMatch[3], dmsMatch[4]);
+      let lng = parseDMS(dmsMatch[5], dmsMatch[6], dmsMatch[7], dmsMatch[8]);
+      if (['E', 'W'].includes(dmsMatch[4].toUpperCase()) && ['N', 'S'].includes(dmsMatch[8].toUpperCase())) {
+        [lat, lng] = [lng, lat];
+      }
+      if (this.isValidGps(lat, lng)) return { lat, lng };
+    }
+
+    // 5. Standard decimal pair: e.g. "21.028511, 105.854167" or "21.028511,105.854167" or "21.028511 105.854167"
+    const numMatches = text.match(/-?\d+(?:\.\d+)?/g);
+    if (numMatches && numMatches.length >= 2) {
+      const lat = parseFloat(numMatches[0]);
+      const lng = parseFloat(numMatches[1]);
+      if (this.isValidGps(lat, lng)) {
+        return { lat, lng };
+      }
+    }
+
+    return null;
+  }
+
+  private isValidGps(lat: number, lng: number): boolean {
+    return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+  }
+
+  onCoordinatePaste(event: ClipboardEvent, targetField: 'latitude' | 'longitude') {
+    const text = event.clipboardData?.getData('text');
+    if (text) {
+      const coords = this.parseGpsCoordinates(text);
+      if (coords) {
+        event.preventDefault();
+        this.branchForm.patchValue({
+          latitude: coords.lat,
+          longitude: coords.lng
+        });
+        this.branchForm.get('latitude')?.markAsDirty();
+        this.branchForm.get('longitude')?.markAsDirty();
+      }
+    }
+  }
+
+  onCoordinateInput(targetField: 'latitude' | 'longitude') {
+    const val = this.branchForm.get(targetField)?.value;
+    if (val && typeof val === 'string' && (val.includes(',') || val.includes('@') || val.includes(';') || val.trim().includes(' '))) {
+      const coords = this.parseGpsCoordinates(val);
+      if (coords) {
+        this.branchForm.patchValue({
+          latitude: coords.lat,
+          longitude: coords.lng
+        });
+        this.branchForm.get('latitude')?.markAsDirty();
+        this.branchForm.get('longitude')?.markAsDirty();
+      }
+    }
+  }
+
+  onCoordinateBlur(targetField: 'latitude' | 'longitude') {
+    const val = this.branchForm.get(targetField)?.value;
+    if (val && typeof val === 'string') {
+      const coords = this.parseGpsCoordinates(val);
+      if (coords) {
+        this.branchForm.patchValue({
+          latitude: coords.lat,
+          longitude: coords.lng
+        });
+      }
+    }
+  }
+
   saveBranch() {
     if (this.branchForm.invalid) {
       this.branchForm.markAllAsTouched();
@@ -683,10 +790,16 @@ export class AdminComponent implements OnInit, OnDestroy {
     };
 
     if (fv.latitude !== undefined && fv.latitude !== null && fv.latitude !== '') {
-      payload.latitude = Number(fv.latitude);
+      const lat = Number(fv.latitude);
+      if (!isNaN(lat)) {
+        payload.latitude = lat;
+      }
     }
     if (fv.longitude !== undefined && fv.longitude !== null && fv.longitude !== '') {
-      payload.longitude = Number(fv.longitude);
+      const lng = Number(fv.longitude);
+      if (!isNaN(lng)) {
+        payload.longitude = lng;
+      }
     }
 
     if (fv.manager_id) {

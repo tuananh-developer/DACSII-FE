@@ -516,18 +516,44 @@
           </div>
 
           <!-- Tọa độ GPS (Vĩ độ & Kinh độ) -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Vĩ độ (Latitude)</label>
-              <input type="number" step="any" formControlName="latitude" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] font-mono focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: 21.028511">
+          <div>
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-[13px] font-medium text-[#0d253d]">Tọa độ GPS (Google Maps)</label>
+              <span class="text-[11px] font-medium text-[#533afd] bg-[#ede9fe] px-2 py-0.5 rounded-full flex items-center gap-1">
+                <svg class="w-3 h-3 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                Tự động tách khi dán từ Google Maps
+              </span>
             </div>
 
-            <div>
-              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Kinh độ (Longitude)</label>
-              <input type="number" step="any" formControlName="longitude" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] font-mono focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: 105.854167">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-[12px] text-[#64748d] mb-1 font-medium">Vĩ độ (Latitude)</label>
+                <input 
+                  type="text" 
+                  formControlName="latitude" 
+                  (paste)="onCoordinatePaste($event, 'latitude')"
+                  (input)="onCoordinateInput('latitude')"
+                  (blur)="onCoordinateBlur('latitude')"
+                  class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] font-mono focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" 
+                  placeholder="VD: 21.028511 (hoặc dán cả cặp tọa độ)">
+              </div>
+
+              <div>
+                <label class="block text-[12px] text-[#64748d] mb-1 font-medium">Kinh độ (Longitude)</label>
+                <input 
+                  type="text" 
+                  formControlName="longitude" 
+                  (paste)="onCoordinatePaste($event, 'longitude')"
+                  (input)="onCoordinateInput('longitude')"
+                  (blur)="onCoordinateBlur('longitude')"
+                  class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] font-mono focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" 
+                  placeholder="VD: 105.854167 (hoặc dán cả cặp tọa độ)">
+              </div>
             </div>
+            <p class="text-[12px] text-[#64748d] mt-1.5">
+              💡 <span class="font-medium text-[#0d253d]">Mẹo:</span> Bạn chỉ cần copy tọa độ từ Google Maps (VD: <code class="bg-[#f0f4f8] text-[#0d253d] font-mono px-1.5 py-0.5 rounded border border-[#e2e8f0]">21.028511, 105.854167</code> hoặc đường link Google Maps) rồi dán vào ô Vĩ độ hoặc Kinh độ, hệ thống sẽ tự nhận diện và tách chuẩn 2 giá trị.
+            </p>
           </div>
-          <p class="text-[12px] text-[#64748d] -mt-2">Tọa độ GPS giúp định vị chi nhánh trên bản đồ và hiển thị khoảng cách cho khách hàng.</p>
 
           <!-- Phân công Quản lý chi nhánh -->
           <div>
