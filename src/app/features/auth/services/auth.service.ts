@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { ApiService } from '../../../core/services/api.service';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, catchError, throwError, of } from 'rxjs';
 import { NotificationService } from '../../../core/services/notification.service';
 
 export interface User {
@@ -22,11 +22,19 @@ export class AuthService {
     this.initAuth();
   }
 
+  private clearLocalAuth() {
+    localStorage.removeItem('access_token');
+    this.currentUser.set(null);
+    this.notificationService.disconnect();
+  }
+
   private initAuth() {
     const token = localStorage.getItem('access_token');
     if (token) {
       this.fetchCurrentUser().subscribe({
-        error: () => this.logout().subscribe()
+        error: () => {
+          this.clearLocalAuth();
+        }
       });
     }
   }
@@ -95,9 +103,11 @@ export class AuthService {
   logout(): Observable<any> {
     return this.api.post('/auth/logout', {}).pipe(
       tap(() => {
-        localStorage.removeItem('access_token');
-        this.currentUser.set(null);
-        this.notificationService.disconnect();
+        this.clearLocalAuth();
+      }),
+      catchError((err) => {
+        this.clearLocalAuth();
+        return of(null);
       })
     );
   }

@@ -30,7 +30,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(clonedReq).pipe(
       catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && !req.url.includes('/auth/login') && !req.url.includes('/auth/refresh')) {
+        if (error.status === 401 && !req.url.includes('/auth/login') && !req.url.includes('/auth/refresh') && !req.url.includes('/auth/logout')) {
           if (!isRefreshing) {
             isRefreshing = true;
             refreshTokenSubject.next(null);
@@ -51,11 +51,13 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
                 }
                 
                 localStorage.removeItem('access_token');
+                refreshTokenSubject.next(null);
                 router.navigate(['/']);
                 return throwError(() => new Error('Refresh failed'));
               }),
               catchError((refreshError) => {
                 isRefreshing = false;
+                refreshTokenSubject.next(null);
                 localStorage.removeItem('access_token');
                 router.navigate(['/']);
                 return throwError(() => refreshError);

@@ -33,13 +33,30 @@ export class ProfileService {
   }
 
   updateProfile(data: Partial<UserProfile>): Observable<UserProfile> {
-    const payload = {
-      full_name: data.name,
-      phone_number: data.phone,
-      date_of_birth: data.dateOfBirth,
-      gender: data.gender,
-      bio: data.bio
-    };
+    const payload: any = {};
+
+    if (data.name !== undefined && data.name !== null) {
+      const trimmed = data.name.trim();
+      if (trimmed) payload.full_name = trimmed;
+    }
+    if (data.phone !== undefined && data.phone !== null) {
+      const trimmed = data.phone.trim();
+      if (trimmed) payload.phone_number = trimmed;
+    }
+    if (data.dateOfBirth !== undefined && data.dateOfBirth !== null) {
+      const trimmedDate = data.dateOfBirth.trim();
+      if (trimmedDate) {
+        const dateObj = new Date(trimmedDate);
+        payload.date_of_birth = isNaN(dateObj.getTime()) ? trimmedDate : dateObj.toISOString();
+      }
+    }
+    if (data.gender !== undefined && data.gender !== null) {
+      payload.gender = data.gender;
+    }
+    if (data.bio !== undefined && data.bio !== null) {
+      payload.bio = data.bio.trim();
+    }
+
     return this.http.put<any>(`${this.apiUrl}/profile`, payload).pipe(
       switchMap(() => this.getProfile())
     );
