@@ -3,6 +3,38 @@ import { ApiService } from '../../../core/services/api.service';
 import { Observable, tap } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
 
+import { environment } from '../../../../environments/environment';
+
+export function resolveImageUrl(url?: string): string {
+  if (!url) return '';
+  let trimmed = url.trim();
+  
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed;
+  }
+  
+  // If the backend saved the URL with domain but missing protocol (e.g. "dacsii-be-production.up.railway.app/uploads/...")
+  const domainWithoutProtocol = environment.apiUrl.replace(/^https?:\/\//, '');
+  if (trimmed.startsWith(domainWithoutProtocol)) {
+    trimmed = trimmed.substring(domainWithoutProtocol.length);
+  }
+  
+  let path = trimmed;
+  if (!path.startsWith('/')) {
+    path = `/${path}`;
+  }
+  
+  // Ensure the path includes /uploads/ if it's just a raw filename
+  if (!path.startsWith('/uploads/')) {
+    path = `/uploads${path}`;
+  }
+  
+  // Remove double slashes just in case
+  path = path.replace(/\/\/+/g, '/');
+  
+  return `${environment.apiUrl}${path}`;
+}
+
 export interface Field {
   id: string;
   name: string;
@@ -53,7 +85,17 @@ export class FieldService {
           const data = res.data || res.items || res;
           if (Array.isArray(data)) {
             const formatted = data.map((item: any) => {
-              const imagesList = item.images && Array.isArray(item.images) ? item.images : [];
+              let imagesList: any[] = [];
+              if (Array.isArray(item.images)) {
+                imagesList = item.images.map((img: any) => {
+                  const rawUrl = typeof img === 'string' ? img : (img.url || img.image_url || img.imageUrl || img.path || '');
+                  return {
+                    ...img,
+                    url: resolveImageUrl(rawUrl),
+                    is_primary: img.is_primary || false
+                  };
+                }).filter((img: any) => !!img.url);
+              }
               const primaryImg = imagesList.find((img: any) => img.is_primary)?.url || (imagesList.length > 0 ? imagesList[0].url : null);
               const branchAddress = item.branch?.address 
                 ? `${item.branch.address.street ? item.branch.address.street + ', ' : ''}${item.branch.address.ward_name ? item.branch.address.ward_name + ', ' : ''}${item.branch.address.city_name || ''}`.replace(/,\s*$/, '')
@@ -62,7 +104,7 @@ export class FieldService {
               return {
                 ...item,
                 images: imagesList,
-                imageUrl: primaryImg || item.imageUrl || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=600&auto=format&fit=crop',
+                imageUrl: primaryImg || resolveImageUrl(item.imageUrl || item.image_url) || '',
                 rating: item.rating !== undefined && item.rating !== null ? Number(item.rating) : null,
                 reviewsCount: item.reviewsCount !== undefined && item.reviewsCount !== null ? Number(item.reviewsCount) : (Array.isArray(item.reviews) ? item.reviews.length : 0),
                 price: item.base_price !== undefined ? Number(item.base_price) : (item.price !== undefined ? Number(item.price) : 0),

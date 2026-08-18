@@ -1,7 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { FieldService, Field } from '../../home/services/field.service';
+import { FieldService, Field, resolveImageUrl } from '../../home/services/field.service';
 import { BookingService } from '../../booking/services/booking.service';
 import { TimeSlot } from '../../booking/models/booking.model';
 import { FormsModule } from '@angular/forms';
@@ -46,8 +46,8 @@ export class FieldDetailComponent implements OnInit {
           let imagesList: any[] = [];
           if (Array.isArray(data.images)) {
             imagesList = data.images.map((img: any) => {
-              const url = typeof img === 'string' ? img : (img.url || img.image_url || img.imageUrl || img.path || '');
-              return { url, is_primary: img.is_primary || false };
+              const rawUrl = typeof img === 'string' ? img : (img.url || img.image_url || img.imageUrl || img.path || '');
+              return { url: resolveImageUrl(rawUrl), is_primary: img.is_primary || false };
             }).filter((img: any) => !!img.url);
           }
           
@@ -59,7 +59,7 @@ export class FieldDetailComponent implements OnInit {
           const formatted: Field = {
             ...data,
             images: imagesList,
-            imageUrl: primaryImage || data.imageUrl || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop',
+            imageUrl: primaryImage || resolveImageUrl(data.imageUrl || data.image_url) || '',
             rating: data.rating !== undefined && data.rating !== null ? Number(data.rating) : null,
             reviewsCount: data.reviewsCount !== undefined && data.reviewsCount !== null ? Number(data.reviewsCount) : (Array.isArray(data.reviews) ? data.reviews.length : 0),
             price: data.base_price !== undefined ? Number(data.base_price) : (data.price !== undefined ? Number(data.price) : 0),
