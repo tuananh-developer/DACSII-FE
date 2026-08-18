@@ -6,18 +6,25 @@ import { HttpParams } from '@angular/common/http';
 export interface Field {
   id: string;
   name: string;
-  description: string;
-  price: number;
-  latitude: number;
-  longitude: number;
-  address: string;
-  rating?: number;
+  description?: string;
+  price?: number;
+  base_price?: number;
+  latitude?: number;
+  longitude?: number;
+  address?: string;
+  rating?: number | null;
   reviewsCount?: number;
   images?: any[];
   imageUrl?: string;
   distance?: string;
   isSaved?: boolean;
   isGuestFavorite?: boolean;
+  fieldType?: any;
+  field_type?: any;
+  fieldTypeName?: string;
+  branch?: any;
+  branchName?: string;
+  utilities?: any[];
 }
 
 @Injectable({
@@ -43,20 +50,28 @@ export class FieldService {
     return this.api.get('/fields', params).pipe(
       tap({
         next: (res: any) => {
-          // Backend response structure might vary (res.data or just res array)
           const data = res.data || res.items || res;
           if (Array.isArray(data)) {
-            // Transform data to fit frontend needs
-            const formatted = data.map((item: any) => ({
-              ...item,
-              imageUrl: item.images && item.images.length > 0 ? item.images[0].url : 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=600&auto=format&fit=crop',
-              rating: item.rating || 4.8,
-              reviewsCount: item.reviewsCount || 124,
-              price: item.base_price || item.price || 250000,
-              distance: item.distance ? `${item.distance.toFixed(1)} km` : '1.2 km',
-              isSaved: false,
-              isGuestFavorite: Math.random() > 0.7
-            }));
+            const formatted = data.map((item: any) => {
+              const imagesList = item.images && Array.isArray(item.images) ? item.images : [];
+              const primaryImg = imagesList.find((img: any) => img.is_primary)?.url || (imagesList.length > 0 ? imagesList[0].url : null);
+              const branchAddress = item.branch?.address 
+                ? `${item.branch.address.street ? item.branch.address.street + ', ' : ''}${item.branch.address.ward_name ? item.branch.address.ward_name + ', ' : ''}${item.branch.address.city_name || ''}`.replace(/,\s*$/, '')
+                : (item.address || item.branch?.name || 'Chưa cập nhật địa chỉ');
+
+              return {
+                ...item,
+                images: imagesList,
+                imageUrl: primaryImg || item.imageUrl || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=600&auto=format&fit=crop',
+                rating: item.rating !== undefined && item.rating !== null ? Number(item.rating) : null,
+                reviewsCount: item.reviewsCount !== undefined && item.reviewsCount !== null ? Number(item.reviewsCount) : (Array.isArray(item.reviews) ? item.reviews.length : 0),
+                price: item.base_price !== undefined ? Number(item.base_price) : (item.price !== undefined ? Number(item.price) : 0),
+                address: branchAddress,
+                distance: item.distance !== undefined && item.distance !== null ? `${Number(item.distance).toFixed(1)} km` : undefined,
+                isSaved: false,
+                isGuestFavorite: item.isGuestFavorite || false
+              };
+            });
             this.fields.set(formatted);
           }
           this.isLoading.set(false);

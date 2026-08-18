@@ -17,23 +17,26 @@
     <h1 class="text-[26px] md:text-[32px] font-semibold text-ink leading-tight mb-2">{{ field()!.name }}</h1>
     
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm font-medium text-ink">
-      <div class="flex items-center gap-2">
-        <span class="flex items-center gap-1">
+      <div class="flex flex-wrap items-center gap-2">
+        <span *ngIf="field()!.rating" class="flex items-center gap-1">
           <svg viewBox="0 0 32 32" class="w-3.5 h-3.5 fill-current"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
-          {{ field()!.rating }}
+          {{ field()!.rating | number:'1.1-1' }}
+        </span>
+        <span *ngIf="!field()!.rating" class="text-muted text-[13px]">
+          Chưa có đánh giá
         </span>
         <span class="text-muted">·</span>
-        <span class="underline cursor-pointer hover:text-muted transition-colors">{{ field()!.reviewsCount }} đánh giá</span>
+        <span class="text-muted">{{ field()!.reviewsCount || reviews().length }} đánh giá</span>
         <span class="text-muted">·</span>
-        <span class="underline cursor-pointer hover:text-muted transition-colors">{{ field()!.address }}</span>
+        <span class="text-ink">{{ field()!.address }}</span>
       </div>
       
       <div class="flex items-center gap-4">
-        <button class="flex items-center gap-2 hover:bg-surface-soft px-3 py-2 rounded-lg transition-colors">
+        <button class="flex items-center gap-2 hover:bg-surface-soft px-3 py-2 rounded-lg transition-colors cursor-pointer">
           <svg viewBox="0 0 32 32" class="w-4 h-4 fill-none stroke-current stroke-2"><path d="M27 18v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-9M16 3v23M6 13l9.3-9.3a1 1 0 0 1 1.4 0L26 13"></path></svg>
           Chia sẻ
         </button>
-        <button class="flex items-center gap-2 hover:bg-surface-soft px-3 py-2 rounded-lg transition-colors">
+        <button class="flex items-center gap-2 hover:bg-surface-soft px-3 py-2 rounded-lg transition-colors cursor-pointer">
           <svg viewBox="0 0 32 32" class="w-4 h-4 fill-none stroke-current stroke-2"><path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-6.94c-2.87 0-5.45 1.5-6.75 4.14-1.3-2.64-3.88-4.14-6.75-4.14A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path></svg>
           Lưu
         </button>
@@ -41,25 +44,29 @@
     </div>
   </div>
 
-  <!-- Image Gallery Grid (Airbnb Style) -->
+  <!-- Image Gallery Grid (Dynamic) -->
   <div class="px-6 md:px-12 xl:px-24 max-w-7xl mx-auto mb-10">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative">
+    <!-- Multiple images layout -->
+    <div *ngIf="field()!.images && field()!.images!.length > 1" class="grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative">
       <div class="md:col-span-2 h-full cursor-pointer hover:opacity-90 transition-opacity bg-surface-strong">
-        <img [src]="field()!.imageUrl" class="w-full h-full object-cover">
+        <img [src]="field()!.images![0]?.url || field()!.imageUrl" class="w-full h-full object-cover" [alt]="field()!.name">
       </div>
       <div class="hidden md:flex flex-col gap-2 h-full">
-        <img src="https://images.unsplash.com/photo-1518605368461-1ee06b2b4bc6?q=80&w=600&auto=format&fit=crop" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer">
-        <img src="https://images.unsplash.com/photo-1529900965600-70f90e542af1?q=80&w=600&auto=format&fit=crop" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer">
+        <img *ngIf="field()!.images![1]" [src]="field()!.images![1].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <img *ngIf="field()!.images![2]" [src]="field()!.images![2].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <div *ngIf="!field()!.images![2] && field()!.images![1]" class="w-full h-[calc(50%-4px)] bg-surface-soft flex items-center justify-center text-muted text-xs">NexusSport</div>
       </div>
       <div class="hidden md:flex flex-col gap-2 h-full">
-        <img src="https://images.unsplash.com/photo-1574629810360-7efbbad11303?q=80&w=600&auto=format&fit=crop" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer">
-        <img src="https://images.unsplash.com/photo-1589487391730-58f20eb2c308?q=80&w=600&auto=format&fit=crop" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer">
+        <img *ngIf="field()!.images![3]" [src]="field()!.images![3].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <img *ngIf="field()!.images![4]" [src]="field()!.images![4].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-90 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <div *ngIf="!field()!.images![3]" class="w-full h-[calc(50%-4px)] bg-surface-soft flex items-center justify-center text-muted text-xs">NexusSport</div>
+        <div *ngIf="!field()!.images![4] && field()!.images![3]" class="w-full h-[calc(50%-4px)] bg-surface-soft flex items-center justify-center text-muted text-xs">NexusSport</div>
       </div>
-      
-      <button class="absolute bottom-4 right-4 bg-canvas text-ink border border-ink text-sm font-semibold px-4 py-1.5 rounded-lg shadow-sm hover:bg-surface-soft transition-colors flex items-center gap-2">
-        <svg viewBox="0 0 32 32" class="w-4 h-4 fill-current"><circle cx="7" cy="16" r="2"/><circle cx="16" cy="16" r="2"/><circle cx="25" cy="16" r="2"/><circle cx="7" cy="7" r="2"/><circle cx="16" cy="7" r="2"/><circle cx="25" cy="7" r="2"/><circle cx="7" cy="25" r="2"/><circle cx="16" cy="25" r="2"/><circle cx="25" cy="25" r="2"/></svg>
-        Hiển thị tất cả ảnh
-      </button>
+    </div>
+
+    <!-- Single image fallback -->
+    <div *ngIf="!field()!.images || field()!.images!.length <= 1" class="h-[300px] md:h-[400px] rounded-2xl overflow-hidden bg-surface-strong">
+      <img [src]="field()!.imageUrl" class="w-full h-full object-cover" [alt]="field()!.name">
     </div>
   </div>
 
@@ -69,80 +76,84 @@
     <!-- Left Column (Field Info) -->
     <div class="flex-1">
       <div class="pb-8 border-b border-hairline">
-        <h2 class="text-[22px] font-semibold text-ink mb-1">Sân do NexusSport quản lý</h2>
-        <p class="text-[16px] text-muted">Bao gồm 3 sân 5, 2 sân 7 và 1 sân 11</p>
-      </div>
-
-      <div class="py-8 border-b border-hairline">
-        <div class="flex gap-4 mb-6">
-          <svg viewBox="0 0 32 32" class="w-6 h-6 fill-none stroke-current stroke-2 shrink-0"><path d="M16 28c7-4.73 14-10 14-17a6.98 6.98 0 0 0-7-6.94c-2.87 0-5.45 1.5-6.75 4.14-1.3-2.64-3.88-4.14-6.75-4.14A6.98 6.98 0 0 0 2 11c0 7 7 12.27 14 17z"></path><circle cx="16" cy="11" r="3"></circle></svg>
-          <div>
-            <h3 class="font-semibold text-ink text-[16px]">Vị trí đắc địa</h3>
-            <p class="text-muted text-[14px] mt-1 text-muted-soft">Nằm ngay trung tâm, có bãi đỗ xe máy và ô tô rộng rãi.</p>
-          </div>
-        </div>
-        <div class="flex gap-4 mb-6">
-          <svg viewBox="0 0 32 32" class="w-6 h-6 fill-none stroke-current stroke-2 shrink-0"><path d="M25 4v24M7 4v24M2 16h28"></path></svg>
-          <div>
-            <h3 class="font-semibold text-ink text-[16px]">Cỏ nhân tạo đạt chuẩn FIFA</h3>
-            <p class="text-muted text-[14px] mt-1 text-muted-soft">Mặt sân được bảo trì hàng tuần, đảm bảo độ bám và êm ái.</p>
-          </div>
-        </div>
-        <div class="flex gap-4">
-          <svg viewBox="0 0 32 32" class="w-6 h-6 fill-none stroke-current stroke-2 shrink-0"><path d="M26 13a4 4 0 1 0-8 0v13h8V13zM14 13a4 4 0 1 0-8 0v13h8V13z"></path></svg>
-          <div>
-            <h3 class="font-semibold text-ink text-[16px]">Trọng tài & Nước uống miễn phí</h3>
-            <p class="text-muted text-[14px] mt-1 text-muted-soft">Hỗ trợ trọng tài cho các trận đấu và miễn phí 2 bình nước mỗi sân.</p>
-          </div>
+        <h2 class="text-[22px] font-semibold text-ink mb-1">
+          {{ field()!.branch?.name ? 'Cơ sở: ' + field()!.branch.name : (field()!.branchName || 'Sân bóng thể thao') }}
+        </h2>
+        <div class="text-[15px] text-muted flex flex-wrap items-center gap-2 mt-2">
+          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[13px] font-medium bg-[#f0f4f8] text-[#0d253d]">
+            Loại: {{ field()!.fieldType?.name || field()!.fieldTypeName || 'Sân bóng đá' }}
+          </span>
+          <span *ngIf="field()!.branch?.phone_number" class="text-muted">· Hotline: <span class="text-ink font-medium">{{ field()!.branch.phone_number }}</span></span>
+          <span *ngIf="field()!.branch?.open_time && field()!.branch?.close_time" class="text-muted">· Mở cửa: <span class="text-ink font-medium">{{ field()!.branch.open_time }} - {{ field()!.branch.close_time }}</span></span>
         </div>
       </div>
 
+      <!-- Utilities / Features Section (Dynamic) -->
+      <div class="py-8 border-b border-hairline" *ngIf="field()!.utilities && field()!.utilities!.length > 0">
+        <h3 class="font-semibold text-ink text-[18px] mb-4">Tiện ích sân bóng</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div *ngFor="let util of field()!.utilities" class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-soft border border-hairline">
+            <div class="w-8 h-8 rounded-lg bg-surface-strong flex items-center justify-center text-primary shrink-0">
+              <svg viewBox="0 0 24 24" class="w-5 h-5 fill-none stroke-current stroke-2"><path d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <div>
+              <div class="font-medium text-[15px] text-ink">{{ util.name || util }}</div>
+              <div *ngIf="util.description" class="text-[12px] text-muted">{{ util.description }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description Section -->
       <div class="py-8 border-b border-hairline">
         <h2 class="text-[22px] font-semibold text-ink mb-4">Mô tả sân</h2>
-        <p class="text-[16px] text-ink leading-relaxed font-light">
-          {{ field()!.description || 'Sân bóng chất lượng cao với hệ thống đèn chiếu sáng tiêu chuẩn. Phù hợp cho các giải đấu phong trào và giao hữu cuối tuần. Có khu vực căng tin giải khát và phòng thay đồ sạch sẽ.' }}
+        <p class="text-[16px] text-ink leading-relaxed font-light whitespace-pre-line">
+          {{ field()!.description || 'Chưa có mô tả chi tiết cho sân bóng này.' }}
         </p>
       </div>
 
-      <!-- Reviews Section (Airbnb Style) -->
+      <!-- Reviews Section (Dynamic from API) -->
       <div class="py-12 border-b border-hairline">
-        <div class="flex items-center gap-4 mb-8">
-          <div class="flex items-center gap-2">
+        <div class="flex items-center gap-4 mb-8" *ngIf="reviews().length > 0">
+          <div class="flex items-center gap-2" *ngIf="field()!.rating">
             <svg viewBox="0 0 32 32" class="w-8 h-8 fill-ink"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
-            <span class="text-[64px] font-bold text-ink leading-[1.1] tracking-[-1px]">{{ field()!.rating }}</span>
+            <span class="text-[48px] font-bold text-ink leading-[1.1] tracking-[-1px]">{{ field()!.rating | number:'1.1-1' }}</span>
           </div>
           <div>
-            <div class="text-[20px] font-semibold text-ink">Khách yêu thích</div>
-            <div class="text-[16px] text-muted">Một trong những sân được đánh giá cao nhất trên NexusSport</div>
-            <div class="text-[16px] font-semibold text-ink underline mt-1">{{ field()!.reviewsCount }} đánh giá</div>
+            <div class="text-[20px] font-semibold text-ink">Đánh giá từ khách hàng</div>
+            <div class="text-[15px] font-medium text-muted mt-0.5">{{ reviews().length }} lượt đánh giá</div>
           </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
-          <div *ngFor="let review of reviews() | slice:0:6" class="flex flex-col gap-3">
-            <div class="flex items-center gap-4">
-              <img [src]="review.authorAvatar || 'https://ui-avatars.com/api/?name=User&background=random'" class="w-12 h-12 rounded-full object-cover">
+        <div *ngIf="reviews().length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+          <div *ngFor="let review of reviews()" class="flex flex-col gap-3">
+            <div class="flex items-center gap-3">
+              <img [src]="review.user?.avatar_url || review.authorAvatar || ('https://ui-avatars.com/api/?name=' + (review.user?.full_name || review.authorName || 'User') + '&background=random')" class="w-10 h-10 rounded-full object-cover" [alt]="review.user?.full_name || 'User'">
               <div>
-                <h4 class="text-[16px] font-semibold text-ink">{{ review.authorName || 'Người dùng' }}</h4>
-                <div class="flex items-center gap-2 text-[14px] text-muted">
-                  <span>{{ review.date }}</span>
-                  <span>·</span>
-                  <div class="flex gap-0.5">
+                <h4 class="text-[15px] font-semibold text-ink">{{ review.user?.full_name || review.authorName || 'Khách hàng' }}</h4>
+                <div class="flex items-center gap-2 text-[13px] text-muted">
+                  <span>{{ (review.created_at || review.createdAt || review.date) | date:'dd/MM/yyyy' }}</span>
+                  <span *ngIf="review.rating">·</span>
+                  <div *ngIf="review.rating" class="flex gap-0.5">
                     <svg *ngFor="let i of [1,2,3,4,5]" viewBox="0 0 32 32" class="w-2.5 h-2.5" [ngClass]="i <= review.rating ? 'fill-ink' : 'fill-hairline'"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
                   </div>
                 </div>
               </div>
             </div>
-            <p class="text-[16px] text-ink leading-relaxed font-light line-clamp-3">
-              {{ review.content }}
+            <p class="text-[15px] text-ink leading-relaxed font-light">
+              {{ review.comment || review.content }}
             </p>
-            <button class="text-[16px] font-semibold text-ink underline text-left w-fit hover:opacity-70 transition-opacity">Hiển thị thêm</button>
           </div>
         </div>
-        
-        <button class="mt-10 bg-canvas text-ink border border-ink font-semibold px-6 py-3 rounded-lg hover:bg-surface-soft transition-colors text-[16px]">
-          Hiển thị tất cả {{ field()!.reviewsCount }} đánh giá
-        </button>
+
+        <!-- Empty Reviews State -->
+        <div *ngIf="reviews().length === 0" class="bg-surface-soft border border-hairline rounded-2xl p-8 text-center my-4">
+          <div class="w-12 h-12 rounded-full bg-surface-strong flex items-center justify-center mx-auto mb-3 text-muted">
+            <svg viewBox="0 0 32 32" class="w-6 h-6 fill-current"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
+          </div>
+          <h4 class="text-[16px] font-medium text-ink mb-1">Chưa có đánh giá nào</h4>
+          <p class="text-[14px] text-muted max-w-md mx-auto">Sân bóng này chưa có lượt đánh giá nào từ khách hàng. Bạn có thể đặt sân và trải nghiệm trước!</p>
+        </div>
       </div>
     </div>
 
@@ -152,14 +163,14 @@
         
         <div class="flex justify-between items-baseline mb-6">
           <div class="text-[22px] font-semibold text-ink" *ngIf="selectedSlotIds().length === 0">
-            ₫{{ field()!.price | number:'1.0-0' }} <span class="text-[16px] font-normal text-muted">/ giờ</span>
+            ₫{{ (field()!.price || 0) | number:'1.0-0' }} <span class="text-[16px] font-normal text-muted">/ giờ</span>
           </div>
           <div class="text-[22px] font-semibold text-ink" *ngIf="selectedSlotIds().length > 0">
             ₫{{ totalBookingPrice | number:'1.0-0' }} <span class="text-[16px] font-normal text-muted">tổng</span>
           </div>
-          <div class="text-sm font-medium flex items-center gap-1">
+          <div class="text-sm font-medium flex items-center gap-1" *ngIf="field()!.rating">
             <svg viewBox="0 0 32 32" class="w-3 h-3 fill-current"><path d="M15.094 1.579l-4.124 8.885-9.86 1.27a1 1 0 0 0-.542 1.736l7.293 6.565-1.965 9.852a1 1 0 0 0 1.483 1.061L16 25.951l8.625 4.997a1 1 0 0 0 1.482-1.06l-1.965-9.853 7.293-6.565a1 1 0 0 0-.541-1.735l-9.86-1.271-4.127-8.885a1 1 0 0 0-1.814 0z"></path></svg>
-            {{ field()!.rating }} <span class="text-muted underline cursor-pointer">{{ field()!.reviewsCount }} đánh giá</span>
+            {{ field()!.rating | number:'1.1-1' }}
           </div>
         </div>
 
@@ -216,10 +227,10 @@
 
         <p class="text-center text-[14px] text-muted mt-4">Bạn vẫn chưa bị trừ tiền</p>
         
-        <!-- Breakdown (Airbnb style) -->
+        <!-- Breakdown -->
         <div *ngIf="selectedSlotIds().length > 0" class="mt-4 pt-4 border-t border-hairline">
           <div class="flex justify-between text-[16px] text-ink mb-2">
-            <span class="underline">₫{{ field()!.price | number:'1.0-0' }} x {{ selectedSlotIds().length }} giờ</span>
+            <span class="underline">₫{{ (field()!.price || 0) | number:'1.0-0' }} x {{ selectedSlotIds().length }} giờ</span>
             <span>₫{{ totalBookingPrice | number:'1.0-0' }}</span>
           </div>
           <div class="flex justify-between text-[16px] font-semibold text-ink pt-4 border-t border-hairline mt-4">

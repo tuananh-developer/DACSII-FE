@@ -41,13 +41,22 @@ export class FieldDetailComponent implements OnInit {
         next: (res: any) => {
           const data = res.data || res;
           
-          // Format data for UI
+          const imagesList = data.images && Array.isArray(data.images) ? data.images : [];
+          const primaryImage = imagesList.find((img: any) => img.is_primary)?.url || (imagesList.length > 0 ? imagesList[0].url : null);
+          const branchAddress = data.branch?.address 
+            ? `${data.branch.address.street ? data.branch.address.street + ', ' : ''}${data.branch.address.ward_name ? data.branch.address.ward_name + ', ' : ''}${data.branch.address.city_name || ''}`.replace(/,\s*$/, '')
+            : (data.address || data.branch?.name || 'Chưa cập nhật địa chỉ');
+
           const formatted: Field = {
             ...data,
-            imageUrl: data.images && data.images.length > 0 ? data.images[0].url : 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop',
-            rating: data.rating || 4.9,
-            reviewsCount: data.reviewsCount || 128,
-            price: data.base_price || data.price || 250000
+            images: imagesList,
+            imageUrl: primaryImage || data.imageUrl || 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?q=80&w=1200&auto=format&fit=crop',
+            rating: data.rating !== undefined && data.rating !== null ? Number(data.rating) : null,
+            reviewsCount: data.reviewsCount !== undefined && data.reviewsCount !== null ? Number(data.reviewsCount) : (Array.isArray(data.reviews) ? data.reviews.length : 0),
+            price: data.base_price !== undefined ? Number(data.base_price) : (data.price !== undefined ? Number(data.price) : 0),
+            address: branchAddress,
+            fieldTypeName: data.fieldType?.name || data.field_type?.name || 'Sân bóng đá',
+            branchName: data.branch?.name || 'Hệ thống NexusSport'
           };
           
           this.field.set(formatted);
@@ -63,31 +72,20 @@ export class FieldDetailComponent implements OnInit {
   loadReviews() {
     this.fieldService.getFieldReviews(this.fieldId).subscribe({
       next: (res: any) => {
-        // If API doesn't return array directly, adapt based on response
         const data = res.data || res.items || res;
         if (Array.isArray(data)) {
           this.reviews.set(data);
+          if (this.field()) {
+            this.field.update(f => f ? { ...f, reviewsCount: f.reviewsCount || data.length } : null);
+          }
         } else {
-          // Fallback mockup if endpoint returns empty or doesn't exist yet
-          this.reviews.set(this.getMockReviews());
+          this.reviews.set([]);
         }
       },
       error: () => {
-        // Fallback mockup on error
-        this.reviews.set(this.getMockReviews());
+        this.reviews.set([]);
       }
     });
-  }
-
-  getMockReviews() {
-    return [
-      { id: 1, authorName: 'Nguyễn Văn A', authorAvatar: 'https://ui-avatars.com/api/?name=NVA&background=random', date: 'Tháng 8, 2026', content: 'Sân rất đẹp, cỏ mới và êm. Đèn sáng trưng đá buổi tối rất sướng. Sẽ tiếp tục ủng hộ sân dài dài.', rating: 5 },
-      { id: 2, authorName: 'Trần Thị B', authorAvatar: 'https://ui-avatars.com/api/?name=TTB&background=random', date: 'Tháng 7, 2026', content: 'Chủ sân nhiệt tình, có nước uống miễn phí. Tuy nhiên bãi gửi xe hơi nhỏ, đi lúc đông hơi khó để xe.', rating: 4 },
-      { id: 3, authorName: 'Lê Hoàng C', authorAvatar: 'https://ui-avatars.com/api/?name=LHC&background=random', date: 'Tháng 7, 2026', content: 'Giá cả hợp lý so với mặt bằng chung. Sân bóng tốt, lưới bao quanh chắc chắn. Căng tin bán đồ uống giá rẻ.', rating: 5 },
-      { id: 4, authorName: 'Phạm Minh D', authorAvatar: 'https://ui-avatars.com/api/?name=PMD&background=random', date: 'Tháng 6, 2026', content: 'Trọng tài nhiệt tình, bắt công tâm. Bọn mình đá giải ở đây rất yên tâm.', rating: 5 },
-      { id: 5, authorName: 'Vũ Đức E', authorAvatar: 'https://ui-avatars.com/api/?name=VDE&background=random', date: 'Tháng 5, 2026', content: 'Sân số 3 hơi lún một chút ở góc phạt góc, hy vọng chủ sân sớm khắc phục. Còn lại mọi thứ đều ổn.', rating: 4 },
-      { id: 6, authorName: 'Hoàng Văn F', authorAvatar: 'https://ui-avatars.com/api/?name=HVF&background=random', date: 'Tháng 4, 2026', content: 'Rất tuyệt vời!', rating: 5 }
-    ];
   }
 
   loadTimeSlots() {
