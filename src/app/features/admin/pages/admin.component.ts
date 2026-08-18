@@ -158,6 +158,8 @@ export class AdminComponent implements OnInit, OnDestroy {
       cityId: ['', Validators.required],
       wardId: ['', Validators.required],
       street: ['', Validators.required],
+      latitude: [''],
+      longitude: [''],
       manager_id: [''],
       description: ['']
     });
@@ -612,6 +614,8 @@ export class AdminComponent implements OnInit, OnDestroy {
       cityId: defaultCity,
       wardId: '',
       street: '',
+      latitude: '',
+      longitude: '',
       manager_id: '',
       description: ''
     });
@@ -631,9 +635,11 @@ export class AdminComponent implements OnInit, OnDestroy {
       phone_number: raw.phone_number || '',
       open_time: raw.open_time || '06:00:00',
       close_time: raw.close_time || '23:00:00',
-      cityId: addr.city_id || (this.cities[0]?.id || ''),
-      wardId: addr.ward_id || '',
+      cityId: addr.city_id || addr.cityId || (this.cities[0]?.id || ''),
+      wardId: addr.ward_id || addr.wardId || '',
       street: addr.street || '',
+      latitude: addr.latitude ?? addr.lat ?? raw.latitude ?? raw.lat ?? '',
+      longitude: addr.longitude ?? addr.lng ?? addr.lon ?? raw.longitude ?? raw.lng ?? raw.lon ?? '',
       manager_id: raw.manager_id || raw.manager?.id || '',
       description: raw.description || ''
     });
@@ -675,6 +681,13 @@ export class AdminComponent implements OnInit, OnDestroy {
       wardId: Number(fv.wardId),
       description: fv.description || ''
     };
+
+    if (fv.latitude !== undefined && fv.latitude !== null && fv.latitude !== '') {
+      payload.latitude = Number(fv.latitude);
+    }
+    if (fv.longitude !== undefined && fv.longitude !== null && fv.longitude !== '') {
+      payload.longitude = Number(fv.longitude);
+    }
 
     if (fv.manager_id) {
       payload.manager_id = fv.manager_id;

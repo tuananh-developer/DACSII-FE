@@ -515,6 +515,20 @@
             <span *ngIf="branchForm.get('street')?.invalid && branchForm.get('street')?.touched" class="text-[#ea2261] text-[12px] mt-1 block">Vui lòng nhập địa chỉ cụ thể</span>
           </div>
 
+          <!-- Tọa độ GPS (Vĩ độ & Kinh độ) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Vĩ độ (Latitude)</label>
+              <input type="number" step="any" formControlName="latitude" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] font-mono focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: 21.028511">
+            </div>
+
+            <div>
+              <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Kinh độ (Longitude)</label>
+              <input type="number" step="any" formControlName="longitude" class="w-full bg-white border border-[#a8c3de] rounded-[6px] px-3.5 py-2 text-[14px] text-[#0d253d] font-mono focus:outline-none focus:border-[#533afd] focus:ring-1 focus:ring-[#533afd] transition-all" placeholder="VD: 105.854167">
+            </div>
+          </div>
+          <p class="text-[12px] text-[#64748d] -mt-2">Tọa độ GPS giúp định vị chi nhánh trên bản đồ và hiển thị khoảng cách cho khách hàng.</p>
+
           <!-- Phân công Quản lý chi nhánh -->
           <div>
             <label class="block text-[13px] font-medium text-[#0d253d] mb-1.5">Phân công Quản lý chi nhánh (Manager)</label>
