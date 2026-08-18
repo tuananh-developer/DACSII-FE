@@ -7,6 +7,14 @@
     </a>
     
     <div class="flex items-center gap-4 relative">
+      <!-- Admin quick button -->
+      <a *ngIf="authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'branch_manager' || authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager'" 
+         routerLink="/admin" 
+         class="hidden sm:flex items-center gap-1.5 bg-[#533afd] hover:bg-[#4434d4] text-white text-[13px] font-semibold px-4 py-2 rounded-full transition-all shadow-sm">
+        <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>Trang Quản Trị</span>
+      </a>
+
       <app-notification-dropdown></app-notification-dropdown>
       
       <!-- User profile when logged in -->
@@ -26,10 +34,23 @@
           <div class="px-4 py-3 border-b border-hairline mb-2">
             <p class="text-[14px] font-bold text-ink truncate">Xin chào, {{ authService.currentUser()?.full_name || authService.currentUser()?.email?.split('@')?.[0] }}</p>
             <p class="text-[12px] text-muted truncate">{{ authService.currentUser()?.email }}</p>
+            <span *ngIf="authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'branch_manager' || authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager'" 
+                  class="inline-block mt-1.5 text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
+              {{ authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'admin' ? 'Quản trị viên' : 'Quản lý CN' }}
+            </span>
           </div>
-          <a routerLink="/profile" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Hồ sơ của tôi</a>
-          <a routerLink="/bookings" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Lịch sử đặt sân</a>
-          <a *ngIf="authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'branch_manager'" routerLink="/admin" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Trang quản trị</a>
+
+          <ng-container *ngIf="authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'branch_manager' || authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager'; else customerMenu">
+            <a routerLink="/admin" class="block px-4 py-2.5 text-[14px] text-[#533afd] font-semibold hover:bg-surface-soft transition-colors flex items-center justify-between">
+              Trang Quản Trị
+              <svg class="w-4 h-4 text-[#533afd]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+          </ng-container>
+          <ng-template #customerMenu>
+            <a routerLink="/profile" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Hồ sơ của tôi</a>
+            <a routerLink="/profile/bookings" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Lịch sử đặt sân</a>
+          </ng-template>
+
           <div class="h-[1px] bg-hairline my-2"></div>
           <button (click)="authService.logout().subscribe()" class="w-full text-left px-4 py-2.5 text-[14px] text-primary hover:bg-surface-soft transition-colors font-medium">Đăng xuất</button>
         </div>

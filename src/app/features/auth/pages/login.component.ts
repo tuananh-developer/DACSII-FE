@@ -50,10 +50,10 @@ export class LoginComponent implements OnDestroy {
       const user = event.data.user;
       const roleName = typeof user.role === 'object' ? user.role.name : user.role;
       
-      if (!user.is_profile_complete) {
-        this.router.navigate(['/profile/info']);
-      } else if (roleName === 'super_admin' || roleName === 'branch_manager') {
+      if (roleName === 'super_admin' || roleName === 'branch_manager' || roleName === 'admin' || roleName === 'manager') {
         this.router.navigate(['/admin']);
+      } else if (!user.is_profile_complete) {
+        this.router.navigate(['/profile/info']);
       } else {
         this.router.navigate(['/']);
       }
@@ -94,8 +94,11 @@ export class LoginComponent implements OnDestroy {
       next: () => {
         this.isLoading.set(false);
         const user = this.authService.currentUser();
-        if (user && (user.role === 'super_admin' || user.role === 'branch_manager')) {
+        const role = user?.role;
+        if (role === 'super_admin' || role === 'branch_manager' || role === 'admin' || role === 'manager') {
           this.router.navigate(['/admin']);
+        } else if (user && !user.is_profile_complete) {
+          this.router.navigate(['/profile/info']);
         } else {
           this.router.navigate(['/']);
         }
