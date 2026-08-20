@@ -107,7 +107,7 @@ export class FieldService {
                 imageUrl: primaryImg || resolveImageUrl(item.imageUrl || item.image_url) || '',
                 rating: item.rating !== undefined && item.rating !== null ? Number(item.rating) : null,
                 reviewsCount: item.reviewsCount !== undefined && item.reviewsCount !== null ? Number(item.reviewsCount) : (Array.isArray(item.reviews) ? item.reviews.length : 0),
-                price: item.base_price !== undefined ? Number(item.base_price) : (item.price !== undefined ? Number(item.price) : 0),
+                price: item.base_price !== undefined ? Number(item.base_price) : (item.price !== undefined ? Number(item.price) : 200000),
                 address: branchAddress,
                 distance: item.distance !== undefined && item.distance !== null ? `${Number(item.distance).toFixed(1)} km` : undefined,
                 isSaved: false,

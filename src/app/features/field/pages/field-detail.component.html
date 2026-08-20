@@ -10,6 +10,62 @@
       <svg viewBox="0 0 32 32" class="h-8 w-8 fill-current"><path d="M16 1c2.008 0 3.463.963 4.751 3.269l.533 1.025c1.954 3.83 6.114 12.54 7.1 14.836l.145.353c.667 1.591.91 2.472.96 3.396l.01.415.001.228c0 4.062-2.877 6.478-6.357 6.478-2.224 0-4.556-1.258-6.709-3.386l-.257-.26-.172-.179h-.011l-.176.185c-2.044 2.1-4.267 3.42-6.414 3.615l-.28.019-.267.006C5.377 31 2.5 28.584 2.5 24.522l.005-.469c.026-.928.23-1.768.83-3.244l.216-.524c.966-2.298 5.083-10.87 7.11-14.886l.528-1.038C12.53 2.016 13.982 1 16 1z"></path></svg>
       NexusSport
     </a>
+    
+<div class="flex items-center gap-4 relative">
+      <!-- Admin quick button -->
+      <a *ngIf="authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'branch_manager' || authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager'" 
+         routerLink="/admin" 
+         class="hidden sm:flex items-center gap-1.5 bg-[#533afd] hover:bg-[#4434d4] text-white text-[13px] font-semibold px-4 py-2 rounded-full transition-all shadow-sm">
+        <svg viewBox="0 0 24 24" class="w-4 h-4 fill-current"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+        <span>Trang Quản Trị</span>
+      </a>
+
+      <app-notification-dropdown></app-notification-dropdown>
+      
+      <!-- User profile when logged in -->
+      <div *ngIf="authService.currentUser()" class="relative group cursor-pointer">
+        <div class="flex items-center gap-2 px-2 py-1 rounded-full border border-hairline hover:shadow-md transition-all duration-300 bg-canvas">
+          <svg viewBox="0 0 32 32" class="w-4 h-4 fill-ink ml-2 hidden md:block"><path d="M2 16h28M2 24h28M2 8h28" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path></svg>
+          <img *ngIf="authService.currentUser()?.avatar_url; else noAvatar" [src]="authService.currentUser()?.avatar_url" class="w-8 h-8 rounded-full object-cover ml-1 md:ml-2">
+          <ng-template #noAvatar>
+            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-canvas font-bold text-[14px] ml-1 md:ml-2">
+              {{ (authService.currentUser()?.full_name?.[0] || authService.currentUser()?.email?.[0] || 'U') | uppercase }}
+            </div>
+          </ng-template>
+        </div>
+        
+        <!-- Dropdown Menu -->
+        <div class="absolute right-0 top-[110%] w-56 bg-canvas rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-hairline py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 transform origin-top-right">
+          <div class="px-4 py-3 border-b border-hairline mb-2">
+            <p class="text-[14px] font-bold text-ink truncate">Xin chào, {{ authService.currentUser()?.full_name || authService.currentUser()?.email?.split('@')?.[0] }}</p>
+            <p class="text-[12px] text-muted truncate">{{ authService.currentUser()?.email }}</p>
+            <span *ngIf="authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'branch_manager' || authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager'" 
+                  class="inline-block mt-1.5 text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">
+              {{ authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'admin' ? 'Quản trị viên' : 'Quản lý CN' }}
+            </span>
+          </div>
+          
+          <ng-container *ngIf="authService.currentUser()?.role === 'super_admin' || authService.currentUser()?.role === 'branch_manager' || authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager'; else customerMenu">
+            <a routerLink="/admin" class="block px-4 py-2.5 text-[14px] text-[#533afd] font-semibold hover:bg-surface-soft transition-colors flex items-center justify-between">
+              Trang Quản Trị
+              <svg class="w-4 h-4 text-[#533afd]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </a>
+          </ng-container>
+          <ng-template #customerMenu>
+            <a routerLink="/profile" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Hồ sơ của tôi</a>
+            <a routerLink="/profile/bookings" class="block px-4 py-2.5 text-[14px] text-ink hover:bg-surface-soft transition-colors font-medium">Lịch sử đặt sân</a>
+          </ng-template>
+
+          <div class="h-[1px] bg-hairline my-2"></div>
+          <button (click)="authService.logout().subscribe()" class="w-full text-left px-4 py-2.5 text-[14px] text-primary hover:bg-surface-soft transition-colors font-medium">Đăng xuất</button>
+        </div>
+      </div>
+
+      <!-- Login button when NOT logged in -->
+      <a *ngIf="!authService.currentUser()" routerLink="/login" class="text-[14px] font-semibold hover:bg-surface-soft px-5 py-2.5 rounded-full transition-colors border border-hairline shadow-sm">
+        Đăng nhập
+      </a>
+    </div>
   </header>
 
   <!-- Title & Action Bar -->
@@ -48,30 +104,30 @@
   <div class="px-6 md:px-12 xl:px-24 max-w-7xl mx-auto mb-10">
     <!-- Multiple images layout (>= 3 images) -->
     <div *ngIf="field()!.images && field()!.images!.length >= 3" class="grid grid-cols-1 md:grid-cols-4 gap-2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative">
-      <div class="md:col-span-2 h-full cursor-pointer hover:opacity-95 transition-opacity bg-surface-strong">
+      <div class="md:col-span-2 h-full cursor-pointer hover:opacity-95 transition-opacity bg-surface-strong" (click)="openLightbox(field()!.images![0].url)">
         <img [src]="field()!.images![0].url" class="w-full h-full object-cover" [alt]="field()!.name">
       </div>
       <div class="hidden md:flex flex-col gap-2 h-full">
-        <img *ngIf="field()!.images![1]" [src]="field()!.images![1].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
-        <img *ngIf="field()!.images![2]" [src]="field()!.images![2].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <img *ngIf="field()!.images![1]" [src]="field()!.images![1].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name" (click)="openLightbox(field()!.images![1].url)">
+        <img *ngIf="field()!.images![2]" [src]="field()!.images![2].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name" (click)="openLightbox(field()!.images![2].url)">
       </div>
       <div class="hidden md:flex flex-col gap-2 h-full">
-        <img *ngIf="field()!.images![3]" [src]="field()!.images![3].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
-        <img *ngIf="field()!.images![4]" [src]="field()!.images![4].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
-        <img *ngIf="!field()!.images![4] && field()!.images![3]" [src]="field()!.images![0].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
-        <img *ngIf="!field()!.images![3]" [src]="field()!.images![0].url" class="w-full h-full object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name">
+        <img *ngIf="field()!.images![3]" [src]="field()!.images![3].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name" (click)="openLightbox(field()!.images![3].url)">
+        <img *ngIf="field()!.images![4]" [src]="field()!.images![4].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name" (click)="openLightbox(field()!.images![4].url)">
+        <img *ngIf="!field()!.images![4] && field()!.images![3]" [src]="field()!.images![0].url" class="w-full h-[calc(50%-4px)] object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name" (click)="openLightbox(field()!.images![0].url)">
+        <img *ngIf="!field()!.images![3]" [src]="field()!.images![0].url" class="w-full h-full object-cover hover:opacity-95 transition-opacity cursor-pointer" [alt]="field()!.name" (click)="openLightbox(field()!.images![0].url)">
       </div>
     </div>
 
     <!-- 2 images layout -->
     <div *ngIf="field()!.images && field()!.images!.length === 2" class="grid grid-cols-1 md:grid-cols-2 gap-2 h-[300px] md:h-[400px] rounded-2xl overflow-hidden relative">
-      <img [src]="field()!.images![0].url" class="w-full h-full object-cover" [alt]="field()!.name">
-      <img [src]="field()!.images![1].url" class="w-full h-full object-cover" [alt]="field()!.name">
+      <img [src]="field()!.images![0].url" class="w-full h-full object-cover cursor-pointer hover:opacity-95 transition-opacity" [alt]="field()!.name" (click)="openLightbox(field()!.images![0].url)">
+      <img [src]="field()!.images![1].url" class="w-full h-full object-cover cursor-pointer hover:opacity-95 transition-opacity" [alt]="field()!.name" (click)="openLightbox(field()!.images![1].url)">
     </div>
 
     <!-- Single image or no image state -->
     <div *ngIf="!field()!.images || field()!.images!.length <= 1" class="h-[300px] md:h-[400px] rounded-2xl overflow-hidden bg-[#0d253d]/5 flex items-center justify-center relative">
-      <img *ngIf="field()!.imageUrl" [src]="field()!.imageUrl" class="w-full h-full object-cover" [alt]="field()!.name">
+      <img *ngIf="field()!.imageUrl" [src]="field()!.imageUrl" class="w-full h-full object-cover cursor-pointer hover:opacity-95 transition-opacity" [alt]="field()!.name" (click)="openLightbox(field()!.imageUrl)">
       <div *ngIf="!field()!.imageUrl" class="flex flex-col items-center justify-center gap-3 text-[#64748d]">
         <svg class="w-16 h-16 text-[#a8c3de] fill-none stroke-current stroke-1.5" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
@@ -173,8 +229,8 @@
       <div class="sticky top-28 bg-canvas border border-hairline shadow-float rounded-2xl p-6">
         
         <div class="flex justify-between items-baseline mb-6">
-          <div class="text-[22px] font-semibold text-ink" *ngIf="selectedSlotIds().length === 0">
-            ₫{{ (field()!.price || 0) | number:'1.0-0' }} <span class="text-[16px] font-normal text-muted">/ giờ</span>
+          <div class="text-[32px] font-bold text-ink leading-none tabular-nums mt-1">
+            ₫{{ computedBasePrice | number:'1.0-0' }} <span class="text-[16px] font-normal text-muted">/ giờ</span>
           </div>
           <div class="text-[22px] font-semibold text-ink" *ngIf="selectedSlotIds().length > 0">
             ₫{{ totalBookingPrice | number:'1.0-0' }} <span class="text-[16px] font-normal text-muted">tổng</span>
@@ -241,7 +297,7 @@
         <!-- Breakdown -->
         <div *ngIf="selectedSlotIds().length > 0" class="mt-4 pt-4 border-t border-hairline">
           <div class="flex justify-between text-[16px] text-ink mb-2">
-            <span class="underline">₫{{ (field()!.price || 0) | number:'1.0-0' }} x {{ selectedSlotIds().length }} giờ</span>
+            <span class="underline">₫{{ computedBasePrice | number:'1.0-0' }} x {{ selectedSlotIds().length }} giờ</span>
             <span>₫{{ totalBookingPrice | number:'1.0-0' }}</span>
           </div>
           <div class="flex justify-between text-[16px] font-semibold text-ink pt-4 border-t border-hairline mt-4">
@@ -253,5 +309,45 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- Lightbox Modal -->
+<div *ngIf="currentLightboxUrl()" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm transition-opacity" (click)="closeLightbox()">
+  
+  <!-- Close Button -->
+  <button class="absolute top-4 right-4 z-[110] text-white hover:text-white bg-black/40 hover:bg-black/80 rounded-full p-2.5 transition-all" (click)="closeLightbox(); $event.stopPropagation()">
+    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+  </button>
+
+  <!-- Previous Button -->
+  <button *ngIf="field()!.images && field()!.images!.length > 1" class="absolute left-4 z-[110] text-white hover:text-white bg-black/40 hover:bg-black/80 rounded-full p-3 transition-all" (click)="prevImage($event)">
+    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+  </button>
+
+  <!-- Next Button -->
+  <button *ngIf="field()!.images && field()!.images!.length > 1" class="absolute right-4 z-[110] text-white hover:text-white bg-black/40 hover:bg-black/80 rounded-full p-3 transition-all" (click)="nextImage($event)">
+    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+  </button>
+
+  <!-- Image Container -->
+  <div class="relative w-full h-full flex items-center justify-center overflow-auto p-4 md:p-12" (click)="$event.stopPropagation()">
+    <img 
+      [src]="currentLightboxUrl()" 
+      class="rounded-sm shadow-2xl transition-transform duration-300 origin-center"
+      [class.max-w-full]="!isZoomed()"
+      [class.max-h-full]="!isZoomed()"
+      [class.object-contain]="!isZoomed()"
+      [class.cursor-zoom-in]="!isZoomed()"
+      [class.cursor-zoom-out]="isZoomed()"
+      [style.transform]="isZoomed() ? 'scale(2)' : 'scale(1)'"
+      (click)="toggleZoom($event)"
+      [alt]="field()!.name"
+    >
+  </div>
+  
+  <!-- Image Counter -->
+  <div *ngIf="field()!.images && field()!.images!.length > 1" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-sm font-medium bg-black/50 px-4 py-1.5 rounded-full tracking-wide">
+    {{ (selectedImageIndex() || 0) + 1 }} / {{ field()!.images!.length }}
   </div>
 </div>
